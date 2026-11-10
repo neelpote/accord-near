@@ -1,41 +1,18 @@
-FROM node:20-alpine AS base
+FROM node:24.22.2-bookworm-slim AS build
 WORKDIR /app
-
-FROM base AS deps
 COPY package.json package-lock.json ./
-# WalletConnect deps ship native websocket addons; skip postinstall builds in Alpine.
-RUN npm ci --ignore-scripts
-
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
+RUN npm ci
 COPY . .
-
-# NEXT_PUBLIC_* values are inlined into the JS bundle by `next build`,
-# so they must be supplied as build args (compose: build.args), not
-# runtime environment.
-ARG NEXT_PUBLIC_API_BASE_URL
-ARG NEXT_PUBLIC_SERVICE_FACTORY_ADDRESS
-ARG NEXT_PUBLIC_SUBSCRIPTIONS_ADDRESS
-ARG NEXT_PUBLIC_USDC_ADDRESS
-ARG NEXT_PUBLIC_WETH_ADDRESS
-ARG NEXT_PUBLIC_WBTC_ADDRESS
-ARG NEXT_PUBLIC_AGGREGATOR_ADDRESS
-ARG NEXT_PUBLIC_WC_PROJECT_ID
-
-ENV NODE_ENV=production
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_SERVICE_FACTORY_ADDRESS=$NEXT_PUBLIC_SERVICE_FACTORY_ADDRESS
-ENV NEXT_PUBLIC_SUBSCRIPTIONS_ADDRESS=$NEXT_PUBLIC_SUBSCRIPTIONS_ADDRESS
-ENV NEXT_PUBLIC_USDC_ADDRESS=$NEXT_PUBLIC_USDC_ADDRESS
-ENV NEXT_PUBLIC_WETH_ADDRESS=$NEXT_PUBLIC_WETH_ADDRESS
-ENV NEXT_PUBLIC_WBTC_ADDRESS=$NEXT_PUBLIC_WBTC_ADDRESS
-ENV NEXT_PUBLIC_AGGREGATOR_ADDRESS=$NEXT_PUBLIC_AGGREGATOR_ADDRESS
-ENV NEXT_PUBLIC_WC_PROJECT_ID=$NEXT_PUBLIC_WC_PROJECT_ID
-ENV NEXT_TELEMETRY_DISABLED=1
-
+ARG ACCORD_API_URL=http://api:4000
+ENV ACCORD_API_URL=$ACCORD_API_URL
 RUN npm run build
-
-RUN addgroup -S nodejs && adduser -S nextjs -G nodejs
-USER nextjs
+FROM node:24.22.2-bookworm-slim
+WORKDIR /app
+COPY --from=build /app/package.json /app/package-lock.json ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/next.config.ts ./next.config.ts
+COPY --from=build /app/public ./public
+ENV ACCORD_API_URL=http://api:4000
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]

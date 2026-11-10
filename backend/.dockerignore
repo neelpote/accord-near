@@ -1,6 +1,8 @@
-node_modules
-.env
-.env.*
-data
-*.db
 .git
+**/node_modules
+**/.env
+**/.near-credentials
+**/.tools
+**/target
+**/.next
+**/test-results

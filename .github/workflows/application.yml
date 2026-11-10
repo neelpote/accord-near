@@ -1,0 +1,48 @@
+name: Application
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  application:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: accord
+          POSTGRES_PASSWORD: accord-ci-only
+          POSTGRES_DB: accord
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U accord -d accord"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      DATABASE_URL: postgres://accord:accord-ci-only@127.0.0.1:5432/accord
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.2
+      - name: Backend install, types, schema and unit checks
+        working-directory: backend
+        run: |
+          npm ci
+          npm run typecheck
+          npm run near:test
+          npm run db:migrate
+          npm run db:migrate
+          npm audit --audit-level=moderate
+      - name: Frontend install, types and production build
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+          npm audit
+      - name: Browser presentation check
+        working-directory: frontend
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:browser
+      - name: Recognizable credential scan
+        run: python3 scripts/scan-secrets.py

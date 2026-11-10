@@ -1,0 +1,60 @@
+{
+  "network": "testnet",
+  "contract": "contract.accord-dev-261110.testnet",
+  "started_at": "2026-11-10T12:56:12.530Z",
+  "working_tree_dirty": true,
+  "code_commit_at_start": "713f3c75a1aa49ad56630dbdf2fbfff889df3277",
+  "checks": [
+    "NEP-413 full-access ownership verified; nonce replay rejected",
+    "Unauthenticated agreement access rejected",
+    "Cross-origin mutation rejected",
+    "Provider registration bound to real wallet/metadata; wrong owner rejected",
+    "Finite agreement funded and charge-only delegate installed; API verified both",
+    "Browser-supplied success receipt cannot unlock an unpaid report",
+    "Concurrent workers produced one verified credit and matching delivered report",
+    "Early cycle rejected on live testnet",
+    "Duplicate retry idempotent; delegate cancellation rejected on testnet",
+    "Second report purchased after a real 60-second testnet interval",
+    "Cancellation revoked contract authority; wallet function-call key removed",
+    "Actual customer exit and provider payout verified through callback state and wallet balances",
+    "Wrong session cannot cancel another owner agreement"
+  ],
+  "transactions": [
+    {
+      "step": "cancel",
+      "hash": "FbgDs1PKoRtKM2NrgtSoDnHLyogKaTEEUxibWV6Vrf7Y"
+    },
+    {
+      "step": "customer_exit",
+      "hash": "2hEdReHJAocQxwCzYuCG8Gp7wCJB2J6YUdG3Kqjb5qeF",
+      "amount": "90000000000000000000000"
+    },
+    {
+      "step": "provider_withdrawal",
+      "hash": "GVmTfAiwEX3gyBdKRak3pw2gFirumtSdfcqTRGAAKE2e",
+      "amount": "30000000000000000000000"
+    }
+  ],
+  "subscription_id": "5",
+  "service_id": "1",
+  "receipts": [
+    {
+      "subscription_id": "5",
+      "cycle": 0,
+      "provider": "provider.accord-dev-261110.testnet",
+      "amount": "10000000000000000000000",
+      "artifact_hash": "0247760ce961996567a488175f810b76c9138871463c09e7d68aa6d73bdb1267",
+      "paid_at_ns": "1794315396904065813"
+    },
+    {
+      "subscription_id": "5",
+      "cycle": 1,
+      "provider": "provider.accord-dev-261110.testnet",
+      "amount": "10000000000000000000000",
+      "artifact_hash": "0247760ce961996567a488175f810b76c9138871463c09e7d68aa6d73bdb1267",
+      "paid_at_ns": "1794315463569058143"
+    }
+  ],
+  "finished_at": "2026-11-10T12:58:04.970Z",
+  "input_disclosure": "Illustrative user-supplied portfolio snapshot; deterministic report, no live oracle or AI inference."
+}

@@ -1,5 +1,9 @@
 name: NEAR contract
-on: [push, pull_request]
+on:
+  push:
+    paths: ["contracts-near/**", ".github/workflows/contract.yml"]
+  pull_request:
+    paths: ["contracts-near/**", ".github/workflows/contract.yml"]
 permissions:
   contents: read
 jobs:

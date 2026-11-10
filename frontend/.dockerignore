@@ -1,9 +1,8 @@
-node_modules
-.next
-out
-.env
-.env.*
 .git
-*.md
-AGENTS.md
-CLAUDE.md
+**/node_modules
+**/.env
+**/.near-credentials
+**/.tools
+**/target
+**/.next
+**/test-results

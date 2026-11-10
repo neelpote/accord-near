@@ -1,0 +1,8 @@
+.git
+**/node_modules
+**/.env
+**/.near-credentials
+**/.tools
+**/target
+**/.next
+**/test-results

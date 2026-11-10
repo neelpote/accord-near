@@ -1,90 +1,961 @@
 "use client";
-
-import { useRouter } from "next/navigation";
-import { useAgents } from "@/lib/api/hooks";
-import { formatMoney } from "@/lib/api/format";
-import Avatar from "@/components/Avatar";
-import { ErrorState, LoadingState, EmptyState } from "@/components/States";
-
-export default function MarketplacePage() {
-  const router = useRouter();
-  const { data, isLoading, isError, error, refetch } = useAgents();
-
-  const agents = data?.agents ?? [];
-
+import { useEffect, useRef, useState } from "react";
+import {
+  api,
+  view,
+  wallet,
+  connector,
+  digest,
+  near,
+  sendWalletTransaction,
+} from "@/lib/near";
+type Config = {
+  network: string;
+  contract: string;
+  rpc: string;
+  recipient: string;
+  provider_url: string;
+};
+type Service = {
+  provider: string;
+  name: string;
+  price: string;
+  interval_ns: string;
+  metadata_hash: string;
+};
+type Listing = {
+  id: string;
+  metadata: {
+    description: string;
+    provider_url: string;
+    analysis_mode?: string;
+  };
+  service: Service;
+};
+type Sub = {
+  id: string;
+  state: string;
+  last_error: string;
+  agreement: {
+    active: boolean;
+    max_cycles: number;
+    cycles: number;
+    reserved: string;
+    next_due_ns: string;
+    expires_at_ns: string;
+    delegate_key: string;
+  };
+  cycles: {
+    cycle: number;
+    state: string;
+    artifact_hash: string;
+    report?: {
+      risk_score: number;
+      risk_level: string;
+      summary: string;
+      findings: string[];
+      recommendations: string[];
+      method?: string;
+      inference?: {
+        model: string;
+        completion_id: string;
+        signature_kind: string;
+      };
+    };
+    receipt?: { provider: string; amount: string };
+  }[];
+};
+type Pending = {
+  provision_id: string;
+  public_key: string;
+  input: unknown;
+  subscription_id?: string;
+  service_id: string;
+};
+const sample = JSON.stringify(
+  {
+    walletAddress: "example.testnet",
+    holdings: [
+      { symbol: "NEAR", balance: "10", value_usd: 80 },
+      { symbol: "USDC", balance: "20", value_usd: 20 },
+    ],
+    totalValueUsd: 100,
+  },
+  null,
+  2,
+);
+export default function Home() {
+  const serviceCache = useRef(new Map<string, Service>());
+  const [config, setConfig] = useState<Config>(),
+    [account, setAccount] = useState(""),
+    [services, setServices] = useState<Listing[]>([]),
+    [subs, setSubs] = useState<Sub[]>([]),
+    [balance, setBalance] = useState({
+      available: "0",
+      earned: "0",
+      pending: "0",
+    }),
+    [error, setError] = useState(""),
+    [notice, setNotice] = useState(""),
+    [busy, setBusy] = useState(false),
+    [selected, setSelected] = useState<Listing>(),
+    [input, setInput] = useState(sample),
+    [cycles, setCycles] = useState(3),
+    [pending, setPending] = useState<Pending>(),
+    [analysisMode, setAnalysisMode] = useState("deterministic"),
+    [lookup, setLookup] = useState(""),
+    [creator, setCreator] = useState(false),
+    [name, setName] = useState("Portfolio concentration report"),
+    [description, setDescription] = useState(
+      "A concentration-risk report for the portfolio snapshot you supply. Deterministic analysis; no live prices or AI inference.",
+    ),
+    [price, setPrice] = useState("0.01"),
+    [interval, setIntervalSeconds] = useState(60);
+  async function refresh(c = config) {
+    if (!c) return;
+    const rows = await api("/services");
+    setServices(
+      await Promise.all(
+        rows.map(async (r: Listing) => ({
+          ...r,
+          service: await (async () => {
+            let service = serviceCache.current.get(r.id);
+            if (!service) {
+              service = await view<Service>(c.rpc, c.contract, "get_service", {
+                service_id: r.id,
+              });
+              serviceCache.current.set(r.id, service);
+            }
+            return service;
+          })(),
+        })),
+      ),
+    );
+    try {
+      const me = await api("/me");
+      setAccount(me.accountId);
+      setSubs(await api("/subscriptions"));
+      setBalance(await api("/balances"));
+    } catch {
+      setAccount("");
+    }
+  }
+  useEffect(() => {
+    api("/config")
+      .then((c) => {
+        setConfig(c);
+        return refresh(c);
+      })
+      .catch((e) => setError(e.message));
+    const saved = localStorage.getItem("accord_pending");
+    if (saved)
+      try {
+        setPending(JSON.parse(saved));
+      } catch {}
+  }, []);
+  useEffect(() => {
+    if (!config) return;
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout>;
+    async function poll() {
+      if (stopped) return;
+      await refresh().catch(() => {});
+      if (!stopped) timer = setTimeout(poll, 7000);
+    }
+    timer = setTimeout(poll, 7000);
+    return () => {
+      stopped = true;
+      clearTimeout(timer);
+    };
+  }, [config]);
+  function savePending(p?: Pending) {
+    setPending(p);
+    if (p) localStorage.setItem("accord_pending", JSON.stringify(p));
+    else localStorage.removeItem("accord_pending");
+  }
+  async function run(fn: () => Promise<void>) {
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      await fn();
+      await refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Action failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function call(method: string, args: object, deposit = "1") {
+    if (!config || !account) throw new Error("Sign in first");
+    const result = await sendWalletTransaction({
+      network: "testnet",
+      signerId: account,
+      receiverId: config.contract,
+      actions: [
+        {
+          type: "FunctionCall",
+          params: { methodName: method, args, gas: "50000000000000", deposit },
+        },
+      ],
+    });
+    if (method === "withdraw" && atob(result.confirmedResult) === "false")
+      throw new Error(
+        "Withdrawal failed; funds were restored to the contract ledger.",
+      );
+    return result;
+  }
+  async function signIn() {
+    const challenge = await api("/auth/challenge", {});
+    const c = await connector();
+    await c.connect();
+    const w = await c.wallet();
+    const signed = await w.signMessage({
+      network: "testnet",
+      message: challenge.message,
+      recipient: challenge.recipient,
+      nonce: Uint8Array.from(atob(challenge.nonce), (c) => c.charCodeAt(0)),
+    });
+    await api("/auth/verify", {
+      challenge_id: challenge.challenge_id,
+      ...signed,
+    });
+    setSubs([]);
+    setBalance({ available: "0", earned: "0", pending: "0" });
+    setAccount(signed.accountId);
+    setNotice("Wallet ownership verified. No spending authority granted.");
+  }
+  async function approve() {
+    if (!selected || !config || !account)
+      throw new Error("Choose a service and sign in");
+    if (pending)
+      throw new Error("Finish or cancel the pending agreement first");
+    const checked = await api("/inputs/validate", { input: JSON.parse(input) });
+    const parsed = checked.input;
+    const d = await api("/delegates", {});
+    const p = { ...d, input: parsed, service_id: selected.id };
+    savePending(p);
+    const storage = await view<string>(
+      config.rpc,
+      config.contract,
+      "storage_quote",
+      { max_cycles: cycles },
+    );
+    await call(
+      "subscribe",
+      {
+        service_id: selected.id,
+        delegate_key: d.public_key,
+        input_hash: await digest(parsed),
+        max_cycles: cycles,
+        expires_at_ns: ((BigInt(Date.now()) + 86400000n) * 1000000n).toString(),
+      },
+      (
+        BigInt(selected.service.price) * BigInt(cycles) +
+        BigInt(storage)
+      ).toString(),
+    );
+    setNotice(
+      "Agreement funded. Enable the limited key to start automatic purchases.",
+    );
+    await recover(p);
+  }
+  async function recover(p = pending) {
+    if (!p || !config) throw new Error("No pending approval");
+    for (let attempt = 0; attempt < 10; attempt++) {
+      try {
+        const found = await api("/subscriptions/recover", {
+          provision_id: p.provision_id,
+        });
+        savePending({ ...p, subscription_id: found.subscription_id });
+        return;
+      } catch (e) {
+        if (attempt === 9) throw e;
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+    }
+  }
+  async function enable() {
+    if (!pending?.subscription_id || !config)
+      throw new Error("Recover the agreement first");
+    await sendWalletTransaction({
+      network: "testnet",
+      signerId: account,
+      receiverId: account,
+      actions: [
+        {
+          type: "AddKey",
+          params: {
+            publicKey: pending.public_key,
+            accessKey: {
+              permission: {
+                receiverId: config.contract,
+                methodNames: ["charge"],
+                allowance: "50000000000000000000000",
+              },
+            },
+          },
+        },
+      ],
+    });
+    await api("/subscriptions", {
+      subscription_id: pending.subscription_id,
+      provision_id: pending.provision_id,
+      input: pending.input,
+    });
+    savePending();
+    setSelected(undefined);
+    setNotice(
+      "Automatic purchases enabled. The first report will appear after verified payment.",
+    );
+  }
+  async function cancel(s: Sub) {
+    await call("cancel", { subscription_id: s.id });
+    await api(`/subscriptions/${s.id}/cancel`, {});
+    setNotice(
+      "Future billing revoked on NEAR. Paid reports remain available. You can now withdraw the remainder.",
+    );
+  }
+  async function withdraw(earnings: boolean) {
+    await call("withdraw", {
+      amount: earnings ? balance.earned : balance.available,
+      earnings,
+    });
+    setNotice("Withdrawal submitted. Refreshing the confirmed balance.");
+  }
+  async function publish() {
+    if (!config) throw new Error("Configuration unavailable");
+    if (!/^\d+(\.\d{1,24})?$/.test(price))
+      throw new Error("Use a positive NEAR amount with at most 24 decimals");
+    const [whole, fraction = ""] = price.split(".");
+    const amount =
+      BigInt(whole) * 10n ** 24n + BigInt(fraction.padEnd(24, "0"));
+    const metadata = {
+      kind: "portfolio-concentration-v1",
+      description,
+      provider_url: config.provider_url,
+      analysis_mode: analysisMode,
+    };
+    await call(
+      "register_service",
+      {
+        name,
+        metadata_hash: await digest(metadata),
+        price: amount.toString(),
+        interval_ns: (BigInt(interval) * 1000000000n).toString(),
+      },
+      "20480000000000000000000",
+    );
+    const counters = await view<[string, string]>(
+      config.rpc,
+      config.contract,
+      "counters",
+      {},
+    );
+    let found: string | undefined;
+    for (
+      let n = BigInt(counters[0]) - 1n;
+      n >= 0n && n >= BigInt(counters[0]) - 20n;
+      n--
+    ) {
+      const service = await view<Service>(
+        config.rpc,
+        config.contract,
+        "get_service",
+        { service_id: n.toString() },
+      );
+      if (
+        service.provider === account &&
+        service.metadata_hash === (await digest(metadata))
+      ) {
+        found = n.toString();
+        break;
+      }
+    }
+    if (found === undefined)
+      throw new Error(
+        "Offer saved on NEAR; refresh to recover its registration",
+      );
+    await api("/services", { service_id: found, metadata });
+    setNotice("Service registered with verified provider ownership.");
+    setCreator(false);
+  }
   return (
-    <div>
-      <div className="page-head">
-        <div className="kicker">{"// MARKETPLACE"}</div>
-        <h1 className="page-title">Discover agents</h1>
-        <p className="page-sub">
-          {data ? `${data.pagination.total_items} agents · ` : ""}pricing set per-agent by its
-          creator
-        </p>
+    <>
+      <div className="network">
+        NEAR TESTNET <span>Free test tokens · no mainnet payments</span>
       </div>
-
-      {isLoading && <LoadingState label="loading agents…" />}
-      {isError && <ErrorState error={error} onRetry={() => refetch()} />}
-      {!isLoading && !isError && agents.length === 0 && (
-        <EmptyState title="No agents yet" sub="Check back soon, creators are onboarding." />
-      )}
-
-      {agents.length > 0 && (
-        <div className="market-grid">
-          {agents.map((a) => (
-            <article
-              key={a.agent_id}
-              className="agent-card"
-              onClick={() => router.push(`/agents/${a.agent_id}`)}
+      <header>
+        <a className="brand" href="/" aria-label="Accord home">
+          <span className="mark">a</span>accord
+        </a>
+        <nav>
+          <a href="#market">Services</a>
+          <a href="#agreements">My agreements</a>
+          <button className="quiet" onClick={() => setCreator(!creator)}>
+            List a service
+          </button>
+        </nav>
+        <button
+          disabled={busy || !config}
+          onClick={() =>
+            void run(
+              account
+                ? async () => {
+                    await api("/auth/logout", {});
+                    await (await connector()).disconnect();
+                    setAccount("");
+                  }
+                : signIn,
+            )
+          }
+        >
+          {account ? account : "Sign in with NEAR"}
+          {!account && " ↗"}
+        </button>
+      </header>
+      <main>
+        <section className="intro">
+          <div>
+            <p className="eyebrow">AGENT SERVICES, ON YOUR TERMS</p>
+            <h1>
+              Delegate the work.
+              <br />
+              <span>Keep the limits.</span>
+            </h1>
+            <p className="lede">
+              Buy recurring reports from independent agents. Choose a finite
+              budget and a billing schedule that the worker cannot change.
+            </p>
+          </div>
+          <aside className="agreement-preview">
+            <p className="eyebrow">YOUR AGREEMENT</p>
+            <div>
+              <strong>Fixed price</strong>
+              <span>One service. One recipient.</span>
+            </div>
+            <div>
+              <strong>Finite budget</strong>
+              <span>No automatic top-ups.</span>
+            </div>
+            <div>
+              <strong>Cancel on NEAR</strong>
+              <span>Withdraw what remains.</span>
+            </div>
+            <p className="caption">
+              The contract enforces billing terms. The provider is responsible
+              for the report.
+            </p>
+          </aside>
+        </section>
+        {error && (
+          <div role="alert" className="alert">
+            {error}
+          </div>
+        )}
+        {notice && (
+          <div role="status" className="notice">
+            {notice}
+          </div>
+        )}
+        {pending && (
+          <section className="panel pending">
+            <h2>Finish your agreement</h2>
+            <p>
+              The commercial agreement and the charge-only key are separate
+              wallet approvals. The key has a 0.05 test NEAR gas allowance.
+            </p>
+            <div className="actions">
+              {pending.subscription_id ? (
+                <>
+                  <button
+                    disabled={busy || !account}
+                    onClick={() => void run(enable)}
+                  >
+                    Enable automatic purchases
+                  </button>
+                  <button
+                    className="quiet"
+                    disabled={busy || !account}
+                    onClick={() =>
+                      void run(async () => {
+                        await call("cancel", {
+                          subscription_id: pending.subscription_id,
+                        });
+                        savePending();
+                        setNotice(
+                          "Pending agreement canceled. Withdraw the remainder below.",
+                        );
+                      })
+                    }
+                  >
+                    Cancel pending agreement
+                  </button>
+                </>
+              ) : (
+                <button
+                  disabled={busy || !account}
+                  onClick={() => void run(() => recover())}
+                >
+                  Recover funded agreement
+                </button>
+              )}
+            </div>
+            <p className="caption">
+              If funding did not confirm, recover again after checking the
+              wallet. If funds were deposited, cancel on NEAR and withdraw them.
+              Contract: {config?.contract}
+            </p>
+          </section>
+        )}
+        {creator && (
+          <section className="panel">
+            <h2>Register your risk-analysis service</h2>
+            <p>
+              Sign with the account operated by the independent provider. This
+              demo supports the approved portfolio-concentration schema.
+            </p>
+            <div className="form-grid">
+              <label>
+                Service name
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  maxLength={80}
+                />
+              </label>
+              <label>
+                Description
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </label>
+              <label>
+                Price per report · test NEAR
+                <input
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  inputMode="decimal"
+                />
+              </label>
+              <label>
+                Analysis method
+                <select
+                  value={analysisMode}
+                  onChange={(e) => setAnalysisMode(e.target.value)}
+                >
+                  <option value="deterministic">
+                    Deterministic concentration report
+                  </option>
+                  <option value="near-ai-cloud" disabled>
+                    NEAR AI Cloud · awaiting credits
+                  </option>
+                </select>
+              </label>
+              <label>
+                Minimum interval · seconds
+                <input
+                  type="number"
+                  min="60"
+                  max="2592000"
+                  value={interval}
+                  onChange={(e) => setIntervalSeconds(Number(e.target.value))}
+                />
+              </label>
+            </div>
+            <p className="caption">
+              Registration retains 0.02048 test NEAR for storage, plus wallet
+              gas. Terms become immutable.
+            </p>
+            <button
+              disabled={busy || !account}
+              onClick={() => void run(publish)}
             >
-              <div className="agent-card-head">
-                <Avatar name={a.name} logo={a.logo} />
-                <div>
-                  <div className="agent-name">{a.name}</div>
-                  <div className="agent-meta">
-                    ★ {a.rating} · {a.tagline} · trust {a.trust_score}
+              Approve service registration
+            </button>
+          </section>
+        )}
+        <section id="market">
+          <div className="section-heading">
+            <h2>Services</h2>
+            <span>Independent providers · fixed terms</span>
+          </div>
+          <div className="service-grid">
+            {services.map((s) => (
+              <article className="service" key={s.id}>
+                <div className="service-icon">↗</div>
+                <p className="eyebrow">
+                  {s.metadata.analysis_mode === "near-ai-cloud"
+                    ? "NEAR AI CLOUD · VERIFIED INFERENCE"
+                    : "PORTFOLIO ANALYSIS"}
+                </p>
+                <h3>{s.service.name}</h3>
+                <p>{s.metadata.description}</p>
+                {s.metadata.analysis_mode === "near-ai-cloud" && (
+                  <p>
+                    AI report · signed model response. Preparation must verify
+                    before billing.
+                  </p>
+                )}
+                <dl>
+                  <div>
+                    <dt>Per report</dt>
+                    <dd>{near(s.service.price)} test NEAR</dd>
                   </div>
+                  <div>
+                    <dt>Minimum interval</dt>
+                    <dd>
+                      {Number(BigInt(s.service.interval_ns) / 1000000000n)}{" "}
+                      seconds
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Provider</dt>
+                    <dd className="account">{s.service.provider}</dd>
+                  </div>
+                </dl>
+                <button
+                  disabled={busy || !account}
+                  onClick={() => setSelected(s)}
+                >
+                  Choose terms →
+                </button>
+              </article>
+            ))}
+            {services.length === 0 && (
+              <div className="empty">
+                <h3>No published services yet</h3>
+                <p>
+                  Start the provider and register its service to make it
+                  available here. See the repository setup guide.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+        {selected && (
+          <section className="panel">
+            <div className="section-heading">
+              <h2>Your terms · {selected.service.name}</h2>
+              <button className="quiet" onClick={() => setSelected(undefined)}>
+                Close
+              </button>
+            </div>
+            <label>
+              Portfolio snapshot · JSON
+              <textarea
+                className="code-input"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                rows={12}
+              />
+            </label>
+            <p className="caption">
+              Values are supplied by you. The sample is illustrative. No live
+              holdings or price feed is fetched.
+            </p>
+            <label>
+              Maximum reports
+              <input
+                type="number"
+                min="1"
+                max="20"
+                value={cycles}
+                onChange={(e) =>
+                  setCycles(Math.max(1, Math.min(20, Number(e.target.value))))
+                }
+              />
+            </label>
+            <div className="budget">
+              <div>
+                <span>Maximum service spend</span>
+                <strong>
+                  {near(
+                    (
+                      BigInt(selected.service.price) * BigInt(cycles)
+                    ).toString(),
+                  )}{" "}
+                  test NEAR
+                </strong>
+              </div>
+              <div>
+                <span>Retained storage fee</span>
+                <strong>
+                  {near(
+                    ((2048n + 512n * BigInt(cycles)) * 10n ** 19n).toString(),
+                  )}{" "}
+                  test NEAR
+                </strong>
+              </div>
+              <div>
+                <span>Approval expires</span>
+                <strong>24 hours after approval</strong>
+              </div>
+            </div>
+            <p>
+              First report can be purchased immediately; later reports follow
+              the minimum interval. Funds are held by the Accord contract.
+              Reports are not refundable automatically.
+            </p>
+            <button
+              disabled={busy || !account}
+              onClick={() => void run(approve)}
+            >
+              Approve and fund agreement
+            </button>
+          </section>
+        )}
+        <section id="agreements">
+          <div className="section-heading">
+            <h2>My agreements</h2>
+            <button
+              className="quiet"
+              disabled={busy || !config}
+              onClick={() => void run(() => refresh())}
+            >
+              Refresh ↻
+            </button>
+          </div>
+          {!account ? (
+            <div className="empty">
+              Sign in to see your agreements and delivered reports.
+            </div>
+          ) : subs.length === 0 ? (
+            <div className="empty">
+              Choose a service to approve your first agreement.
+            </div>
+          ) : (
+            subs.map((s) => (
+              <article className="panel" key={s.id}>
+                <div className="section-heading">
+                  <h3>Agreement #{s.id}</h3>
+                  <span className="badge">
+                    {s.agreement.active
+                      ? s.agreement.cycles >= s.agreement.max_cycles
+                        ? "Complete"
+                        : BigInt(s.agreement.expires_at_ns) <=
+                            BigInt(Date.now()) * 1000000n
+                          ? "Expired"
+                          : "Active"
+                      : "Canceled"}
+                  </span>
                 </div>
-              </div>
-              <p className="agent-desc">{a.short_description}</p>
-              <div className="chip-row">
-                {a.services.map((s) => (
-                  <div key={s} className="chip">
-                    {s}
-                  </div>
-                ))}
-              </div>
-              <div className="agent-card-foot">
-                <div className="price-label">
-                  {a.sub_price ? (
-                    <>
-                      {formatMoney(a.sub_price, { cents: false })}
-                      <span className="price-unit">
-                        /
-                        {a.payment_frequency === "weekly"
-                          ? "wk"
-                          : a.payment_frequency === "test_5min"
-                            ? "5min"
-                            : a.payment_frequency === "test_2min"
-                              ? "2min"
-                              : "mo"}
+                <div
+                  className="cycle-strip"
+                  aria-label={`${s.agreement.cycles} of ${s.agreement.max_cycles} reports purchased`}
+                >
+                  {Array.from({ length: s.agreement.max_cycles }, (_, i) => (
+                    <span
+                      key={i}
+                      className={i < s.agreement.cycles ? "purchased" : ""}
+                    />
+                  ))}
+                </div>
+                <p>
+                  {s.agreement.cycles} of {s.agreement.max_cycles} reports
+                  purchased · {near(s.agreement.reserved)} test NEAR reserved
+                </p>
+                {s.last_error && (
+                  <p role="alert" className="error-text">
+                    {s.last_error}
+                  </p>
+                )}
+                <div className="actions">
+                  <button
+                    className="quiet"
+                    disabled={busy || !s.agreement.active}
+                    onClick={() => void run(() => cancel(s))}
+                  >
+                    Cancel future purchases
+                  </button>
+                  <button
+                    className="quiet"
+                    disabled={busy}
+                    onClick={() =>
+                      void run(async () => {
+                        await sendWalletTransaction({
+                          network: "testnet",
+                          signerId: account,
+                          receiverId: account,
+                          actions: [
+                            {
+                              type: "DeleteKey",
+                              params: { publicKey: s.agreement.delegate_key },
+                            },
+                          ],
+                        });
+                        setNotice(
+                          "Limited key removed from wallet. Cancel the agreement to release its reserve.",
+                        );
+                      })
+                    }
+                  >
+                    Remove limited key
+                  </button>
+                </div>
+                {s.cycles.map((c) => (
+                  <details key={c.cycle} open={c.state === "DELIVERED"}>
+                    <summary>
+                      Report {c.cycle + 1}{" "}
+                      <span className="badge">
+                        {c.state === "SETTLED"
+                          ? "Paid · awaiting delivery"
+                          : c.state === "DELIVERED"
+                            ? "Paid · delivered"
+                            : c.state}
                       </span>
-                    </>
-                  ) : a.one_time_price ? (
-                    <>
-                      {formatMoney(a.one_time_price, { cents: false })}
-                      <span className="price-unit">/run</span>
-                    </>
-                  ) : (
-                    <span className="price-unit">free</span>
-                  )}
-                </div>
-                <div className="view-plans">view agent →</div>
+                    </summary>
+                    {c.report && (
+                      <div className="report">
+                        <div className="risk-score">
+                          {c.report.risk_score}
+                          <small>/100 concentration</small>
+                        </div>
+                        <div>
+                          <h4>{c.report.risk_level} concentration risk</h4>
+                          <p>{c.report.summary}</p>
+                          {c.report.findings.map((f, i) => (
+                            <p key={i}>{f}</p>
+                          ))}
+                          {c.report.recommendations.map((f, i) => (
+                            <p key={i}>{f}</p>
+                          ))}
+                          {c.report.inference && (
+                            <p className="caption">
+                              NEAR AI Cloud · {c.report.inference.model} ·{" "}
+                              {c.report.inference.signature_kind} signature
+                              verified by provider ·{" "}
+                              {c.report.inference.completion_id}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    <p className="caption">
+                      Artifact SHA-256: {c.artifact_hash}
+                    </p>
+                    {c.receipt && (
+                      <p className="caption">
+                        Verified provider credit: {near(c.receipt.amount)} test
+                        NEAR to {c.receipt.provider}. Provider withdrawal is a
+                        separate step.
+                      </p>
+                    )}
+                  </details>
+                ))}
+              </article>
+            ))
+          )}
+        </section>
+        {account && (
+          <section className="panel">
+            <h2>Recover an agreement</h2>
+            <p>
+              Funded an agreement on another device, or lost the activation
+              reminder? Find it by its onchain ID to cancel and recover its
+              reserve.
+            </p>
+            <label>
+              Agreement ID
+              <input
+                value={lookup}
+                onChange={(e) => setLookup(e.target.value)}
+                inputMode="numeric"
+              />
+            </label>
+            <button
+              className="quiet"
+              disabled={busy || !lookup}
+              onClick={() =>
+                void run(async () => {
+                  if (!config || !/^\d{1,20}$/.test(lookup))
+                    throw new Error("Enter a valid agreement ID");
+                  const sub = await view<{ owner: string }>(
+                    config.rpc,
+                    config.contract,
+                    "get_subscription",
+                    { subscription_id: lookup },
+                  );
+                  if (!sub || sub.owner !== account)
+                    throw new Error("This wallet does not own that agreement");
+                  await call("cancel", { subscription_id: lookup });
+                  setNotice(
+                    "Agreement canceled on NEAR. Withdraw its remainder below.",
+                  );
+                })
+              }
+            >
+              Cancel and recover reserve
+            </button>
+          </section>
+        )}
+        {account && (
+          <section className="panel">
+            <h2>Funds and earnings</h2>
+            <div className="funds">
+              <div>
+                <p>Available remainder</p>
+                <strong>
+                  {near(balance.available)} <small>test NEAR</small>
+                </strong>
+                <button
+                  disabled={
+                    busy || balance.available === "0" || balance.pending !== "0"
+                  }
+                  onClick={() => void run(() => withdraw(false))}
+                >
+                  Withdraw remainder
+                </button>
               </div>
-            </article>
-          ))}
+              <div>
+                <p>Provider earnings</p>
+                <strong>
+                  {near(balance.earned)} <small>test NEAR</small>
+                </strong>
+                <button
+                  disabled={
+                    busy || balance.earned === "0" || balance.pending !== "0"
+                  }
+                  onClick={() => void run(() => withdraw(true))}
+                >
+                  Withdraw earnings
+                </button>
+              </div>
+            </div>
+            {balance.pending !== "0" && (
+              <p role="status">
+                Withdrawal pending: {near(balance.pending)} test NEAR. Wait for
+                confirmation before retrying.
+              </p>
+            )}
+            <p className="caption">
+              Funds return directly to your signed-in wallet. Withdrawals
+              require one yoctoNEAR plus gas. Retained storage fees remain in
+              the contract.
+            </p>
+          </section>
+        )}
+      </main>
+      <footer>
+        <span>accord · agent commerce with limits</span>
+        <a
+          href="https://github.com/neelpote/accord-near"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Source & verification ↗
+        </a>
+        <p>
+          Testnet prototype. Report quality and delivery depend on the provider.
+          The deployment account retains upgrade authority.
+        </p>
+      </footer>
+      {busy && (
+        <div className="working" role="status">
+          Waiting for wallet or network confirmation…
         </div>
       )}
-    </div>
+    </>
   );
 }

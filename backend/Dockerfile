@@ -1,18 +1,9 @@
-FROM node:20-alpine
-
+FROM node:24.22.2-bookworm-slim
 WORKDIR /app
-
-RUN apk add --no-cache postgresql-client
-
 COPY package.json package-lock.json ./
 RUN npm ci
-
 COPY tsconfig.json ./
 COPY src ./src
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-EXPOSE 3001
-
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["npm", "run", "api:start"]
+ENV BIND_HOST=0.0.0.0
+EXPOSE 4000 4001
+CMD ["npm", "run", "near:start"]

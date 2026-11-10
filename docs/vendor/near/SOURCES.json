@@ -62,5 +62,29 @@
     "source_sha256": "f23aeaa4efc068df8a05ef97c1ade88022575ad5ea52dbe9af218028462d4e27",
     "local_sha256": "df3551a6027e241cfc3c2b3834794aec9b2a586dfd9635e0c097ae740ea45ab1",
     "transformations": "Trailing whitespace normalized; public sandbox example secret keys redacted, if present."
+  },
+  {
+    "file": "ai-quickstart.md",
+    "url": "https://docs.near.ai/cloud/quickstart.md",
+    "source_sha256": "c7ceb99f2e3a7d8600f2da07c8c6e7e1e8813bacd0b0238917f1759d10a8d042",
+    "local_sha256": "35908eb81f2f4f70bfa24d280afe9408ba4d1442fabbb90e80db9852950e4ba0",
+    "retrieved_at": "2026-11-10T12:55:03.646695+00:00",
+    "transformations": "Trailing whitespace normalized"
+  },
+  {
+    "file": "ai-models.md",
+    "url": "https://docs.near.ai/cloud/models.md",
+    "source_sha256": "5eb5a6ec6cfbcfc5f03235cfa3d2d95ddbb8e9f86422d2bd384b64da520e7d20",
+    "local_sha256": "f7c4644a2a1172b5f9d73e93eed41e930e59a277e46045b7c433384e7cd53c09",
+    "retrieved_at": "2026-11-10T12:55:03.647306+00:00",
+    "transformations": "Trailing whitespace normalized"
+  },
+  {
+    "file": "ai-sdk-javascript.md",
+    "url": "https://docs.near.ai/cloud/inference-sdk/javascript.md",
+    "source_sha256": "7d45ee8f855c6757f13ffdcf7269bab712f030713cf3643d1f4455aee0563c3a",
+    "local_sha256": "54aa809aa5b95f74d10af3fed150b0d6b9d00e579fbcc23b5eb1b56e3a20ad5f",
+    "retrieved_at": "2026-11-10T12:55:03.647966+00:00",
+    "transformations": "Trailing whitespace normalized"
   }
 ]
