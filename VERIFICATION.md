@@ -18,3 +18,5 @@
 - `cargo +stable test --test test_basics`: passed against NEAR Sandbox 2.14.0. Real WASM, receipts, transfers and callbacks; recurrence time fast-forwarded locally.
 - Loops House 0.6.0 authenticated; actual `near-hackathon` / `agent-economy` evaluator prompt fetched to `docs/loops-agent-economy-prompt.json`. No project/submission created and no credits purchased/spent. Prompt execution/review is pending.
 - Public testnet deployment is in progress; it is not yet claimed as verified. API/frontend work is not included in this contract checkpoint.
+
+CI run 42774553164 passed formatting, unit tests and strict Clippy, then failed because the installer searched all of `/tmp` and encountered runner-owned directories. Scoped extraction/search to `/tmp/accord-cargo-near`; no contract checks were weakened. Remote WASM/Sandbox checks await the rerun.

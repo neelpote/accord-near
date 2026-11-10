@@ -24,8 +24,9 @@ jobs:
           curl -fsSL https://github.com/near/cargo-near/releases/download/cargo-near-v0.23.0/cargo-near-x86_64-unknown-linux-gnu.tar.gz -o /tmp/cargo-near.tar.gz
           curl -fsSL https://github.com/near/cargo-near/releases/download/cargo-near-v0.23.0/cargo-near-x86_64-unknown-linux-gnu.tar.gz.sha256 -o /tmp/cargo-near.sha256
           python3 -c 'import hashlib; assert hashlib.sha256(open("/tmp/cargo-near.tar.gz","rb").read()).hexdigest() == open("/tmp/cargo-near.sha256").read().split()[0]'
-          tar -xzf /tmp/cargo-near.tar.gz -C /tmp
-          find /tmp -name cargo-near -type f -exec cp {} "$HOME/.cargo/bin/cargo-near" \;
+          mkdir -p /tmp/accord-cargo-near
+          tar -xzf /tmp/cargo-near.tar.gz -C /tmp/accord-cargo-near
+          find /tmp/accord-cargo-near -name cargo-near -type f -exec cp {} "$HOME/.cargo/bin/cargo-near" \;
       - name: Build and execute real WASM
         run: |
           cargo near build non-reproducible-wasm --locked --no-abi
