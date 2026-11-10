@@ -22,4 +22,4 @@ Human submission/social posting remains outside this build authorization. AI gen
 - [x] Verify two real paid cycles per agent, cancellation, key removal and withdrawals.
 - [x] Publish explicit synthetic paid examples, screenshots and browser walkthrough.
 - [x] Verify a fresh Wallet Watch subscription through the actual UI/API/testnet boundary.
-- [ ] Push tested expansion and confirm CI for the published revision.
+- [x] Push tested expansion and confirm CI for the published revision (Application run 42835706811).
