@@ -41,3 +41,13 @@ CI run 42774553164 passed formatting, unit tests and strict Clippy, then failed 
 - Awaited UI polling and immutable-service caching reduce overlapping public-RPC requests.
 - Application Docker images built from clean package installs; backend typecheck and four unit tests also passed inside its image. Local host checks passed on Node 24.22.2. Remote application CI will verify the committed revision independently.
 - Live hackathon guide reread and compared: no change to the saved guide at this check. No application or social post sent.
+
+### Published application and review follow-up
+
+Application commit `d2f91ec6e359f4dee9c8177e85bea0d480bcc46d` was pushed after local checks. GitHub Application run 42821060716 passed clean installs, backend types/unit/schema checks, frontend production build and browser presentation check. The contract workflow is tracked separately.
+
+A fresh API/worker acceptance run against the committed application passed for subscription 7, with `working_tree_dirty: false`; evidence is saved in docs/testnet-proof.json. Both real billing cycles and recipient wallet increases were verified.
+
+The Loops-prompt review identified two additional robustness issues: fixture credential/RPC error handling and checking provider size only after buffering its body. These were fixed without changing billing authority: exclusive key-file creation and identity checks preserve existing fixtures; provider JSON is now capped while streaming. New regression checks cover both findings. See docs/evaluations/LOOPS_REVIEW.md.
+
+Review hardening checks passed: backend types; six Node unit tests (including stream cancellation and fixture-file preservation); nine recovery checks; backend Docker rebuild, typecheck and six tests inside that image. Running setup against the existing dedicated fixtures preserved the keys and reported that the initialized contract was not replaced. Both GitHub workflows for d2f91ec passed, including real WASM/Sandbox execution.

@@ -46,3 +46,21 @@ test("delegate credentials use authenticated encryption with independent nonces"
   mutated[15] = mutated[15]! ^ 1;
   assert.throws(() => unseal(mutated.toString("base64"), key));
 });
+
+test("provider response is rejected while streaming beyond the byte limit", async () => {
+  const { boundedJson } = await import("./core.js");
+  assert.deepEqual(await boundedJson(new Response('{"ok":true}')), {
+    ok: true,
+  });
+  let canceled = false;
+  const body = new ReadableStream({
+    start(controller) {
+      controller.enqueue(new Uint8Array(131073));
+    },
+    cancel() {
+      canceled = true;
+    },
+  });
+  await assert.rejects(() => boundedJson(new Response(body)), /too large/);
+  assert.equal(canceled, true);
+});

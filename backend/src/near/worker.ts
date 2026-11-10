@@ -8,7 +8,7 @@ import {
   type Service,
   type Receipt,
 } from "./config.js";
-import { digest, unseal, verifyReport } from "./core.js";
+import { digest, unseal, verifyReport, boundedJson } from "./core.js";
 export function encryptionKey(): Buffer {
   const raw = process.env["DELEGATE_ENCRYPTION_KEY"];
   if (!raw || !/^[0-9a-f]{64}$/.test(raw))
@@ -25,9 +25,7 @@ async function providerCall(path: string, body: unknown): Promise<any> {
   });
   if (!response.ok)
     throw new Error(`Provider ${path}: HTTP ${response.status}`);
-  const text = await response.text();
-  if (text.length > 131072) throw new Error("Provider response too large");
-  return JSON.parse(text);
+  return boundedJson(response);
 }
 export async function tick() {
   const subscriptions = (

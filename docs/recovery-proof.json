@@ -1,6 +1,6 @@
 {
   "kind": "Local fault injection with a pre-existing real testnet receipt; no monetary transactions submitted",
-  "subscription_id": "5",
+  "subscription_id": "7",
   "cycle": 0,
   "checks": [
     "Database rejects a second unresolved cycle",
@@ -13,5 +13,5 @@
     "SETTLED: recovered existing receipt and exact prepared artifact without a signing key",
     "Onchain cycle count and reserved funds unchanged throughout fault injection"
   ],
-  "completed_at": "2026-11-10T12:59:17.675Z"
+  "completed_at": "2026-11-10T13:09:36.774Z"
 }

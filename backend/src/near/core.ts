@@ -121,3 +121,22 @@ export function verifyReport(report: unknown): void {
   )
     throw new Error("Artifact schema mismatch");
 }
+
+/** Bound the response while reading, before an untrusted provider can consume unbounded memory. */
+export async function boundedJson(response: Response): Promise<any> {
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error("Provider returned no body");
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const part = await reader.read();
+    if (part.done) break;
+    size += part.value.byteLength;
+    if (size > 131072) {
+      await reader.cancel();
+      throw new Error("Provider response too large");
+    }
+    chunks.push(part.value);
+  }
+  return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+}

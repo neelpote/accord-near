@@ -1,7 +1,9 @@
-import { Account, JsonRpcProvider, KeyPair, actions } from "near-api-js";
+import { Account, JsonRpcProvider, actions } from "near-api-js";
 import { readFile, writeFile, mkdir, chmod } from "node:fs/promises";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
+import { AccountDoesNotExistError } from "near-api-js/rpc-errors";
+import { fixtureKey } from "./fixture-keys.js";
 const root = resolve(import.meta.dirname, "../../..");
 const masterId = process.env["MASTER_ACCOUNT_ID"];
 if (!masterId || !masterId.endsWith(".testnet"))
@@ -28,37 +30,17 @@ for (const [role, amount] of [
   const id = `${role}.${masterId}`;
   ids[role] = id;
   const path = resolve(directory, role + ".json");
-  let key: ReturnType<typeof KeyPair.fromRandom>;
-  try {
-    const saved = JSON.parse(await readFile(path, "utf8"));
-    key = KeyPair.fromString(saved.private_key);
-  } catch {
+  async function accountExists() {
     try {
       await rpc.viewAccount({ accountId: id });
-      throw new Error("EXISTING_ACCOUNT_WITHOUT_LOCAL_KEY");
+      return true;
     } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message === "EXISTING_ACCOUNT_WITHOUT_LOCAL_KEY"
-      )
-        throw error;
+      if (error instanceof AccountDoesNotExistError) return false;
+      throw error;
     }
-    key = KeyPair.fromRandom("ed25519");
-    await writeFile(
-      path,
-      JSON.stringify({
-        account_id: id,
-        private_key: key.toString(),
-        public_key: key.getPublicKey().toString(),
-      }),
-      { mode: 0o600 },
-    );
   }
-  let exists = false;
-  try {
-    await rpc.viewAccount({ accountId: id });
-    exists = true;
-  } catch {}
+  const key = await fixtureKey(path, id, accountExists);
+  const exists = await accountExists();
   if (!exists)
     await master.signAndSendTransaction({
       receiverId: id,

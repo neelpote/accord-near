@@ -1,9 +1,9 @@
 {
   "network": "testnet",
   "contract": "contract.accord-dev-261110.testnet",
-  "started_at": "2026-11-10T12:56:12.530Z",
-  "working_tree_dirty": true,
-  "code_commit_at_start": "713f3c75a1aa49ad56630dbdf2fbfff889df3277",
+  "started_at": "2026-11-10T13:04:05.500Z",
+  "working_tree_dirty": false,
+  "code_commit_at_start": "d2f91ec6e359f4dee9c8177e85bea0d480bcc46d",
   "checks": [
     "NEP-413 full-access ownership verified; nonce replay rejected",
     "Unauthenticated agreement access rejected",
@@ -22,39 +22,39 @@
   "transactions": [
     {
       "step": "cancel",
-      "hash": "FbgDs1PKoRtKM2NrgtSoDnHLyogKaTEEUxibWV6Vrf7Y"
+      "hash": "D2jHQRwPQYHbMF1Pea5gTUZisE4HLidAjUUfknE9mYzJ"
     },
     {
       "step": "customer_exit",
-      "hash": "2hEdReHJAocQxwCzYuCG8Gp7wCJB2J6YUdG3Kqjb5qeF",
-      "amount": "90000000000000000000000"
+      "hash": "6QZmknVJ1HaNHV7YzgoNxGAMDNaB3ConZHiw2PThtLTg",
+      "amount": "10000000000000000000000"
     },
     {
       "step": "provider_withdrawal",
-      "hash": "GVmTfAiwEX3gyBdKRak3pw2gFirumtSdfcqTRGAAKE2e",
+      "hash": "Hj4EUNVYSu5jAvFBUHLeuELygGr26BQAzm2RcUHCDkHx",
       "amount": "30000000000000000000000"
     }
   ],
-  "subscription_id": "5",
+  "subscription_id": "7",
   "service_id": "1",
   "receipts": [
     {
-      "subscription_id": "5",
+      "subscription_id": "7",
       "cycle": 0,
       "provider": "provider.accord-dev-261110.testnet",
       "amount": "10000000000000000000000",
       "artifact_hash": "0247760ce961996567a488175f810b76c9138871463c09e7d68aa6d73bdb1267",
-      "paid_at_ns": "1794315396904065813"
+      "paid_at_ns": "1794315863902839348"
     },
     {
-      "subscription_id": "5",
+      "subscription_id": "7",
       "cycle": 1,
       "provider": "provider.accord-dev-261110.testnet",
       "amount": "10000000000000000000000",
       "artifact_hash": "0247760ce961996567a488175f810b76c9138871463c09e7d68aa6d73bdb1267",
-      "paid_at_ns": "1794315463569058143"
+      "paid_at_ns": "1794315929600215261"
     }
   ],
-  "finished_at": "2026-11-10T12:58:04.970Z",
+  "finished_at": "2026-11-10T13:05:55.057Z",
   "input_disclosure": "Illustrative user-supplied portfolio snapshot; deterministic report, no live oracle or AI inference."
 }
