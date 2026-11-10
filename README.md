@@ -4,15 +4,17 @@ Recurring purchases for agent services, with spending limits enforced on NEAR.
 
 A customer approves a finite agreement, funds its budget, and installs a charge-only function-call key. An independent provider prepares a report. The worker purchases the exact prepared artifact when it is due. NEAR fixes the recipient, price, minimum interval, maximum cycles and expiry, even if the worker misbehaves. The customer can cancel future billing and withdraw the unspent remainder; providers withdraw earned funds separately.
 
-**Status:** testnet prototype. The reference service is portfolio concentration analysis of a user-supplied snapshot. It uses deterministic analysis. NEAR AI Cloud integration is implemented and paused: TEE preflight authenticated successfully, but inference returned HTTP 402 because credits/spending limits were not configured. Live AI output is not claimed.
+**Status:** testnet prototype. Five agents now read live NEAR testnet data: Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector and Network Pulse. They use deterministic rules and need no AI credits. The supplied-portfolio snapshot service remains available separately. NEAR AI Cloud integration is implemented and paused: TEE preflight authenticated successfully, but inference returned HTTP 402 because credits/spending limits were not configured. Live AI output is not claimed.
 
 [Recorded testnet demo](docs/demo/accord-testnet-demo.webm) · [Verification and CI](VERIFICATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Loops review](docs/evaluations/LOOPS_REVIEW.md)
+
+See [the five agents and their working demonstrations](docs/AGENT_SERVICES.md), including actual purchased reports and source-block evidence.
 
 ## What to try
 
 1. Start the API, provider and frontend with the instructions below. Open `http://localhost:3000`.
 2. Sign in with a NEAR **testnet** wallet. The API verifies a one-use NEP-413 signature against a full-access public key on that account. Connecting a wallet alone does not authenticate it.
-3. Choose the portfolio report, inspect its fixed terms, and approve a finite prepaid agreement. Then separately enable the limited key. Its 0.05 test NEAR allowance covers gas only; the contract separately enforces the service budget.
+3. Choose a live NEAR agent or the portfolio report, inspect its fixed terms, and approve a finite prepaid agreement. Then separately enable the limited key. Its 0.05 test NEAR allowance covers gas only; the contract separately enforces the service budget.
 4. See a verified provider credit and matching delivered report. Payment and delivery have distinct states. Subsequent purchases wait for the onchain interval.
 5. Cancel future purchases, remove the limited key, and withdraw the available remainder. The provider signs into its own account to withdraw earnings.
 
@@ -131,7 +133,7 @@ This is different from per-request HTTP payment: the agreement authorizes a boun
 
 The prototype is not audited. The deployment account retains full-access development keys and can replace code; it is not immutable or trustless against the deployer. Provider quality and delivery remain service assumptions. A paid delivery failure blocks new purchases while the same artifact is recovered. No automatic quality refund or arbitration is implemented.
 
-Reports analyze a supplied snapshot, not live wallet holdings or market prices. Repeating an unchanged snapshot has limited practical value. There is no customer-demand study or winning-probability claim. End-user portfolio data is visible to the application/provider; optional encrypted TEE inference would protect a narrower provider-to-model boundary, not the complete application.
+The portfolio service analyzes a supplied snapshot. The five NEAR monitoring agents query live onchain data for each purchased cycle. None fetch external market prices. Repeating a finalized-transaction diagnostic or unchanged portfolio snapshot has limited recurring value. There is no customer-demand study or winning-probability claim. End-user portfolio data is visible to the application/provider; optional encrypted TEE inference would protect a narrower provider-to-model boundary, not the complete application.
 
 A cancellation cannot reverse a cycle already charged before cancellation finalized. Remove the limited key to revoke its remaining gas authority as well. Paid retrieval remains available. Retained storage fees stay in the contract; they are disclosed before approval. A pending withdrawal must be reconciled before retrying.
 

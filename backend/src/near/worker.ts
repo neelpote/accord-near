@@ -8,6 +8,7 @@ import {
   type Service,
   type Receipt,
 } from "./config.js";
+import { isAgentKind, verifyChainReport } from "./agents.js";
 import { digest, unseal, verifyReport, boundedJson } from "./core.js";
 export function encryptionKey(): Buffer {
   const raw = process.env["DELEGATE_ENCRYPTION_KEY"];
@@ -92,6 +93,13 @@ export async function tick() {
       const service = await view<Service>("get_service", {
         service_id: sub.service_id,
       });
+      const metadata = (
+        await db.query("SELECT metadata FROM accord_services WHERE id=$1", [
+          sub.service_id,
+        ])
+      ).rows[0]?.metadata;
+      if (!metadata || digest(metadata) !== service.metadata_hash)
+        throw new Error("Service metadata differs from onchain agreement");
       if (!row.artifact_hash) {
         const prepared = await providerCall("/prepare", {
           ...args,
@@ -195,7 +203,9 @@ export async function tick() {
         ...args,
         prepare_id: row.prepare_id,
       });
-      verifyReport(delivered.report);
+      if (isAgentKind(metadata.kind))
+        verifyChainReport(delivered.report, metadata.kind);
+      else verifyReport(delivered.report);
       if (digest(delivered.report) !== receipt.artifact_hash)
         throw new Error("Delivered artifact hash mismatch");
       await db.query(

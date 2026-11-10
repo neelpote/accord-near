@@ -10,8 +10,9 @@ import {
   type Service,
   type Receipt,
 } from "./config.js";
+import { isAgentKind, validateServiceInput, runChainAgent } from "./agents.js";
 import { inferVerified } from "./ai.js";
-import { analyze, digest, validateInput } from "./core.js";
+import { analyze, digest } from "./core.js";
 const app = express();
 app.disable("x-powered-by");
 app.use(express.json({ limit: "64kb" }));
@@ -32,17 +33,26 @@ app.get("/health", (_req, res) =>
 );
 app.post("/prepare", async (req, res) => {
   const args = cycleArgs(req.body);
-  const input = validateInput(req.body.input);
   const sub = await view<Subscription | null>("get_subscription", {
     subscription_id: args.subscription_id,
   });
-  if (!sub || digest(input) !== sub.input_hash || args.cycle >= sub.max_cycles)
-    throw new Error("Agreement/input mismatch");
+  if (!sub || args.cycle >= sub.max_cycles)
+    throw new Error("Agreement mismatch");
   const service = await view<Service>("get_service", {
     service_id: sub.service_id,
   });
   if (service.provider !== process.env["PROVIDER_ACCOUNT_ID"])
     throw new Error("Not this provider");
+  const metadata = (
+    await db.query("SELECT metadata FROM accord_services WHERE id=$1", [
+      sub.service_id,
+    ])
+  ).rows[0]?.metadata;
+  if (!metadata || digest(metadata) !== service.metadata_hash)
+    throw new Error("Provider metadata does not match immutable onchain offer");
+  const input = validateServiceInput(metadata.kind, req.body.input);
+  if (digest(input) !== sub.input_hash)
+    throw new Error("Agreement/input mismatch");
   const existing = (
     await db.query(
       "SELECT * FROM accord_provider_artifacts WHERE subscription_id=$1 AND cycle=$2",
@@ -74,13 +84,6 @@ app.post("/prepare", async (req, res) => {
     BigInt(sub.next_due_ns) > BigInt(Date.now()) * 1000000n
   )
     throw new Error("This cycle is not currently authorized and due");
-  const metadata = (
-    await db.query("SELECT metadata FROM accord_services WHERE id=$1", [
-      sub.service_id,
-    ])
-  ).rows[0]?.metadata;
-  if (!metadata || digest(metadata) !== service.metadata_hash)
-    throw new Error("Provider metadata does not match immutable onchain offer");
   const prepare_id = randomUUID();
   const inserted = await db.query(
     "INSERT INTO accord_provider_artifacts(subscription_id,cycle,prepare_id,artifact_hash,report,state) VALUES($1,$2,$3,$4,'null'::jsonb,'PREPARING') ON CONFLICT DO NOTHING RETURNING prepare_id",
@@ -107,7 +110,10 @@ app.post("/prepare", async (req, res) => {
           "Free-credit request limit reached; no top-up or paid fallback",
         );
       report = await inferVerified(input);
-    } else report = analyze(input);
+    } else
+      report = isAgentKind(metadata.kind)
+        ? await runChainAgent(metadata.kind, input)
+        : analyze(input);
     const artifact_hash = digest(report);
     await db.query(
       "UPDATE accord_provider_artifacts SET artifact_hash=$3,report=$4,state='READY' WHERE subscription_id=$1 AND cycle=$2 AND prepare_id=$5",

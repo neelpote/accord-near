@@ -22,10 +22,16 @@ Agent-run review using the installed official NEAR contract-audit guidance, stri
 | --- | --- |
 | Development deployment keys | Deployer can replace code or transfer funds. Testnet only; disclosed. Mainnet requires an independently reviewed custody/upgrade policy. |
 | Subjective service quality | Hashes bind content, not correctness. No automated refund/arbitration. |
-| Supplied portfolio snapshot | No live balances/prices. Repetition may offer limited value; no market-demand claim. |
+| Data sources | The portfolio service uses supplied values; five added monitors query live NEAR RPC data. No market-price feed or market-demand validation is claimed. |
 | Provider preparation interruption | Review required before a new inference attempt after an opaque failure; availability can pause safely. |
 | Third-party wallet variants | Standard connector boundary tested with a real-signing fixture; individual vendors' redirects/hardware-wallet UI remain manual verification. |
 | Backend dependency advisory | Three low npm findings trace to the official inference SDK's @phala/dcap-qvl → elliptic dependency. No upstream fix reported. It is used for public attestation/certificate verification, not customer NEAR signing. AI is paused. No moderate/high/critical npm findings remain in active backend; frontend reports zero. |
 | Production operations | No independent audit, production key manager, backup/recovery rehearsal, hosted-service SLA, abuse/load test or production DB privilege separation is claimed. |
 
 No unresolved critical/high issue was identified in this scoped agent review. That statement is bounded by the checks above and is not independent certification.
+
+## Five-agent expansion review
+
+The contract and spending authority are unchanged. New inputs accept testnet account IDs, bounded hashes and explicit thresholds, not caller-selected RPC URLs. Unexpected input fields are rejected. Public metadata is checked against its immutable hash before preparation/payment; delivered kinds cannot substitute for a different service. Agent schemas bound metrics and textual output, and numeric currency calculations use BigInt.
+
+Unit checks cover low/negative-headroom handling, broad/unlimited permissions, code mismatch, failed receipts, stale blocks, wrong chain, RPC failure and report-kind substitution. The agents only read public data and never modify keys or deploy code. Demonstration publishing is an explicit developer script operating dedicated synthetic fixtures; no generic customer-report publication endpoint was added.

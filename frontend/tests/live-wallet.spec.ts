@@ -150,7 +150,16 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   await expect(
     page.getByRole("button", { name: buyer.accountId, exact: true }),
   ).toBeVisible({ timeout: 90000 });
-  await page.getByRole("button", { name: "Choose terms →" }).first().click();
+  if (process.env.ACCORD_AGENT_UI === "1")
+    await page
+      .locator("article.service")
+      .filter({
+        has: page.getByRole("heading", { name: "Wallet Watch", exact: true }),
+      })
+      .getByRole("button", { name: "Choose terms →" })
+      .click();
+  else
+    await page.getByRole("button", { name: "Choose terms →" }).first().click();
   await page
     .getByRole("button", { name: "Approve and fund agreement" })
     .click();
@@ -173,11 +182,18 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
     agreement.getByText("Paid · delivered", { exact: true }),
   ).toBeVisible({ timeout: 160000 });
   await expect(
-    agreement.getByText("high concentration risk", { exact: true }),
+    process.env.ACCORD_AGENT_UI === "1"
+      ? agreement.getByRole("heading", { name: "Wallet Watch", exact: true })
+      : agreement.getByText("high concentration risk", { exact: true }),
   ).toBeVisible();
   await mkdir(resolve(root, "docs/demo"), { recursive: true });
   await page.screenshot({
-    path: resolve(root, "docs/demo/marketplace-and-delivery.png"),
+    path: resolve(
+      root,
+      process.env.ACCORD_AGENT_UI === "1"
+        ? "docs/demo/wallet-watch-live.png"
+        : "docs/demo/marketplace-and-delivery.png",
+    ),
     fullPage: true,
   });
   await agreement
@@ -212,7 +228,12 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   expect(transactions.some((t) => t.method === "withdraw")).toBeTruthy();
   expect(errors).toEqual([]);
   await writeFile(
-    resolve(root, "docs/browser-testnet-proof.json"),
+    resolve(
+      root,
+      process.env.ACCORD_AGENT_UI === "1"
+        ? "docs/browser-live-agent-proof.json"
+        : "docs/browser-testnet-proof.json",
+    ),
     JSON.stringify(
       {
         network: "testnet",
@@ -236,7 +257,12 @@ test.afterEach(async ({ page }, info) => {
     if (video) {
       await page.close();
       await video.saveAs(
-        resolve(process.cwd(), "../docs/demo/accord-testnet-demo.webm"),
+        resolve(
+          process.cwd(),
+          process.env.ACCORD_AGENT_UI === "1"
+            ? "../docs/demo/live-agent-wallet-demo.webm"
+            : "../docs/demo/accord-testnet-demo.webm",
+        ),
       );
     }
   }

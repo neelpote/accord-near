@@ -12,7 +12,12 @@ import {
   type Service,
   type Subscription,
 } from "./config.js";
-import { digest, seal, validateInput } from "./core.js";
+import { digest, seal } from "./core.js";
+import {
+  agentDefinitions,
+  isAgentKind,
+  validateServiceInput,
+} from "./agents.js";
 import { tick, encryptionKey } from "./worker.js";
 const app = express();
 app.disable("x-powered-by");
@@ -143,6 +148,13 @@ app.post("/auth/logout", async (req, res) => {
   res.clearCookie("accord_session");
   res.json({ ok: true });
 });
+app.get("/agent-examples", async (_req, res) =>
+  res.json(
+    (await db.query("SELECT * FROM accord_agent_demos ORDER BY service_id"))
+      .rows,
+  ),
+);
+app.get("/agent-types", (_req, res) => res.json(agentDefinitions()));
 app.get("/services", async (_req, res) =>
   res.json(
     (
@@ -175,7 +187,8 @@ app.post("/services", async (req, res) => {
     );
   if (
     !metadata ||
-    metadata.kind !== "portfolio-concentration-v1" ||
+    (metadata.kind !== "portfolio-concentration-v1" &&
+      !isAgentKind(metadata.kind)) ||
     typeof metadata.description !== "string" ||
     metadata.description.length > 2000 ||
     metadata.provider_url !== config.provider ||
@@ -184,6 +197,11 @@ app.post("/services", async (req, res) => {
     )
   )
     throw new Error("Use the approved risk-provider endpoint and schema");
+  if (isAgentKind(metadata.kind)) {
+    if (metadata.analysis_mode !== "deterministic")
+      throw new Error("Live RPC agents use deterministic rules");
+    validateServiceInput(metadata.kind, metadata.input_example);
+  }
   const service = await view<Service | null>("get_service", {
     service_id: serviceId,
   });
@@ -193,6 +211,10 @@ app.post("/services", async (req, res) => {
     service.metadata_hash !== digest(metadata)
   )
     throw new Error("Register these exact service terms on NEAR first");
+  if (service.provider !== process.env["PROVIDER_ACCOUNT_ID"])
+    throw new Error(
+      "This deployment only lists the account operated by its configured provider",
+    );
   await db.query(
     "INSERT INTO accord_services(id,metadata) VALUES($1,$2) ON CONFLICT DO NOTHING",
     [serviceId, metadata],
@@ -230,7 +252,17 @@ app.post("/transactions/confirm", async (req, res) => {
 });
 app.post("/inputs/validate", async (req, res) => {
   await owner(req);
-  const input = validateInput(req.body.input);
+  let kind = "portfolio-concentration-v1";
+  if (req.body.service_id !== undefined) {
+    const row = (
+      await db.query("SELECT metadata FROM accord_services WHERE id=$1", [
+        id(req.body.service_id),
+      ])
+    ).rows[0];
+    if (!row) throw new Error("Unknown service");
+    kind = row.metadata.kind;
+  }
+  const input = validateServiceInput(kind, req.body.input);
   res.json({ input, input_hash: digest(input) });
 });
 app.post("/delegates", async (req, res) => {
@@ -239,9 +271,10 @@ app.post("/delegates", async (req, res) => {
     provision_id = randomUUID();
   await db.query("DELETE FROM accord_provisioning WHERE expires_at<now()");
   const count = (
-    await db.query("SELECT count(*) FROM accord_provisioning WHERE owner=$1", [
-      account,
-    ])
+    await db.query(
+      "SELECT count(*) FROM accord_provisioning p WHERE p.owner=$1 AND NOT EXISTS (SELECT 1 FROM accord_subscriptions s WHERE s.owner=p.owner AND s.delegate_cipher=p.delegate_cipher)",
+      [account],
+    )
   ).rows[0].count;
   if (Number(count) >= 10) throw new Error("Too many unfinished approvals");
   await db.query(
@@ -287,8 +320,7 @@ app.post("/subscriptions/recover", async (req, res) => {
 });
 app.post("/subscriptions", async (req, res) => {
   const account = await owner(req),
-    subscriptionId = id(req.body.subscription_id),
-    input = validateInput(req.body.input);
+    subscriptionId = id(req.body.subscription_id);
   const provision = (
     await db.query(
       "SELECT * FROM accord_provisioning WHERE id=$1 AND owner=$2 AND expires_at>now()",
@@ -299,6 +331,14 @@ app.post("/subscriptions", async (req, res) => {
   const sub = await view<Subscription | null>("get_subscription", {
     subscription_id: subscriptionId,
   });
+  if (!sub) throw new Error("Unknown onchain agreement");
+  const metadata = (
+    await db.query("SELECT metadata FROM accord_services WHERE id=$1", [
+      sub.service_id,
+    ])
+  ).rows[0]?.metadata;
+  if (!metadata) throw new Error("Unknown service metadata");
+  const input = validateServiceInput(metadata.kind, req.body.input);
   if (
     !sub ||
     sub.owner !== account ||
@@ -349,7 +389,16 @@ app.get("/subscriptions", async (req, res) => {
       )
     ).rows;
   for (const row of rows) {
-    row.agreement = await view("get_subscription", { subscription_id: row.id });
+    row.agreement = await view<Subscription>("get_subscription", {
+      subscription_id: row.id,
+    });
+    const metadata = (
+      await db.query("SELECT metadata FROM accord_services WHERE id=$1", [
+        row.agreement.service_id,
+      ])
+    ).rows[0]?.metadata;
+    row.service_name = metadata?.name ?? "Portfolio concentration report";
+    row.service_kind = metadata?.kind ?? "portfolio-concentration-v1";
     row.cycles = (
       await db.query(
         "SELECT cycle,state,artifact_hash,receipt,report,error FROM accord_cycles WHERE subscription_id=$1 ORDER BY cycle",

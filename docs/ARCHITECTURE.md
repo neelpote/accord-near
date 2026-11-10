@@ -78,3 +78,9 @@ Per-request payment protocols can make sense for occasional HTTP purchases. Acco
 The owner trusts the deployment account not to replace code or transfer contract funds; full-access development keys remain. Provider work quality is not enforced by a hash. The API/provider see portfolio inputs; optional TEE inference does not make the whole application private. The deterministic reference analyzes a supplied snapshot, so an unchanged snapshot yields repeated information. Customer validation, refreshed holdings and broader provider discovery remain future product work.
 
 The current deployment has one approved provider endpoint and a shared development PostgreSQL instance for API/provider tables. Processes are independently hosted and the provider verifies settlement directly. Separate provider databases/credentials are a production hardening step, not an implemented decentralization claim.
+
+## Live agent services
+
+The requested expansion adds five distinct RPC-backed handlers in `backend/src/near/agents.ts`: wallet reserve, public-key permissions, deployed-code baseline, finalized-transaction diagnostics and RPC health. A registry supplies validated input schemas to the API/provider and marketplace forms. The existing contract needs no redeployment: its immutable metadata hash binds the service type, and its price/recipient/cycle restrictions remain the actual charge path. The worker checks expected report kind and bounded schema before delivery.
+
+Public demonstrations come only from explicitly published developer-fixture rows in `accord_agent_demos`; customer subscriptions and reports remain session-owned. Each example is labeled with its recorded time rather than presented as a newly generated free result. See AGENT_SERVICES.md for service IDs, run commands and live transaction evidence.

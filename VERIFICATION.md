@@ -40,3 +40,19 @@ The 63-second [demo recording](docs/demo/accord-testnet-demo.webm) shows the rea
 NEAR AI Cloud authenticated TEE preflight passed. Generation returned HTTP 402 (spending limit/credits missing), and the user requested pausing it. No successful AI completion or end-to-end private application is claimed. The optional adapter and schema checks remain available for later credit-enabled verification.
 
 The review is agent-run, not an independent audit. Development deployment keys retain upgrade authority, subjective service quality is not enforced, and customer demand is unvalidated. See [SECURITY_REVIEW.md](docs/SECURITY_REVIEW.md), [NEAR_AI_STATUS.md](docs/NEAR_AI_STATUS.md), and [ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Five-agent expansion — 10 November 2026
+
+Added Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector and Network Pulse as live RPC-backed rule services. Existing contract source and monetary rules are unchanged.
+
+- Backend typecheck and 13 unit tests passed, including all five kinds, invalid inputs, currency arithmetic, permission flags, code changes/global-reference handling, receipt failures, stale/wrong-network data and RPC errors.
+- Frontend typecheck and production build passed. Two offline browser tests passed: responsive presentation and correct input schema/defaults for each of the five services. These fixtures are presentation tests, not monetary proof.
+- Recovery regression suite passed all 9 checks with service metadata populated in its isolated database.
+- Live five-agent demonstration passed: services 2–6, agreements 9–13, two actual paid cycles each, exact artifact/receipt checks, cancellation, key deletion and actual customer/provider wallet increases. See docs/agents-demo-proof.json. This first expansion run occurred against a working tree and records `source_dirty: true` explicitly.
+- Public paid-example browser check passed for all five, including rendered metrics, source blocks, hashes, recorded-snapshot labeling and mobile width. The five-agent walkthrough is recorded in docs/demo/five-agents-showcase.webm.
+- A fresh Wallet Watch UI purchase passed against real testnet (agreement 14), with actual sign-in, separate approvals, report delivery, cancellation, key removal and verified exit. See docs/browser-live-agent-proof.json and docs/demo/live-agent-wallet-demo.webm.
+- Public examples are explicitly published synthetic fixture results. No customer-session report endpoint was made public. The running scheduler serves new customer-approved agreements; demonstration subscriptions are canceled after verification.
+- The local Docker database was recovered after disk exhaustion. Regenerable build/package caches were cleared; existing database records were preserved. No volume or source-work deletion was performed.
+- Initial recording capture collided with a parallel browser runner's temporary directory. Rerunning the recording alone passed; the failed capture is not counted as success.
+
+Remote CI for the expansion is checked after the tested source is pushed. See docs/AGENT_SERVICES.md for service descriptions, IDs, inputs, outputs and reproduction commands.

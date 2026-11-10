@@ -522,3 +522,80 @@ footer p {
     transition: none !important;
   }
 }
+.agent-status {
+  text-transform: capitalize;
+  color: #245a48;
+  min-width: 130px;
+  font-size: 24px;
+  font-weight: 600;
+}
+.agent-status small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.agent-status.attention,
+.agent-status.changed {
+  color: #9a5c0f;
+}
+.agent-status.failed {
+  color: #972a2a;
+}
+.report-metrics {
+  font-size: 13px;
+  margin: 16px 0;
+}
+.report-metrics > div {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(0, 2fr);
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.report-metrics dt {
+  color: var(--muted);
+}
+.report-metrics dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+}
+.report > div:last-child {
+  min-width: 0;
+  flex: 1;
+}
+@media (max-width: 600px) {
+  .report-metrics > div {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+}
+.agent-demo .report {
+  flex-direction: column;
+  gap: 12px;
+}
+.agent-demo .agent-status {
+  font-size: 18px;
+}
+.agent-demo .report-metrics > div {
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+.agent-demo summary {
+  color: var(--blue);
+}
+.agent-demo {
+  margin: 20px 0;
+}
+.exact-value {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.evidence-link {
+  font-size: 12px;
+  color: var(--blue);
+}

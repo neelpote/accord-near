@@ -8,7 +8,9 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test:browser": "playwright test tests/smoke.spec.ts",
-    "test:testnet": "ACCORD_LIVE_BROWSER=1 playwright test"
+    "test:testnet": "ACCORD_LIVE_BROWSER=1 playwright test",
+    "test:agents": "ACCORD_LIVE_BROWSER=1 ACCORD_AGENTS_SHOWCASE=1 playwright test tests/agent-catalog.spec.ts",
+    "test:agent-wallet": "ACCORD_LIVE_BROWSER=1 ACCORD_AGENT_UI=1 playwright test tests/live-wallet.spec.ts"
   },
   "dependencies": {
     "@hot-labs/near-connect": "0.12.0",

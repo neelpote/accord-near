@@ -1,0 +1,706 @@
+{
+  "network": "testnet",
+  "contract": "contract.accord-dev-261110.testnet",
+  "source_commit_at_start": "227e71a5143bd946b681b0ca4de48b4f9e4bc2fd",
+  "source_dirty": true,
+  "started_at": "2026-11-10T14:13:21.602Z",
+  "agents": [
+    {
+      "kind": "near-wallet-watch-v1",
+      "name": "Wallet Watch",
+      "service_id": "2",
+      "subscription_id": "9",
+      "input": {
+        "account_id": "contract.accord-dev-261110.testnet",
+        "minimum_available_yocto": "50000000000000000000000"
+      },
+      "delegate_public_key": "ed25519:9cZsLqgndeom81ALhZDoQCRKZsTCgjD4KefiXAd9L1K6",
+      "cycles": [
+        {
+          "cycle": 0,
+          "report": {
+            "kind": "near-wallet-watch-v1",
+            "title": "Wallet Watch",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "8qD9V69GVXDzyaoKkAF2r823p1HamSBQ3487enT8uRT5",
+              "block_height": 277078326
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Account",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Total balance · yoctoNEAR",
+                "value": "3166969175840854400000017"
+              },
+              {
+                "label": "Storage requirement · yoctoNEAR",
+                "value": "2011020000000000000000000"
+              },
+              {
+                "label": "Available balance · yoctoNEAR",
+                "value": "1155949175840854400000017"
+              },
+              {
+                "label": "Locked stake · yoctoNEAR",
+                "value": "0"
+              },
+              {
+                "label": "Storage · bytes",
+                "value": "201102"
+              }
+            ],
+            "summary": "Spendable balance meets your configured reserve.",
+            "findings": [
+              "Account and storage cost were read at the same finalized block."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:15:02.812Z",
+            "recommendations": []
+          },
+          "artifact_hash": "7c14a6562a87a0677b179fb886f8aa69c69f1c4c0977e5708d8e7330a52c4a1e",
+          "receipt": {
+            "cycle": 0,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320104886091795",
+            "artifact_hash": "7c14a6562a87a0677b179fb886f8aa69c69f1c4c0977e5708d8e7330a52c4a1e",
+            "subscription_id": "9"
+          }
+        },
+        {
+          "cycle": 1,
+          "report": {
+            "kind": "near-wallet-watch-v1",
+            "title": "Wallet Watch",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "AUrHAHcd9BJH3jRwf7p2W9TW1uiBdRMFgXXhkLWxWVo2",
+              "block_height": 277078434
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Account",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Total balance · yoctoNEAR",
+                "value": "3166969175840854400000017"
+              },
+              {
+                "label": "Storage requirement · yoctoNEAR",
+                "value": "2020770000000000000000000"
+              },
+              {
+                "label": "Available balance · yoctoNEAR",
+                "value": "1146199175840854400000017"
+              },
+              {
+                "label": "Locked stake · yoctoNEAR",
+                "value": "0"
+              },
+              {
+                "label": "Storage · bytes",
+                "value": "202077"
+              }
+            ],
+            "summary": "Spendable balance meets your configured reserve.",
+            "findings": [
+              "Account and storage cost were read at the same finalized block."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:16:07.475Z",
+            "recommendations": []
+          },
+          "artifact_hash": "ab6b1b848901fa81e46bc85ca0f10ba38270c0a5e9411ccd416b63dc5d3826df",
+          "receipt": {
+            "cycle": 1,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320169682895542",
+            "artifact_hash": "ab6b1b848901fa81e46bc85ca0f10ba38270c0a5e9411ccd416b63dc5d3826df",
+            "subscription_id": "9"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "near-access-guard-v1",
+      "name": "Access Guard",
+      "service_id": "3",
+      "subscription_id": "10",
+      "input": {
+        "account_id": "contract.accord-dev-261110.testnet",
+        "trusted_contract_id": "contract.accord-dev-261110.testnet"
+      },
+      "delegate_public_key": "ed25519:87uqpJdHVpFjPykD5qwQaeqp3xKUsCq9UehCFrU4rbzC",
+      "cycles": [
+        {
+          "cycle": 0,
+          "report": {
+            "kind": "near-access-guard-v1",
+            "title": "Access Guard",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "hWQ8wv4K6vvcjYWD5kZ67f8atCYRd3x6VXasLLkwekz",
+              "block_height": 277078287
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Account",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Public keys",
+                "value": "1"
+              },
+              {
+                "label": "Full-access keys",
+                "value": "1"
+              },
+              {
+                "label": "Unlimited gas allowances",
+                "value": "0"
+              },
+              {
+                "label": "Broad / other-contract keys",
+                "value": "0"
+              },
+              {
+                "label": "Other permission types",
+                "value": "0"
+              }
+            ],
+            "summary": "No configured permission-review rule was triggered.",
+            "findings": [
+              "A full-access key can control this account; one is common for a wallet. Key ownership and compromise cannot be inferred from the chain."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:14:39.343Z",
+            "recommendations": []
+          },
+          "artifact_hash": "59dbe81239196bcefb02243c83df5ecd91004e3ba66358408e3567d89bb33978",
+          "receipt": {
+            "cycle": 0,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320081486619757",
+            "artifact_hash": "59dbe81239196bcefb02243c83df5ecd91004e3ba66358408e3567d89bb33978",
+            "subscription_id": "10"
+          }
+        },
+        {
+          "cycle": 1,
+          "report": {
+            "kind": "near-access-guard-v1",
+            "title": "Access Guard",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "DVG6EZa7xb7nWwoQpoSiy2h559Av5DirPASVrkEzADRV",
+              "block_height": 277078397
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Account",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Public keys",
+                "value": "1"
+              },
+              {
+                "label": "Full-access keys",
+                "value": "1"
+              },
+              {
+                "label": "Unlimited gas allowances",
+                "value": "0"
+              },
+              {
+                "label": "Broad / other-contract keys",
+                "value": "0"
+              },
+              {
+                "label": "Other permission types",
+                "value": "0"
+              }
+            ],
+            "summary": "No configured permission-review rule was triggered.",
+            "findings": [
+              "A full-access key can control this account; one is common for a wallet. Key ownership and compromise cannot be inferred from the chain."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:15:44.021Z",
+            "recommendations": []
+          },
+          "artifact_hash": "a586dda3908d4ce512773526a27c8ea65be4ae14a8603b3d5d0d19fc463bdf8b",
+          "receipt": {
+            "cycle": 1,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320146348689976",
+            "artifact_hash": "a586dda3908d4ce512773526a27c8ea65be4ae14a8603b3d5d0d19fc463bdf8b",
+            "subscription_id": "10"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "near-contract-sentinel-v1",
+      "name": "Contract Sentinel",
+      "service_id": "4",
+      "subscription_id": "11",
+      "input": {
+        "account_id": "contract.accord-dev-261110.testnet",
+        "expected_code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+      },
+      "delegate_public_key": "ed25519:EeFcZYfmeMcttm3bX3DwXdj6VnDuCy3vLDzEPmDQn8h1",
+      "cycles": [
+        {
+          "cycle": 0,
+          "report": {
+            "kind": "near-contract-sentinel-v1",
+            "title": "Contract Sentinel",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "53DEQBjJTh7YCteNBNBJgBGGEa3Q5uAdAQnqpsos9VM8",
+              "block_height": 277078297
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Contract",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Expected code hash",
+                "value": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+              },
+              {
+                "label": "Observed code hash",
+                "value": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+              },
+              {
+                "label": "Storage · bytes",
+                "value": "200517"
+              }
+            ],
+            "summary": "Deployed code matches your approved baseline.",
+            "findings": [
+              "This compares code identity, not behavior or audit quality. State changes and future upgrades are outside this snapshot."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:14:45.020Z",
+            "recommendations": []
+          },
+          "artifact_hash": "65b7fa096d96b12b4e1550c5a45141c6c4a40df1c1a7d6dc62875cd6f421d644",
+          "receipt": {
+            "cycle": 0,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320087367589064",
+            "artifact_hash": "65b7fa096d96b12b4e1550c5a45141c6c4a40df1c1a7d6dc62875cd6f421d644",
+            "subscription_id": "11"
+          }
+        },
+        {
+          "cycle": 1,
+          "report": {
+            "kind": "near-contract-sentinel-v1",
+            "title": "Contract Sentinel",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "DzCzBeikmo44Yv1rseq5Z23XR412zxCSYAzKbUrBi4yf",
+              "block_height": 277078407
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Contract",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Expected code hash",
+                "value": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+              },
+              {
+                "label": "Observed code hash",
+                "value": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+              },
+              {
+                "label": "Storage · bytes",
+                "value": "201492"
+              }
+            ],
+            "summary": "Deployed code matches your approved baseline.",
+            "findings": [
+              "This compares code identity, not behavior or audit quality. State changes and future upgrades are outside this snapshot."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:15:50.169Z",
+            "recommendations": []
+          },
+          "artifact_hash": "30d02c14d08b4d501bf767be8ef33ac34d3dad3f304e8b0dd4770f99d729c732",
+          "receipt": {
+            "cycle": 1,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320152447603325",
+            "artifact_hash": "30d02c14d08b4d501bf767be8ef33ac34d3dad3f304e8b0dd4770f99d729c732",
+            "subscription_id": "11"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "near-receipt-inspector-v1",
+      "name": "Receipt Inspector",
+      "service_id": "5",
+      "subscription_id": "12",
+      "input": {
+        "signer_account_id": "contract.accord-dev-261110.testnet",
+        "transaction_hash": "ANvufY2wASqigzqbHXRYuYj5YSXgycmMA6uQp4ti9Wap"
+      },
+      "delegate_public_key": "ed25519:7NLgrRYSxvBYRrdrg1wPDBrsVuY81eGPtYd4X5zE4K6L",
+      "cycles": [
+        {
+          "cycle": 0,
+          "report": {
+            "kind": "near-receipt-inspector-v1",
+            "title": "Receipt Inspector",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "7uXQFaddaAFZTK8qzQ2LLH5pGhv34piV9Jaq5wsxescj",
+              "block_height": 277035812,
+              "transaction_hash": "ANvufY2wASqigzqbHXRYuYj5YSXgycmMA6uQp4ti9Wap"
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Transaction",
+                "value": "ANvufY2wASqigzqbHXRYuYj5YSXgycmMA6uQp4ti9Wap"
+              },
+              {
+                "label": "Signer",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Receiver",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Finality",
+                "value": "FINAL"
+              },
+              {
+                "label": "Failed receipts",
+                "value": "0"
+              },
+              {
+                "label": "Gas burned · yoctoNEAR",
+                "value": "1575412079572800000000"
+              }
+            ],
+            "summary": "Transaction finalized without failed receipt outcomes.",
+            "findings": [
+              "Receipt failures can be handled by later callbacks. This diagnostic does not establish delivery, recipient credit or an Accord purchase."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:14:50.857Z",
+            "recommendations": []
+          },
+          "artifact_hash": "7aec4f275b91ca69b94d6c15ea6c0578ac06d8bfbff6f5a3d2ce12f594e75fc7",
+          "receipt": {
+            "cycle": 0,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320092833622109",
+            "artifact_hash": "7aec4f275b91ca69b94d6c15ea6c0578ac06d8bfbff6f5a3d2ce12f594e75fc7",
+            "subscription_id": "12"
+          }
+        },
+        {
+          "cycle": 1,
+          "report": {
+            "kind": "near-receipt-inspector-v1",
+            "title": "Receipt Inspector",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "7uXQFaddaAFZTK8qzQ2LLH5pGhv34piV9Jaq5wsxescj",
+              "block_height": 277035812,
+              "transaction_hash": "ANvufY2wASqigzqbHXRYuYj5YSXgycmMA6uQp4ti9Wap"
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Transaction",
+                "value": "ANvufY2wASqigzqbHXRYuYj5YSXgycmMA6uQp4ti9Wap"
+              },
+              {
+                "label": "Signer",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Receiver",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Finality",
+                "value": "FINAL"
+              },
+              {
+                "label": "Failed receipts",
+                "value": "0"
+              },
+              {
+                "label": "Gas burned · yoctoNEAR",
+                "value": "1575412079572800000000"
+              }
+            ],
+            "summary": "Transaction finalized without failed receipt outcomes.",
+            "findings": [
+              "Receipt failures can be handled by later callbacks. This diagnostic does not establish delivery, recipient credit or an Accord purchase."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:15:56.091Z",
+            "recommendations": []
+          },
+          "artifact_hash": "e948ced0763f5edfdd6e623ad55446892b1753c741ef080b4faf4378204d7a42",
+          "receipt": {
+            "cycle": 1,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320158508769733",
+            "artifact_hash": "e948ced0763f5edfdd6e623ad55446892b1753c741ef080b4faf4378204d7a42",
+            "subscription_id": "12"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "near-network-pulse-v1",
+      "name": "Network Pulse",
+      "service_id": "6",
+      "subscription_id": "13",
+      "input": {
+        "max_block_age_seconds": 60
+      },
+      "delegate_public_key": "ed25519:FXBEmDqt4gwxeoRZ1P8iM82A2cguWF67kJx8SD4LSpM",
+      "cycles": [
+        {
+          "cycle": 0,
+          "report": {
+            "kind": "near-network-pulse-v1",
+            "title": "Network Pulse",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "Hfg1Wix4GQQr1kmxJGzShJYeg9NDDvSu3mkos8Sw9QXo",
+              "block_height": 277078317
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Network",
+                "value": "testnet"
+              },
+              {
+                "label": "Finalized height",
+                "value": "277078317"
+              },
+              {
+                "label": "Block age · seconds",
+                "value": "3"
+              },
+              {
+                "label": "RPC syncing",
+                "value": "false"
+              },
+              {
+                "label": "RPC-reported validators",
+                "value": "20"
+              },
+              {
+                "label": "Gas price · yoctoNEAR/gas",
+                "value": "100000000"
+              },
+              {
+                "label": "1 TGas · yoctoNEAR",
+                "value": "100000000000000000000"
+              }
+            ],
+            "summary": "The configured RPC is serving a recent finalized block.",
+            "findings": [
+              "Freshness depends on this RPC and the provider clock; this is not a full-network consensus or availability audit."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:14:57.356Z",
+            "recommendations": []
+          },
+          "artifact_hash": "4f41961b55aef00e0852421a8cbc721ca174a47d1323f4b19880eb26491cb56b",
+          "receipt": {
+            "cycle": 0,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320099448956718",
+            "artifact_hash": "4f41961b55aef00e0852421a8cbc721ca174a47d1323f4b19880eb26491cb56b",
+            "subscription_id": "13"
+          }
+        },
+        {
+          "cycle": 1,
+          "report": {
+            "kind": "near-network-pulse-v1",
+            "title": "Network Pulse",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "A2SV3cktAEfkSnpPmjpHkdxx4HSzLUiHNWThurJSjPP3",
+              "block_height": 277078425
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Network",
+                "value": "testnet"
+              },
+              {
+                "label": "Finalized height",
+                "value": "277078425"
+              },
+              {
+                "label": "Block age · seconds",
+                "value": "3"
+              },
+              {
+                "label": "RPC syncing",
+                "value": "false"
+              },
+              {
+                "label": "RPC-reported validators",
+                "value": "20"
+              },
+              {
+                "label": "Gas price · yoctoNEAR/gas",
+                "value": "100000000"
+              },
+              {
+                "label": "1 TGas · yoctoNEAR",
+                "value": "100000000000000000000"
+              }
+            ],
+            "summary": "The configured RPC is serving a recent finalized block.",
+            "findings": [
+              "Freshness depends on this RPC and the provider clock; this is not a full-network consensus or availability audit."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:16:01.526Z",
+            "recommendations": []
+          },
+          "artifact_hash": "771bfd0926dc6b6742182a983c09b2a78076559db8174c0bc45a5c7e246da411",
+          "receipt": {
+            "cycle": 1,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320163406201957",
+            "artifact_hash": "771bfd0926dc6b6742182a983c09b2a78076559db8174c0bc45a5c7e246da411",
+            "subscription_id": "13"
+          }
+        }
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "method": "register_service",
+      "hash": "4YHQWR86hrQ4Zo7Ax3kyxjiC5QK4qz5vdZVqhzM9C3Nn"
+    },
+    {
+      "method": "subscribe",
+      "hash": "2Xun1c5V33x5njcNL3teGeBT1xbjhoQubt4DrFzjwUrx"
+    },
+    {
+      "method": "register_service",
+      "hash": "FW2Y3edBv6i6NFZAQSNUx5QDBSoX4YpuPRZvXW7uVxxv"
+    },
+    {
+      "method": "subscribe",
+      "hash": "5cwjiaRS9XraD9EbAjs7p7ZMEfTGUBpFGzHasTJ3Jzte"
+    },
+    {
+      "method": "register_service",
+      "hash": "A1fRvbfFQVB86xy7vzsbGFG4tCGMTDkT44448EJQpp63"
+    },
+    {
+      "method": "subscribe",
+      "hash": "8j9kcZXnX2fjuumnGxBALyuJKDicUSwRYrRVeAtHpeWj"
+    },
+    {
+      "method": "register_service",
+      "hash": "3D1NpeQMHLvF9UdjHdJ1k48v2Aoi71718kBZtNVvho2M"
+    },
+    {
+      "method": "subscribe",
+      "hash": "EMnpXa9VzdJyTfWgfH8U3jq3qwKyVfWYD2hbapwyQDtm"
+    },
+    {
+      "method": "register_service",
+      "hash": "8s4fcF39k7GaonancZtQ4yNLUqcrGxB6hizDCYN76ygg"
+    },
+    {
+      "method": "subscribe",
+      "hash": "BUxFyoPtfiHVQ9Tim3koae6ZoURYjgxsTUjX4sGMYk26"
+    },
+    {
+      "method": "cancel",
+      "hash": "964TGKY9sbB4Z8S8nuCt7Fia22LN6fhB9jPEPMwiLuLs"
+    },
+    {
+      "method": "cancel",
+      "hash": "7JGCeoSnishn89L9CryEXoZphFWoHxwpSyf3VHfGxr1N"
+    },
+    {
+      "method": "cancel",
+      "hash": "ExFoWwxCxk5o7Lw7dzZajqqfT5Rq3Ytb6dnuV3UuCPJW"
+    },
+    {
+      "method": "cancel",
+      "hash": "79SyUy4k3Az8oBwqsL4euNwJWzRzVDZUXtfoLu5LBtT9"
+    },
+    {
+      "method": "cancel",
+      "hash": "23t8vUezEMm8TpjzicnoXN8NLQafqiYLKmyuwYQL5o4V"
+    },
+    {
+      "method": "withdraw",
+      "hash": "JE5HjnqVHaLbXrCpiMkEiQRx8LLA8QbjojbxUz6UvJ79"
+    },
+    {
+      "method": "withdraw",
+      "hash": "8w32VfrrSdaaLRo5pvK1DrUdxnshVGCNEVoGVTpqnXYU"
+    }
+  ],
+  "checks": [
+    "Wallet Watch: two due cycles, exact paid artifacts, final receipts, cancellation and key removal",
+    "Access Guard: two due cycles, exact paid artifacts, final receipts, cancellation and key removal",
+    "Contract Sentinel: two due cycles, exact paid artifacts, final receipts, cancellation and key removal",
+    "Receipt Inspector: two due cycles, exact paid artifacts, final receipts, cancellation and key removal",
+    "Network Pulse: two due cycles, exact paid artifacts, final receipts, cancellation and key removal",
+    "Customer remainder and provider earnings reached the actual testnet wallets"
+  ],
+  "completed_at": "2026-11-10T14:17:15.996Z"
+}

@@ -9,6 +9,18 @@ import {
   near,
   sendWalletTransaction,
 } from "@/lib/near";
+import ReportView, { type ServiceReport } from "@/components/ReportView";
+type AgentExample = {
+  kind: string;
+  service_id: string;
+  subscription_id: string;
+  cycle: number;
+  input: Record<string, unknown>;
+  report: ServiceReport;
+  artifact_hash: string;
+  receipt: { amount: string; provider: string };
+  updated_at: string;
+};
 type Config = {
   network: string;
   contract: string;
@@ -23,9 +35,22 @@ type Service = {
   interval_ns: string;
   metadata_hash: string;
 };
+type AgentDefinition = {
+  kind: string;
+  name: string;
+  category: string;
+  description: string;
+  input_label: string;
+  input_example: Record<string, unknown>;
+};
 type Listing = {
   id: string;
   metadata: {
+    kind?: string;
+    name?: string;
+    category?: string;
+    input_label?: string;
+    input_example?: Record<string, unknown>;
     description: string;
     provider_url: string;
     analysis_mode?: string;
@@ -36,6 +61,8 @@ type Sub = {
   id: string;
   state: string;
   last_error: string;
+  service_name?: string;
+  service_kind?: string;
   agreement: {
     active: boolean;
     max_cycles: number;
@@ -49,19 +76,7 @@ type Sub = {
     cycle: number;
     state: string;
     artifact_hash: string;
-    report?: {
-      risk_score: number;
-      risk_level: string;
-      summary: string;
-      findings: string[];
-      recommendations: string[];
-      method?: string;
-      inference?: {
-        model: string;
-        completion_id: string;
-        signature_kind: string;
-      };
-    };
+    report?: ServiceReport;
     receipt?: { provider: string; amount: string };
   }[];
 };
@@ -89,6 +104,9 @@ export default function Home() {
   const [config, setConfig] = useState<Config>(),
     [account, setAccount] = useState(""),
     [services, setServices] = useState<Listing[]>([]),
+    [examples, setExamples] = useState<AgentExample[]>([]),
+    [agentTypes, setAgentTypes] = useState<AgentDefinition[]>([]),
+    [creatorKind, setCreatorKind] = useState("portfolio-concentration-v1"),
     [subs, setSubs] = useState<Sub[]>([]),
     [balance, setBalance] = useState({
       available: "0",
@@ -113,7 +131,11 @@ export default function Home() {
     [interval, setIntervalSeconds] = useState(60);
   async function refresh(c = config) {
     if (!c) return;
-    const rows = await api("/services");
+    const [rows, examples] = await Promise.all([
+      api("/services"),
+      api("/agent-examples"),
+    ]);
+    setExamples(examples);
     setServices(
       await Promise.all(
         rows.map(async (r: Listing) => ({
@@ -141,6 +163,9 @@ export default function Home() {
     }
   }
   useEffect(() => {
+    api("/agent-types")
+      .then(setAgentTypes)
+      .catch((e) => setError(e.message));
     api("/config")
       .then((c) => {
         setConfig(c);
@@ -230,7 +255,10 @@ export default function Home() {
       throw new Error("Choose a service and sign in");
     if (pending)
       throw new Error("Finish or cancel the pending agreement first");
-    const checked = await api("/inputs/validate", { input: JSON.parse(input) });
+    const checked = await api("/inputs/validate", {
+      service_id: selected.id,
+      input: JSON.parse(input),
+    });
     const parsed = checked.input;
     const d = await api("/delegates", {});
     const p = { ...d, input: parsed, service_id: selected.id };
@@ -331,7 +359,9 @@ export default function Home() {
     const amount =
       BigInt(whole) * 10n ** 24n + BigInt(fraction.padEnd(24, "0"));
     const metadata = {
-      kind: "portfolio-concentration-v1",
+      kind: creatorKind,
+      ...(agentTypes.find((d) => d.kind === creatorKind) ?? {}),
+      name,
       description,
       provider_url: config.provider_url,
       analysis_mode: analysisMode,
@@ -510,12 +540,38 @@ export default function Home() {
         )}
         {creator && (
           <section className="panel">
-            <h2>Register your risk-analysis service</h2>
+            <h2>Register a service</h2>
             <p>
               Sign with the account operated by the independent provider. This
-              demo supports the approved portfolio-concentration schema.
+              provider supports five live NEAR agent types and the portfolio
+              snapshot service.
             </p>
             <div className="form-grid">
+              <label>
+                Agent type
+                <select
+                  value={creatorKind}
+                  onChange={(e) => {
+                    const kind = e.target.value;
+                    setCreatorKind(kind);
+                    setAnalysisMode("deterministic");
+                    const d = agentTypes.find((x) => x.kind === kind);
+                    if (d) {
+                      setName(d.name);
+                      setDescription(d.description);
+                    }
+                  }}
+                >
+                  <option value="portfolio-concentration-v1">
+                    Portfolio concentration
+                  </option>
+                  {agentTypes.map((d) => (
+                    <option value={d.kind} key={d.kind}>
+                      {d.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <label>
                 Service name
                 <input
@@ -588,7 +644,7 @@ export default function Home() {
                 <p className="eyebrow">
                   {s.metadata.analysis_mode === "near-ai-cloud"
                     ? "NEAR AI CLOUD · VERIFIED INFERENCE"
-                    : "PORTFOLIO ANALYSIS"}
+                    : (s.metadata.category ?? "PORTFOLIO ANALYSIS")}
                 </p>
                 <h3>{s.service.name}</h3>
                 <p>{s.metadata.description}</p>
@@ -615,9 +671,48 @@ export default function Home() {
                     <dd className="account">{s.service.provider}</dd>
                   </div>
                 </dl>
+                {examples
+                  .filter(
+                    (e) => e.service_id === s.id && e.kind === s.metadata.kind,
+                  )
+                  .map((e) => (
+                    <details className="agent-demo" key={e.kind}>
+                      <summary>View paid example</summary>
+                      <p className="caption">
+                        Recorded testnet demonstration ·{" "}
+                        {new Date(e.updated_at).toLocaleString()}. This is a
+                        purchased snapshot, not a fresh report generated when
+                        you open it.
+                      </p>
+                      <ReportView report={e.report} />
+                      <p className="caption">
+                        Agreement #{e.subscription_id} · cycle {e.cycle + 1} ·
+                        provider credit {near(e.receipt.amount)} test NEAR
+                        <br />
+                        Artifact SHA-256: {e.artifact_hash}
+                      </p>
+                      <a
+                        className="evidence-link"
+                        target="_blank"
+                        rel="noreferrer"
+                        href={`https://testnet.nearblocks.io/address/${config?.contract}`}
+                      >
+                        Inspect the testnet contract ↗
+                      </a>
+                    </details>
+                  ))}
                 <button
                   disabled={busy || !account}
-                  onClick={() => setSelected(s)}
+                  onClick={() => {
+                    setSelected(s);
+                    setInput(
+                      JSON.stringify(
+                        s.metadata.input_example ?? JSON.parse(sample),
+                        null,
+                        2,
+                      ),
+                    );
+                  }}
                 >
                   Choose terms →
                 </button>
@@ -643,7 +738,7 @@ export default function Home() {
               </button>
             </div>
             <label>
-              Portfolio snapshot · JSON
+              {selected.metadata.input_label ?? "Portfolio snapshot · JSON"}
               <textarea
                 className="code-input"
                 value={input}
@@ -652,8 +747,9 @@ export default function Home() {
               />
             </label>
             <p className="caption">
-              Values are supplied by you. The sample is illustrative. No live
-              holdings or price feed is fetched.
+              {selected.metadata.kind?.startsWith("near-")
+                ? "The provider reads live NEAR testnet data for this input. Every purchased report records its observation time and source block. No private key is needed."
+                : "Values are supplied by you. The sample is illustrative. No live holdings or price feed is fetched."}
             </p>
             <label>
               Maximum reports
@@ -741,6 +837,9 @@ export default function Home() {
                       : "Canceled"}
                   </span>
                 </div>
+                <p className="eyebrow">
+                  {s.service_name ?? "Portfolio concentration report"}
+                </p>
                 <div
                   className="cycle-strip"
                   aria-label={`${s.agreement.cycles} of ${s.agreement.max_cycles} reports purchased`}
@@ -806,32 +905,7 @@ export default function Home() {
                             : c.state}
                       </span>
                     </summary>
-                    {c.report && (
-                      <div className="report">
-                        <div className="risk-score">
-                          {c.report.risk_score}
-                          <small>/100 concentration</small>
-                        </div>
-                        <div>
-                          <h4>{c.report.risk_level} concentration risk</h4>
-                          <p>{c.report.summary}</p>
-                          {c.report.findings.map((f, i) => (
-                            <p key={i}>{f}</p>
-                          ))}
-                          {c.report.recommendations.map((f, i) => (
-                            <p key={i}>{f}</p>
-                          ))}
-                          {c.report.inference && (
-                            <p className="caption">
-                              NEAR AI Cloud · {c.report.inference.model} ·{" "}
-                              {c.report.inference.signature_kind} signature
-                              verified by provider ·{" "}
-                              {c.report.inference.completion_id}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    )}
+                    {c.report && <ReportView report={c.report} />}
                     <p className="caption">
                       Artifact SHA-256: {c.artifact_hash}
                     </p>

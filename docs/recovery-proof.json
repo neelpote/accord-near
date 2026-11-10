@@ -13,5 +13,5 @@
     "SETTLED: recovered existing receipt and exact prepared artifact without a signing key",
     "Onchain cycle count and reserved funds unchanged throughout fault injection"
   ],
-  "completed_at": "2026-11-10T13:09:36.774Z"
+  "completed_at": "2026-11-10T14:30:48.726Z"
 }

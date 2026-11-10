@@ -26,7 +26,8 @@
     "legacy:db:seed": "tsx src/db/seed.ts",
     "start": "tsx src/near/server.ts",
     "dev": "tsx watch src/near/server.ts",
-    "db:migrate": "tsx src/near/migrate.ts"
+    "db:migrate": "tsx src/near/migrate.ts",
+    "near:demo:agents": "tsx src/near/agents-demo.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",

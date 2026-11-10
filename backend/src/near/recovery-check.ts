@@ -34,6 +34,13 @@ const { db, migrate } = await import("./db.js");
 const { config, view } = await import("./config.js");
 const { tick } = await import("./worker.js");
 await migrate();
+for (const row of (
+  await original.query("SELECT id,metadata FROM accord_services")
+).rows)
+  await db.query(
+    "INSERT INTO accord_services(id,metadata) VALUES($1,$2) ON CONFLICT(id) DO UPDATE SET metadata=excluded.metadata",
+    [row.id, row.metadata],
+  );
 await db.query("DELETE FROM accord_cycles");
 await db.query("DELETE FROM accord_subscriptions");
 await db.query(
