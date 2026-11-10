@@ -1,5 +1,7 @@
 # Demo and submission preparation
 
+Recorded real acceptance journey: [accord-testnet-demo.webm](demo/accord-testnet-demo.webm), about 63 seconds. [Transaction evidence](browser-testnet-proof.json) identifies the exact tested source commit and actual testnet operations.
+
 Show a real user action leading to a paid report, then cancel and exit. Use testnet and label the developer fixture wallet when showing automated footage.
 
 1. Start all processes and register the supplied-portfolio report with a dedicated provider account.

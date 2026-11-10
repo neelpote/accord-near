@@ -6,6 +6,8 @@ A customer approves a finite agreement, funds its budget, and installs a charge-
 
 **Status:** testnet prototype. The reference service is portfolio concentration analysis of a user-supplied snapshot. It uses deterministic analysis. NEAR AI Cloud integration is implemented and paused: TEE preflight authenticated successfully, but inference returned HTTP 402 because credits/spending limits were not configured. Live AI output is not claimed.
 
+[Recorded testnet demo](docs/demo/accord-testnet-demo.webm) · [Verification and CI](VERIFICATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Loops review](docs/evaluations/LOOPS_REVIEW.md)
+
 ## What to try
 
 1. Start the API, provider and frontend with the instructions below. Open `http://localhost:3000`.

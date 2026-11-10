@@ -44,3 +44,5 @@ Neither finding established an exploitable duplicate payment in the tested contr
 The two implementation findings were fixed with exclusive, validated fixture-key handling and a streaming response limit. New checks reject malformed existing credentials without replacing them, propagate RPC errors, reject missing keys for existing accounts, preserve a valid key, enforce 0600 file permissions and cancel oversized response streams.
 
 The final release records the remediation commit and check results in VERIFICATION.md. Remaining product/operations gaps are explicitly scoped, including paused AI generation and lack of customer validation. No unresolved critical/high issue was identified in this agent-run review; no official score or independent certification is claimed. Further cosmetic score chasing is not warranted.
+
+Final remediation revision: `7587362ef72e1d3844e036f833c734584d0f9a30`. Six backend unit tests, nine recovery checks, a real testnet browser journey with actual exit, both image builds and remote Application CI passed. Contract CI passed on the unchanged contract revision d2f91ec. No additional code change was requested after this review.

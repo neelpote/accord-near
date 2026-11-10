@@ -1,53 +1,42 @@
-# Verification log
+# Verification
 
-## Baseline — 10 November 2026
+Verified application source: **7587362ef72e1d3844e036f833c734584d0f9a30**. Testnet only. Optional AI generation is paused at the user's request.
 
-- Backend and both existing workers: TypeScript check passed using Node 24.22.2.
-- Existing frontend lockfile missing; repair required before a reproducible container build.
-- Docker Desktop started; server version 29.4.3 reachable.
-- All eight near/agent-skills packages installed in the user skill directory.
-- Loops 0.6.0 CLI executed; near-hackathon event discovered; generic project skills installed. No authenticated evaluation yet.
-- Nothing is deployed; no financial test has passed yet.
+## Results
 
-## Native contract checkpoint — 10 November 2026
+| Check | Actual result / evidence |
+| --- | --- |
+| Contract unit tests | 11 passed: budget conservation, duplicates, early cycles, wrong owner/key, expiry, cancellation, artifact replacement, exhaustion, underfunding, overflow and failed/successful withdrawal callbacks. |
+| Contract formatting / strict Clippy | Passed, including all test targets with `-D warnings`. |
+| Optimized WASM | Built using cargo-near 0.23.0 / near-sdk 5.30.1. Deployed binary 193,114 bytes; SHA256 `bc308e9d63274f6ea64db7b24869d55145739b7c63635c16ec685f4921299ff6`. This is a host build, not a reproducible-build claim. |
+| Real NEAR Sandbox | Passed actual WASM deployment, two billing cycles, rejected invalid calls, cancellation, paid retrieval, actual transfers and callback readback. Time was fast-forwarded locally. |
+| Backend unit suite | 6 passed: canonical input/artifact hashes, report/input bounds, authenticated encryption, AI schema rejection, streaming response cap/cancellation and fixture credential preservation. |
+| Backend types and schema | Passed. Additive migration ran twice successfully; one-unresolved-cycle index verified. |
+| Frontend types and production build | Passed using Node 24.22.2 / Next.js 16.4.6. |
+| Browser presentation | Passed desktop/mobile layout and no horizontal overflow at 390px. Presentation fixtures are not monetary evidence. |
+| Real testnet API/worker | Passed against committed application d2f91ec, subscription 7, `working_tree_dirty: false`. Actual NEP-413 authentication/replay rejection, owner/session/CSRF checks, provider ownership, finite funding, restricted key, false-receipt rejection, concurrent workers, duplicate/early-cycle checks, second real due cycle, cancellation/key deletion and both recipient wallet increases. See [testnet-proof.json](docs/testnet-proof.json). |
+| Real testnet browser journey | Passed against **7587362**, subscription 8, `application_source_dirty: false`. Actual UI sign-in, separate funding/key approvals, paid artifact, cancellation, key deletion and finalized withdrawal. The test checks the receiving wallet increase and records the withdrawal transaction. See [browser-testnet-proof.json](docs/browser-testnet-proof.json). |
+| Recovery fault injection | 9 checks passed against an already-paid real testnet receipt in a separate PostgreSQL database, with no signing key. Covers a second unresolved cycle, altered artifact, invalid schema, outage and PREPARED/SUBMITTING/UNCERTAIN/SETTLED recovery. Receipt cycle and reserved funds remained unchanged. See [recovery-proof.json](docs/recovery-proof.json). |
+| Docker | Backend and frontend images built from clean package installs. Final backend image passed typecheck and 6 tests; final frontend image passed production build. Default Compose schema validated; it starts PostgreSQL only. |
+| Dependencies | Frontend npm audit: zero findings. Backend: 3 low findings through optional inference SDK / DCAP / elliptic; no moderate/high/critical findings. No upstream fix reported; see [security review](docs/SECURITY_REVIEW.md). |
+| Credentials | Recognizable format scanner passed tracked files and all 289 reachable historical blobs at the hardening checkpoint. Actual environment/key/trace files are ignored; no credentials were found in the published history. This is not a guarantee against every possible secret format. |
+| Loops | Authenticated loopshouse 0.6.0; actual Agent Economy and AI Security & Defense prompts fetched and executed as agent-run source reviews. Both concrete robustness findings were fixed and tested. No hosted-judge score, paid query, credit purchase or submission record. See [review](docs/evaluations/LOOPS_REVIEW.md). |
+| Hackathon guide | Live HACKATHON.md reread and compared with the saved guide on 10 November 2026: unchanged at that check. No application/social post sent. |
 
-- `cargo +stable test --lib`: 11 passed, zero failures.
-- `cargo +stable fmt --check`: passed.
-- `cargo +stable clippy --all-targets -- -D warnings`: passed after fixing one numeric-format lint.
-- `cargo-near 0.23.0 ... build non-reproducible-wasm --locked --no-abi`: passed; optimized WASM 193,114 bytes, SHA256 `bc308e9d63274f6ea64db7b24869d55145739b7c63635c16ec685f4921299ff6`.
-- `cargo +stable test --test test_basics`: passed against NEAR Sandbox 2.14.0. Real WASM, receipts, transfers and callbacks; recurrence time fast-forwarded locally.
-- Loops House 0.6.0 authenticated; actual `near-hackathon` / `agent-economy` evaluator prompt fetched to `docs/loops-agent-economy-prompt.json`. No project/submission created and no credits purchased/spent. Prompt execution/review is pending.
-- Public testnet deployment is in progress; it is not yet claimed as verified. API/frontend work is not included in this contract checkpoint.
+## Remote CI
 
-CI run 42774553164 passed formatting, unit tests and strict Clippy, then failed because the installer searched all of `/tmp` and encountered runner-owned directories. Scoped extraction/search to `/tmp/accord-cargo-near`; no contract checks were weakened. Remote WASM/Sandbox checks await the rerun.
+- [Application — 7587362, run 42822354854](https://github.com/neelpote/accord-near/actions/runs/42822354854): **passed** clean backend/frontend installs, types, six unit tests, repeated additive migration, audit thresholds, production build, browser presentation and credential scan.
+- [NEAR contract — d2f91ec, run 42821060620](https://github.com/neelpote/accord-near/actions/runs/42821060620): **passed** formatting, unit tests, strict Clippy, official checked tool install, WASM build and real Sandbox test. Contract source/lockfile are unchanged in 7587362; the workflow is path-scoped.
+- [Application — d2f91ec, run 42821060716](https://github.com/neelpote/accord-near/actions/runs/42821060716): passed the initial complete application checkpoint.
 
-## Application integration — 10 November 2026
+Earlier contract CI run 42774553164 failed in a tool installer that searched runner-owned `/tmp` directories. It was fixed by scoping the extraction directory; no contract assertion/check was weakened. The successful reruns are linked above.
 
-- Real testnet API/worker proof passed: NEP-413 ownership and nonce replay protection, wrong/missing session, CSRF origin check, provider ownership, finite funding and restricted key, false-receipt rejection, simultaneous workers, duplicate retry, early billing, two actual due cycles, cancellation/key removal and both recipient wallet increases. Initial application source was still uncommitted; evidence records this explicitly.
-- Browser acceptance reached real testnet report delivery/cancellation/key removal. Its first withdrawal assertion was too weak (button could be disabled during loading), so this is not yet counted as full browser exit evidence. A stronger finality, transaction-hash and wallet-balance assertion is being run before the application push.
-- TypeScript checks, four Node unit tests, production Next.js build and mobile-width presentation check passed. Additive database migration passed twice.
-- Provider fault injection passed eight checks against an already-paid receipt without a signing key. Added a ninth check for the one-unresolved-cycle DB constraint; final rerun pending.
-- Both application Docker images built using Node 24.22.2. Final code/container gate and remote application CI remain pending at this entry.
-- npm audit: frontend zero findings. Backend has three low findings via optional inference SDK / DCAP verification / elliptic; no moderate/high/critical findings. Details in docs/SECURITY_REVIEW.md.
-- AI preflight authenticated and verified the TEE. Generation returned HTTP 402 (spending limit/credits missing); user asked to pause. No successful AI completion claimed.
-- Recognizable secret scanning now also checks API-key formats. Runtime credentials remain ignored local files.
+## Evidence boundaries
 
-### Final local application gate
+The browser uses a developer fixture implementing the standard NEAR Connect injected-wallet API. Keys stay in the Node test process; actual signatures and testnet transactions pass through the UI/API boundary. Individual third-party wallets' popup/redirect/hardware workflows are not certified by that fixture.
 
-- Repeated live API/worker proof passed for subscription 5 after switching to the current FastNEAR testnet endpoint. Actual second due cycle, cancellation, key removal and customer/provider wallet increases verified.
-- Stronger live browser run passed for subscription 6 (55.1 seconds). It waits for final withdrawal status, records the withdrawal transaction and checks an actual receiving-wallet increase, in addition to sign-in, separate approvals, paid report, cancellation and key deletion.
-- Recorded the real browser testnet journey at docs/demo/accord-testnet-demo.webm. It uses the explicitly disclosed standard-interface fixture wallet; no private key enters the page. No trace/cookie files are published.
-- Recovery fault suite: 9 passed, including the partial unique index rejecting a second unresolved cycle. No signing key or new monetary transaction is used in that suite.
-- Awaited UI polling and immutable-service caching reduce overlapping public-RPC requests.
-- Application Docker images built from clean package installs; backend typecheck and four unit tests also passed inside its image. Local host checks passed on Node 24.22.2. Remote application CI will verify the committed revision independently.
-- Live hackathon guide reread and compared: no change to the saved guide at this check. No application or social post sent.
+The 63-second [demo recording](docs/demo/accord-testnet-demo.webm) shows the real testnet browser acceptance run. Public portfolio values are illustrative supplied snapshots. The deterministic report is not live market intelligence. The contract credit is distinct from a provider's external withdrawal.
 
-### Published application and review follow-up
+NEAR AI Cloud authenticated TEE preflight passed. Generation returned HTTP 402 (spending limit/credits missing), and the user requested pausing it. No successful AI completion or end-to-end private application is claimed. The optional adapter and schema checks remain available for later credit-enabled verification.
 
-Application commit `d2f91ec6e359f4dee9c8177e85bea0d480bcc46d` was pushed after local checks. GitHub Application run 42821060716 passed clean installs, backend types/unit/schema checks, frontend production build and browser presentation check. The contract workflow is tracked separately.
-
-A fresh API/worker acceptance run against the committed application passed for subscription 7, with `working_tree_dirty: false`; evidence is saved in docs/testnet-proof.json. Both real billing cycles and recipient wallet increases were verified.
-
-The Loops-prompt review identified two additional robustness issues: fixture credential/RPC error handling and checking provider size only after buffering its body. These were fixed without changing billing authority: exclusive key-file creation and identity checks preserve existing fixtures; provider JSON is now capped while streaming. New regression checks cover both findings. See docs/evaluations/LOOPS_REVIEW.md.
-
-Review hardening checks passed: backend types; six Node unit tests (including stream cancellation and fixture-file preservation); nine recovery checks; backend Docker rebuild, typecheck and six tests inside that image. Running setup against the existing dedicated fixtures preserved the keys and reported that the initialized contract was not replaced. Both GitHub workflows for d2f91ec passed, including real WASM/Sandbox execution.
+The review is agent-run, not an independent audit. Development deployment keys retain upgrade authority, subjective service quality is not enforced, and customer demand is unvalidated. See [SECURITY_REVIEW.md](docs/SECURITY_REVIEW.md), [NEAR_AI_STATUS.md](docs/NEAR_AI_STATUS.md), and [ARCHITECTURE.md](docs/ARCHITECTURE.md).
