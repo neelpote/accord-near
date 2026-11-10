@@ -1,0 +1,66 @@
+[
+  {
+    "file": "security-checklist.md",
+    "url": "https://docs.near.org/smart-contracts/security/checklist.md",
+    "retrieved_at": "2026-11-10T07:08:26.385138+00:00",
+    "source_sha256": "37396ba5cbdcf0a799036e3d29558d6d37ee6ea154703ede5831d64f6ca9692a",
+    "local_sha256": "cdecfc2439e27d0446099fb8d2f693ca816e5ce11fbb01b730f4fa210f915a91",
+    "transformations": "Trailing whitespace normalized; public sandbox example secret keys redacted, if present."
+  },
+  {
+    "file": "callbacks.md",
+    "url": "https://docs.near.org/smart-contracts/security/cross-contract-calls/callbacks.md",
+    "retrieved_at": "2026-11-10T07:08:26.659988+00:00",
+    "source_sha256": "381c2c42be9cb80eb0481532d1232085bd0855910ffbdff3ab9d702f97388ac3",
+    "local_sha256": "5f819f5fe886243433094816c96ee7b0f74484682904993cf083ac5ee6fe6bfc",
+    "transformations": "Trailing whitespace normalized; public sandbox example secret keys redacted, if present."
+  },
+  {
+    "file": "storage.md",
+    "url": "https://docs.near.org/smart-contracts/security/storage.md",
+    "retrieved_at": "2026-11-10T07:08:27.160172+00:00",
+    "source_sha256": "828173278dca5e9312cf6f088e1a2da8f7b805ef6e6722ad8f49fbfbdf2c4246",
+    "local_sha256": "7d7b04b1e5493732ea20fb26658ee9ec62d1be842e87cfdade63092d041534f9",
+    "transformations": "Trailing whitespace normalized; public sandbox example secret keys redacted, if present."
+  },
+  {
+    "file": "access-keys.md",
+    "url": "https://docs.near.org/protocol/access-keys.md",
+    "retrieved_at": "2026-11-10T07:08:27.566908+00:00",
+    "source_sha256": "4f497c2f89792a38a2a458dc1b39a2e2e75ab1aea2fa8d91e4942bae67e00775",
+    "local_sha256": "b1fd9c105da1e89c25629a007893d9d3c2991182043a2951888bb33ed1fc7efb",
+    "transformations": "Trailing whitespace normalized; public sandbox example secret keys redacted, if present."
+  },
+  {
+    "file": "unit-testing.md",
+    "url": "https://docs.near.org/smart-contracts/testing/unit-test.md",
+    "retrieved_at": "2026-11-10T07:08:27.989665+00:00",
+    "source_sha256": "4ad7ffe20f67387411c272e6add83226974ba45a83fa0d162f39842756c2f4e6",
+    "local_sha256": "486f37604e396ec0157fa927b439338a072141e9b34d382f576d6476f89a89b7",
+    "transformations": "Trailing whitespace normalized; public sandbox example secret keys redacted, if present."
+  },
+  {
+    "file": "integration-testing.md",
+    "url": "https://docs.near.org/smart-contracts/testing/integration-test.md",
+    "retrieved_at": "2026-11-10T07:08:28.274649+00:00",
+    "source_sha256": "6aa6531e2cb1d3dc972b5ead42db557d07df431e5cfb6442f20ff8eee0dc1d3c",
+    "local_sha256": "4efb092e5debaf18bab621db9750115fbf5ebcc4b6bcb4fdb750db4ebdf0d139",
+    "transformations": "Trailing whitespace normalized; public sandbox example secret keys redacted, if present."
+  },
+  {
+    "file": "nep413.md",
+    "url": "https://raw.githubusercontent.com/near/NEPs/master/neps/nep-0413.md",
+    "retrieved_at": "2026-11-10T07:08:28.817783+00:00",
+    "source_sha256": "a1571dfeab5f594abe04817f9c6d62f0674b69e7db2a58687821e129b7fd27af",
+    "local_sha256": "a1571dfeab5f594abe04817f9c6d62f0674b69e7db2a58687821e129b7fd27af",
+    "transformations": "Trailing whitespace normalized; public sandbox example secret keys redacted, if present."
+  },
+  {
+    "file": "near-api-js.md",
+    "url": "https://raw.githubusercontent.com/near/near-api-js/master/README.md",
+    "retrieved_at": "2026-11-10T07:08:29.217355+00:00",
+    "source_sha256": "f23aeaa4efc068df8a05ef97c1ade88022575ad5ea52dbe9af218028462d4e27",
+    "local_sha256": "df3551a6027e241cfc3c2b3834794aec9b2a586dfd9635e0c097ae740ea45ab1",
+    "transformations": "Trailing whitespace normalized; public sandbox example secret keys redacted, if present."
+  }
+]
