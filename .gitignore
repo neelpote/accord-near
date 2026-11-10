@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Environment
+.env
+*.env
+
+# Foundry
+contracts/out/
+contracts/cache/
+contracts/lib/
+
+# Node
+node_modules/
+
+# Accord local tools, credentials, build products
+.tools/
+.near-credentials/
+*.key
+*.pem
+contracts-near/target/
+frontend/.next/
+.env.local
+.env.*.local
