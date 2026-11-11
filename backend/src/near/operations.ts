@@ -14,6 +14,8 @@ export function workspaceInput(value:unknown){
 }
 export async function capture(accounts:string[],client:Pick<JsonRpcProvider,"viewBlock"|"viewAccount"|"sendJsonRpc">=rpc):Promise<Snapshot>{
  const block=await client.viewBlock({finality:"final"});
+ const blockAge=Date.now()-Number(BigInt(block.header.timestamp_nanosec)/1000000n);
+ if(!Number.isFinite(blockAge)||blockAge>120000||blockAge< -5000)throw Error("Finalized block is stale or clock is inconsistent");
  const result:AccountSnapshot[]=[];
  for(const account_id of accounts){
   const account=await client.viewAccount({accountId:account_id,blockQuery:{blockId:block.header.hash}});

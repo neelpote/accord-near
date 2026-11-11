@@ -18,6 +18,9 @@ export async function migrate() {
  ALTER TABLE accord_workspaces ADD COLUMN IF NOT EXISTS last_success_at timestamptz;
  ALTER TABLE accord_workspaces ADD COLUMN IF NOT EXISTS last_error text;
  CREATE TABLE IF NOT EXISTS accord_workspace_events(id bigserial PRIMARY KEY,workspace_id uuid NOT NULL REFERENCES accord_workspaces(id) ON DELETE CASCADE,type text NOT NULL,body jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
+ ALTER TABLE accord_workspaces ADD COLUMN IF NOT EXISTS last_observation jsonb;
+ CREATE TABLE IF NOT EXISTS accord_incidents(id bigserial PRIMARY KEY,workspace_id uuid NOT NULL REFERENCES accord_workspaces(id) ON DELETE CASCADE,baseline_version integer NOT NULL,fingerprint text NOT NULL,type text NOT NULL,account_id text NOT NULL,evidence jsonb NOT NULL,state text NOT NULL DEFAULT 'open',observations integer NOT NULL DEFAULT 1,occurrences integer NOT NULL DEFAULT 1,acknowledged_at timestamptz,first_seen timestamptz NOT NULL DEFAULT now(),last_seen timestamptz NOT NULL DEFAULT now(),resolved_at timestamptz,UNIQUE(workspace_id,baseline_version,fingerprint));
+ CREATE TABLE IF NOT EXISTS accord_notifications(id bigserial PRIMARY KEY,workspace_id uuid NOT NULL REFERENCES accord_workspaces(id) ON DELETE CASCADE,event_id bigint NOT NULL UNIQUE REFERENCES accord_workspace_events(id) ON DELETE CASCADE,payload jsonb NOT NULL,state text NOT NULL DEFAULT 'pending',attempts integer NOT NULL DEFAULT 0,next_attempt_at timestamptz NOT NULL DEFAULT now(),last_error text,delivered_at timestamptz);
  CREATE TABLE IF NOT EXISTS accord_groq_budget(id integer PRIMARY KEY,requests integer NOT NULL);
  INSERT INTO accord_groq_budget VALUES(1,0) ON CONFLICT DO NOTHING;
  CREATE TABLE IF NOT EXISTS accord_ai_budget(id integer PRIMARY KEY,requests integer NOT NULL);

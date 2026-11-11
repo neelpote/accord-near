@@ -50,6 +50,21 @@ try{
  const parallel=await Promise.all(Array.from({length:4},()=>request("/workspaces",{name:"Bounded fixture",accounts:["app.testnet"]})));
  assert.equal(parallel.filter(r=>r.status===200).length,2);
  checks.push("Workspace ownership, explicit hash-bound approval, repeated approval rejection, capture cooldown and concurrent three-workspace cap");
+ const {observeWorkspace}=await import("./incidents.js");
+ async function check(snapshotValue= snapshot){await db.query("UPDATE accord_workspaces SET last_capture_at=NULL WHERE id=$1",[workspace.id]);return observeWorkspace(workspace.id,async()=>snapshotValue,true);}
+ const changed={...snapshot,block_height:124,accounts:[{...snapshot.accounts[0]!,code_hash:"2".repeat(32)}]};
+ assert.equal((await check(changed)).changes,1);await check(changed);
+ let incidents=(await db.query("SELECT * FROM accord_incidents WHERE workspace_id=$1",[workspace.id])).rows;
+ assert.equal(incidents.length,1);assert.equal(incidents[0].observations,2);
+ assert.equal((await db.query("SELECT count(*) FROM accord_notifications")).rows[0].count,"1");
+ await check(snapshot);assert.equal((await db.query("SELECT state FROM accord_incidents")).rows[0].state,"resolved");
+ await check(changed);assert.equal((await db.query("SELECT occurrences FROM accord_incidents")).rows[0].occurrences,2);
+ assert.equal((await db.query("SELECT count(*) FROM accord_notifications")).rows[0].count,"2");
+ await db.query("UPDATE accord_workspaces SET last_capture_at=NULL WHERE id=$1",[workspace.id]);
+ await assert.rejects(observeWorkspace(workspace.id,async()=>{throw Error("RPC fixture failure")},true));
+ const retained=(await db.query("SELECT last_error,last_observation FROM accord_workspaces WHERE id=$1",[workspace.id])).rows[0];
+ assert(retained.last_error);assert.equal(retained.last_observation.block_height,124);
+ checks.push("One incident for repeated changes, recovery and reopening, transactional notification deduplication, failed observation retains last evidence");
  console.log(JSON.stringify({scope:"Isolated PostgreSQL schema + HTTP fixture authorization",checks},null,2));
 }finally{
  await new Promise<void>(r=>server.close(()=>r()));await db.end();await admin.query(`DROP SCHEMA ${schema} CASCADE`);await admin.end();
