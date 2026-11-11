@@ -23,3 +23,7 @@ Human submission/social posting remains outside this build authorization. AI gen
 - [x] Publish explicit synthetic paid examples, screenshots and browser walkthrough.
 - [x] Verify a fresh Wallet Watch subscription through the actual UI/API/testnet boundary.
 - [x] Push tested expansion and confirm CI for the published revision (Application run 42835706811).
+
+## Five-phase application pilot
+
+Engineering increments are implemented in three commits per phase; see docs/PHASE_DELIVERY.md for the commit map, tests and Loops-prompt gates. Customer discovery and retained paid use remain human/external gates. The user authorized implementation of all phases as a testnet hypothesis; those business gates are not silently marked passed. Public hosting and an authorized external notification destination remain unconfigured.

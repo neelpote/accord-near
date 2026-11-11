@@ -1,0 +1,18 @@
+{
+  "application_commit_tested": "b0449d89a9c1f1853071b99069600f5d669b7a1a",
+  "application_source_dirty": false,
+  "browser_test_sha256": "0079801f7892aa553c466f38f68a76be21fc5b41a4663fdd6452c64b374a6fbc",
+  "browser_result": "passed: real fixture session, controlled incident, cached Groq explanation, linked historical paid evidence, browser-verified export, mobile overflow and no page errors",
+  "readiness": {
+    "database": "ready",
+    "operations_worker": "recent completion",
+    "network": "testnet"
+  },
+  "completed_at": "2026-11-11T06:27:50.607113+00:00",
+  "limits": [
+    "No customer demand or revenue validated",
+    "No hosted or third-party wallet UI certification",
+    "External receiver tested locally only",
+    "Controlled deployment evidence records its earlier working-tree provenance"
+  ]
+}

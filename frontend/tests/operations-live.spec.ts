@@ -15,6 +15,9 @@ test("real operations workspace shows controlled change, linked payment and expo
  await incident.locator("summary").click();
  await expect(incident.getByRole("heading",{name:"Approved value"})).toBeVisible();
  await expect(incident.getByText(/acknowledged/).first()).toBeVisible();
+ await incident.getByRole("button",{name:"Explain incident with Groq"}).click();
+ await expect(incident.getByRole("heading",{name:"What to review next"})).toBeVisible();
+ await expect(incident.getByText(/No TEE attestation/)).toBeVisible();
  await expect(operations.getByText(/test NEAR credited to/)).toBeVisible({timeout:30000});
  await expect(operations.getByText("paid report linked",{exact:true})).toBeVisible();
  const downloadPromise=page.waitForEvent("download");

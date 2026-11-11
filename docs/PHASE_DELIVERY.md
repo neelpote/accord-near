@@ -36,3 +36,22 @@ Deterministic code/key changes now open grouped incidents, resolve on return to 
 Owner-private timeline, paginated history and consistent JSON exports now connect baseline approval, incidents, human acknowledgement, explanations and related paid artifacts. Export SHA-256 is computed over the serialized body and verified in the browser. Linking a delivered report rechecks its receipt, owner, account association, provider, price and exact artifact hash on NEAR; it does not request a new payment. Agreement links expose the existing cancellation/key-removal/withdrawal controls. Optional incident explanations are capped and cached, with no automatic retry or model transaction authority.
 
 Controlled live proof: docs/operations-demo-proof.json. A separate canary received two valid no-op WASM versions with different custom-section markers. The actual background worker detected code identity change; this is not an exploit or behavior change. Escrow code was checked unchanged. A historical paid Wallet Watch report for the escrow account was linked, not falsely sold as a canary observation. Actual Groq explanation and browser export verification passed. The run records working-tree provenance honestly. Browser recording: docs/demo/operations-workspace.webm.
+
+### Phase 5 result
+Engineering release work is implemented: wallet-private setup/review metrics, explicit continuation feedback, demo exclusion, confirmed pilot-data deletion, optional creation allowlist, DB/worker readiness, atomic review/state history, indexes, CI integration coverage and an operator/recovery runbook. The final committed application passed local checks and [Application CI 42972243590](https://github.com/neelpote/accord-near/actions/runs/42972243590). Real customer recruitment, repeated use and paid continuation are still **pending**. Hosting and an authorized external receiver are unconfigured. This is a tested testnet pilot, not a certified production monitoring service.
+
+## Commit map
+
+| Phase | Increment 1 | Increment 2 | Increment 3 |
+| --- | --- | --- | --- |
+| 1 | 1d2acaf — discovery brief and gates | 6186cbd — structured feedback model | 10c6916 — private feedback API/UI |
+| 2 | d5985d1 — finalized capture and scope | 5c07af7 — reviewed baseline approval | 61bcfca — workspace onboarding and review |
+| 3 | 19bb138 — grouped meaningful changes | 3ba4704 — notification retries/worker | 43c90f4 — incident review and health UI |
+| 4 | ca63ebb — evidence timeline/export | 8c7ea3e — paid links and optional AI | cdcea75 — real testnet incident/browser demonstration |
+| 5 | 4cf04ae — pilot metrics/demo separation | b0449d8 — consistency/readiness/CI | this release-evidence commit — final verification and reviews |
+
+## Does each phase belong in Accord?
+
+Discovery prevents confusing engineering evidence with demand. The workspace replaces repeated configuration with one application scope. Grouped incidents and reliable notification delivery address the actual job of noticing a change. Evidence and existing bounded agreements connect investigation to inspectable paid work without claiming that a hash proves quality. Release metrics expose whether anyone uses this beyond our own demo. No additional generic agents, trading, automatic remediation or provider marketplace were added.
+
+Limits worth preserving: code/key checks are deliberately narrow; deeper transaction diagnosis remains the existing paid service. The unbilled pilot and separately purchased reports are distinct until customer feedback justifies a reviewed commercial bundle. We have not invented customers, a production price or an independent Loops approval to make the roadmap appear complete.

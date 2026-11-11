@@ -150,3 +150,13 @@ Best-fit tracks are Agent Economy and AI Security & Defense. Final track selecti
 ## Groq copilot extension
 
 New chain-agent offers can include a separate Groq explanation of the public NEAR evidence. Existing deterministic offers remain unchanged. See [setup and limits](docs/GROQ.md), [live inference proof](docs/groq-live-proof.json) and the [submission improvement assessment](docs/HACKATHON_DIFFERENTIATION.md). This does not claim private inference, automatic remediation or independent providers.
+
+## Application operations pilot
+
+Accord now has an application workspace for a small NEAR team or maintenance agency: capture and review code/key baselines, enable read-only change monitoring, investigate grouped incidents, acknowledge review and export evidence. Optional Groq commentary is separate from measured facts. Related paid reports can be linked after their exact receipts are rechecked on NEAR.
+
+The operations pilot is **unbilled**; existing recurring paid reports remain separate, explicit finite agreements. There is no automatic enrollment, bundled production price, autonomous remediation or claim of exploit prevention. Customer demand and paid continuation remain unvalidated. Synthetic demo activity is excluded from pilot metrics.
+
+Start at [localhost:3000](http://localhost:3000), sign in and choose Application workspace. See the [user/operator guide](docs/OPERATIONS.md), [five-phase delivery log](docs/PHASE_DELIVERY.md), [Loops-prompt review gates](docs/evaluations/PHASE_GATES.md), [pilot interviews](docs/pilot/INTERVIEWS.md) and [measurement/pricing test](docs/pilot/MEASUREMENT.md).
+
+Working evidence: [controlled testnet change](docs/operations-demo-proof.json), [HTTP/DB integration checks](docs/operations-integration-proof.json), [release browser checks](docs/operations-release-proof.json), [workspace screenshot](docs/demo/operations-workspace.png) and [browser walkthrough](docs/demo/operations-workspace.webm). The controlled canary changes only a no-op WASM marker; it does not demonstrate an exploit, behavioral regression or an escrow upgrade.

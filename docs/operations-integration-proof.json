@@ -1,0 +1,16 @@
+{
+  "scope": "Isolated PostgreSQL schema + HTTP fixture authorization",
+  "checks": [
+    "Authenticated fixture access, owner isolation, honest pilot summary and feedback deletion",
+    "Workspace ownership, explicit hash-bound approval, repeated approval rejection, capture cooldown and concurrent three-workspace cap",
+    "One incident for repeated changes, recovery and reopening, transactional notification deduplication, failed observation retains last evidence",
+    "Signed real HTTP delivery to local receiver, persisted retry after 503, successful delivery and no redelivery, owner-scoped incident acknowledgement",
+    "Owner-scoped consistent evidence export, artifact hash verification and bounded timeline cursor validation",
+    "Paid-report linking verifies owner, account association, immutable price/provider/hash and deduplicates; disabled AI fails without payment or retries",
+    "Concurrent acknowledgements stay idempotent, expired proposals fail, allowlist blocks unauthorized enrollment, timeline pagination is stable, final delivery leases fail closed",
+    "Pilot metrics exclude synthetic demos and never claim revenue; confirmed workspace deletion cascades private pilot data while preserving paid agreements"
+  ],
+  "application_commit_tested": "b0449d89a9c1f1853071b99069600f5d669b7a1a",
+  "application_source_dirty": false,
+  "checks_passed": 8
+}
