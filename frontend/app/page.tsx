@@ -9,6 +9,7 @@ import {
   near,
   sendWalletTransaction,
 } from "@/lib/near";
+import PilotFeedback from "@/components/PilotFeedback";
 import ReportView, { type ServiceReport } from "@/components/ReportView";
 type AgentExample = {
   kind: string;
@@ -1018,6 +1019,7 @@ export default function Home() {
             </p>
           </section>
         )}
+      <details id="pilot"><summary>Pilot feedback</summary><PilotFeedback account={account}/></details>
       </main>
       <footer>
         <span>accord · agent commerce with limits</span>

@@ -1,0 +1,41 @@
+/** Isolated schema + HTTP checks. Auth boundary is a test stub; production NEP-413 is not bypassed. */
+import "dotenv/config";
+import "express-async-errors";
+import assert from "node:assert/strict";
+import express from "express";
+import pg from "pg";
+import {randomUUID} from "node:crypto";
+const original = process.env.DATABASE_URL;
+if(!original)throw Error("DATABASE_URL required");
+const admin=new pg.Pool({connectionString:original});
+const schema="accord_ops_test_"+randomUUID().replaceAll("-","");
+await admin.query(`CREATE SCHEMA ${schema}`);
+const url=new URL(original);url.searchParams.set("options",`-csearch_path=${schema}`);process.env.DATABASE_URL=url.toString();
+const {db,migrate}=await import("./db.js");
+const {mountOperations}=await import("./operations-api.js");
+const app=express();app.use(express.json());
+mountOperations(app,async req=>{const account=req.headers["x-test-owner"];if(typeof account!=="string")throw Error("Unauthorized fixture");return account;});
+app.use((e:Error,_req:express.Request,res:express.Response,_next:express.NextFunction)=>{res.status(400).json({error:e.message});});
+const server=app.listen(0,"127.0.0.1");
+await new Promise<void>(r=>server.once("listening",r));
+const address=server.address();if(!address||typeof address==="string")throw Error("No address");
+const base=`http://127.0.0.1:${address.port}`;
+const checks:string[]=[];
+async function request(path:string,body?:unknown,owner="alpha.testnet",method=body===undefined?"GET":"POST"){
+ const r=await fetch(base+path,{method,headers:{"content-type":"application/json",...(owner?{"x-test-owner":owner}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});
+ return {status:r.status,body:await r.json()};
+}
+try{
+ await migrate();await migrate();
+ assert.equal((await request("/pilot",undefined,"")).status,400);
+ const v={role:"developer",stage:"used",problem:"Fixture code change",workaround:"Fixture script",outcome:"Synthetic test; not customer feedback"};
+ const added=await request("/pilot",v);assert.equal(added.status,200);
+ assert.equal((await request("/pilot",undefined,"beta.testnet")).body.records.length,0);
+ assert.equal((await request(`/pilot/${added.body.id}`,undefined,"beta.testnet","DELETE")).status,400);
+ const list=await request("/pilot");assert.equal(list.body.records.length,1);assert.equal(list.body.summary.demand_validated,false);
+ assert.equal((await request(`/pilot/${added.body.id}`,undefined,"alpha.testnet","DELETE")).body.deleted,true);
+ checks.push("Authenticated fixture access, owner isolation, honest pilot summary and feedback deletion");
+ console.log(JSON.stringify({scope:"Isolated PostgreSQL schema + HTTP fixture authorization",checks},null,2));
+}finally{
+ await new Promise<void>(r=>server.close(()=>r()));await db.end();await admin.query(`DROP SCHEMA ${schema} CASCADE`);await admin.end();
+}

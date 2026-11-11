@@ -1,3 +1,4 @@
+import { mountOperations } from "./operations-api.js";
 import { groqConfigured } from "./groq-budget.js";
 import "express-async-errors";
 import express from "express";
@@ -59,6 +60,7 @@ async function owner(req: express.Request): Promise<string> {
   if (!row) throw new Error("Session expired; sign in again");
   return row.account_id;
 }
+mountOperations(app, owner);
 const limits = new Map<string, { at: number; count: number }>();
 app.get("/health", (_req, res) =>
   res.json({ ok: true, network: config.network, contract: config.contract }),

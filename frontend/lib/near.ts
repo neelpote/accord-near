@@ -19,9 +19,10 @@ export async function wallet() {
     return await c.connect();
   }
 }
-export async function api(path: string, body?: unknown) {
+export async function api(path: string, body?: unknown, method?: string) {
   const r = await fetch("/api/near" + path, {
     credentials: "same-origin",
+    ...(method ? {method} : {}),
     ...(body !== undefined
       ? {
           method: "POST",
