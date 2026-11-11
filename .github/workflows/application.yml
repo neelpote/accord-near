@@ -4,7 +4,8 @@ permissions:
   contents: read
 jobs:
   application:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     services:
       postgres:
         image: postgres:17-alpine
@@ -43,7 +44,8 @@ jobs:
       - name: Browser presentation check
         working-directory: frontend
         run: |
-          npx playwright install --with-deps chromium
+          # Hosted Ubuntu 24.04 includes Chrome system libraries; avoid unrelated apt mirrors.
+          npx playwright install chromium
           npm run test:browser
       - name: Recognizable credential scan
         run: python3 scripts/scan-secrets.py
