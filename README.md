@@ -163,6 +163,6 @@ Working evidence: [controlled testnet change](docs/operations-demo-proof.json), 
 
 ## Animated interface
 
-The frontend combines an original interactive 3D agent crew with a quieter evidence/workspace interface. Select a specialist, pause decorative motion, or use the OS reduced-motion preference. Devices without WebGL receive a static illustration. Existing approvals, exact spending terms and report provenance remain functional.
+The current frontend uses a credited artist-made Robot Expressive model and a native-scroll Observe → Inspect → Limit sequence. Camera angle, evidence paths and the bounded-authority illustration follow scroll position. Reduced-motion users can select chapters without camera motion; devices without WebGL receive a static fallback. Paid terms and evidence remain explicit in a service directory. The earlier procedural robot gallery was superseded after user feedback.
 
-[Desktop preview](docs/demo/redesign-desktop.png) · [Mobile preview](docs/demo/redesign-mobile.png) · [Visual walkthrough](docs/demo/redesign-experience.webm) · [Design decisions](docs/design/FRONTEND_DIRECTION.md) · [Verification](docs/redesign-proof.json)
+[Desktop preview](docs/demo/editorial-desktop.png) · [Mobile preview](docs/demo/editorial-mobile.png) · [Scroll walkthrough](docs/demo/editorial-scroll.webm) · [Asset research and design decisions](docs/design/MODEL_AND_SCROLL_REVISION.md) · [Verification](docs/editorial-proof.json)

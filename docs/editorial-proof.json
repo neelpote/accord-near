@@ -1,0 +1,29 @@
+{
+  "application_commit_tested": "22653625c0a6e2c38e4cf53ef82d1b206c2d3508",
+  "application_source_dirty": false,
+  "model": {
+    "name": "Robot Expressive",
+    "author": "Tom\u00e1s Laulh\u00e9 (Quaternius), glTF modifications by Don McCurdy",
+    "license": "CC0 1.0",
+    "source": "https://threejs.org/examples/webgl_animation_skinning_morph.html",
+    "sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319"
+  },
+  "checks": {
+    "frontend_types": "passed",
+    "production_build": "passed",
+    "dependency_audit": "zero vulnerabilities",
+    "presentation_checks": 6,
+    "scroll_chapters": "Observe/Inspect/Limit states verified against native scroll progress; reduced-motion manual chapters verified",
+    "webgl": "ready in actual production browser capture",
+    "mobile_390_fits": true,
+    "capture_page_errors": [],
+    "operations_browser": "passed (7.2 seconds), real fixture session, incident, cached explanation and export",
+    "wallet_browser": "passed (2.2 minutes), real testnet funding, key activation, delivery, cancellation, key deletion and exit"
+  },
+  "ci": {
+    "run": "https://github.com/neelpote/accord-near/actions/runs/43064815992",
+    "conclusion": "success"
+  },
+  "scope": "Artist asset and illustrated workflow; no live AI telemetry or independent usability validation. Hosted CI exercises the explicit no-GPU fallback; actual WebGL was checked locally.",
+  "recorded_at": "2026-11-11T17:11:32.445311+00:00"
+}

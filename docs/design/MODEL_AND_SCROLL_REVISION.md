@@ -21,3 +21,7 @@ Selecting a paid offer now scrolls to its actual terms form. This responds to an
 ## Verification
 
 See the revision's evidence and verification appendices for executed results. Aesthetic quality remains subject to the user's review; implementation checks are not independent usability research or a claim that the design will win a competition.
+
+Executed results: six browser presentation checks passed (including native-scroll chapter progression, reduced-motion manual chapters, mobile resizing, fallback and financial-refresh failure preservation), types/build passed, audit found zero vulnerabilities, real WebGL capture had no page errors and fit 390 px. Real operations review passed in 7.2 seconds and the actual testnet wallet flow passed in 2.2 minutes. [Application CI 43064815992](https://github.com/neelpote/accord-near/actions/runs/43064815992) passed. See ../editorial-proof.json and ../editorial-wallet-proof.json.
+
+An initial live operations attempt timed out with a detached panel and is not counted as a pass. Investigation found that a failed financial-history fetch could clear a valid session; the new failure-injection test reproduces that flaw. Authentication and financial refresh are now separate, last loaded financial values are explicitly labeled stale on failure, and the live rerun passed. Contract and authentication verification logic were not changed.

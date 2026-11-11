@@ -1,0 +1,31 @@
+{
+  "network": "testnet",
+  "contract": "contract.accord-dev-261110.testnet",
+  "subscription_id": "18",
+  "transactions": [
+    {
+      "method": "subscribe",
+      "hash": "G7LA56Qkz6thAYjJ4st1r3n58gQSHFWJ6irJ3BASnVGG"
+    },
+    {
+      "method": "AddKey",
+      "hash": "6cBxvGXcwhUvRC6DvBFfT3H3z6NPTxN548VTeZ1tnmu7"
+    },
+    {
+      "method": "cancel",
+      "hash": "GszPpHkBa6KRRnxnGXTrZSRC4Fa2VXTJYV8jidggDxYU"
+    },
+    {
+      "method": "DeleteKey",
+      "hash": "3UQQgak4ibHnZB59XMp44xrmhHy1SrMLp6PdUunzmDzb"
+    },
+    {
+      "method": "withdraw",
+      "hash": "34TYV3raDcSwe5Z6Dp1Uo34Cs5YY9dQHtRQDhCWfoVYR"
+    }
+  ],
+  "completed_at": "2026-11-11T17:09:43.932Z",
+  "wallet": "Test fixture through standard NEAR Connect injection API; real NEP-413 signatures and testnet transactions, no third-party wallet UI certification.",
+  "application_commit_tested": "22653625c0a6e2c38e4cf53ef82d1b206c2d3508",
+  "application_source_dirty": false
+}

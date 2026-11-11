@@ -1,3 +1,7 @@
+# Superseded visual direction
+
+This document records the first animated iteration, which the user rejected. The current direction is [the artist-model and scroll revision](MODEL_AND_SCROLL_REVISION.md), with proof in ../editorial-proof.json. The following is preserved as historical implementation evidence.
+
 # Accord visual direction
 
 Brief: combine the supplied robot/platform image with the supplied Axon-style motion reference, without copying their branding or embedding their media. Audience remains a NEAR application developer or maintainer. Primary action: open the application workspace; secondary action: inspect agent-service terms.
