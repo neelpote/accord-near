@@ -26,4 +26,4 @@ Human submission/social posting remains outside this build authorization. AI gen
 
 ## Five-phase application pilot
 
-Engineering increments are implemented in three commits per phase; see docs/PHASE_DELIVERY.md for the commit map, tests and Loops-prompt gates. Customer discovery and retained paid use remain human/external gates. The user authorized implementation of all phases as a testnet hypothesis; those business gates are not silently marked passed. Public hosting and an authorized external notification destination remain unconfigured.
+Engineering increments are implemented in three commits per phase, plus a fourth phase-5 mobile regression follow-up; see docs/PHASE_DELIVERY.md for the commit map, tests and Loops-prompt gates. Customer discovery and retained paid use remain human/external gates. The user authorized implementation of all phases as a testnet hypothesis; those business gates are not silently marked passed. Public hosting and an authorized external notification destination remain unconfigured.

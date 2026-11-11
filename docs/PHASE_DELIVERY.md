@@ -48,10 +48,12 @@ Engineering release work is implemented: wallet-private setup/review metrics, ex
 | 2 | d5985d1 — finalized capture and scope | 5c07af7 — reviewed baseline approval | 61bcfca — workspace onboarding and review |
 | 3 | 19bb138 — grouped meaningful changes | 3ba4704 — notification retries/worker | 43c90f4 — incident review and health UI |
 | 4 | ca63ebb — evidence timeline/export | 8c7ea3e — paid links and optional AI | cdcea75 — real testnet incident/browser demonstration |
-| 5 | 4cf04ae — pilot metrics/demo separation | b0449d8 — consistency/readiness/CI | this release-evidence commit — final verification and reviews |
+| 5 | 4cf04ae — pilot metrics/demo separation | b0449d8 — consistency/readiness/CI | 2347768 — final verification and reviews |
 
 ## Does each phase belong in Accord?
 
 Discovery prevents confusing engineering evidence with demand. The workspace replaces repeated configuration with one application scope. Grouped incidents and reliable notification delivery address the actual job of noticing a change. Evidence and existing bounded agreements connect investigation to inspectable paid work without claiming that a hash proves quality. Release metrics expose whether anyone uses this beyond our own demo. No additional generic agents, trading, automatic remediation or provider marketplace were added.
 
 Limits worth preserving: code/key checks are deliberately narrow; deeper transaction diagnosis remains the existing paid service. The unbilled pilot and separately purchased reports are distinct until customer feedback justifies a reviewed commercial bundle. We have not invented customers, a production price or an independent Loops approval to make the roadmap appear complete.
+
+Phase 5 has a fourth follow-up commit: final recording review exposed long source hashes in late-loaded paid-report AI prose on mobile. A wrapping fix and presentation regression test were added, the live check now awaits complete agreement history, and the readable 14-second recording passed. Its proof records base commit plus the changed stylesheet hash rather than claiming a clean working tree.

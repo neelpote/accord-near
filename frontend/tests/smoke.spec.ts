@@ -181,6 +181,7 @@ test("application onboarding requires review before baseline approval",async({pa
  if(path.endsWith("/events"))json={events:[],next_cursor:null};
  if(path==="/notification-config")json={webhook_available:false};
  if(path.endsWith("/monitoring")){workspace.monitoring=r.request().postDataJSON().enabled;json={saved:true};}
+ if(path.endsWith("/explain"))json={title:"Incident review",summary:"Source block "+"a".repeat(64),status:"attention",metrics:[{label:"Account",value:"app.testnet"}],findings:[],recommendations:[],explanation:{provider:"groq",model:"fixture",summary:"Review hash "+"b".repeat(64),next_steps:["Compare deployment records"],disclosure:"Presentation fixture, not live inference"}};
  if(path.endsWith("/acknowledge")){acknowledged=true;json={acknowledged:true};}
  if(path.endsWith("/capture")){workspace.pending_baseline=snapshot;json={snapshot};}
  if(path.endsWith("/approve")){expect(r.request().postDataJSON().proposal_hash).toMatch(/^[a-f0-9]{64}$/);workspace.baseline=snapshot;workspace.pending_baseline=null;workspace.baseline_version=1;json={approved:true};}
@@ -202,6 +203,8 @@ test("application onboarding requires review before baseline approval",async({pa
  await expect(page.getByText('"old-code"',{exact:true})).toBeVisible();
  await page.getByRole("button",{name:"Acknowledge incident"}).click();
  await expect(page.getByText(/code changed · app.testnet · open · acknowledged/)).toBeVisible();
+ await page.getByRole("button",{name:"Explain incident with Groq"}).click();
+ await expect(page.getByRole("heading",{name:"What to review next"})).toBeVisible();
  await page.setViewportSize({width:390,height:844});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
 });

@@ -626,3 +626,5 @@ footer p {
 
 .event-ledger {padding-left:22px;}
 .event-ledger>li {border-bottom:1px solid var(--line);padding:12px 0;}
+/* Source hashes in AI prose must wrap, including nested paid-report panels. */
+.report { min-width:0; overflow-wrap:anywhere; }
