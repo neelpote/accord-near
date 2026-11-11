@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import WorkspaceIncidents from "./WorkspaceIncidents";
 import {api,digest} from "@/lib/near";
 type Snapshot={block_height:number;block_hash:string;observed_at:string;accounts:{account_id:string;code_hash:string;keys:{public_key:string;permission:unknown}[]}[]};
 type Workspace={id:string;name:string;accounts:string[];baseline:Snapshot|null;pending_baseline:Snapshot|null;baseline_version:number;monitoring:boolean;last_success_at:string|null;last_error:string|null};
@@ -25,6 +26,7 @@ export default function OperationsWorkspace({account}:{account:string}){
  <button className="quiet" disabled={busy} onClick={()=>void act(()=>api(`/workspaces/${w.id}/capture`,{}))}>{w.baseline?"Capture proposed replacement baseline":"Capture baseline for review"}</button>
  {w.pending_baseline&&<div className="baseline-proposal"><h4>Review proposed baseline</h4><Baseline snapshot={w.pending_baseline}/><p>Approval records this exact snapshot. It does not certify the code or permissions are safe.</p><button disabled={busy} onClick={()=>void act(async()=>{await api(`/workspaces/${w.id}/approve`,{proposal_hash:await digest(w.pending_baseline)});setNotice("Baseline approved. Existing evidence is retained.");})}>I reviewed this snapshot · approve baseline</button></div>}
  {w.baseline&&<details><summary>Approved baseline · version {w.baseline_version}</summary><Baseline snapshot={w.baseline}/></details>}
+ <WorkspaceIncidents key={w.id} workspace={w} onChange={load}/>
  </article>}
  </>}
  <p role="status">{notice}</p>

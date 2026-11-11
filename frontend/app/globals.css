@@ -612,3 +612,14 @@ footer p {
 .key-review { padding:12px 0; border-bottom:1px solid var(--line); }
 .operations details { overflow-wrap:anywhere; }
 @media(max-width:600px) { .operations .section-title {display:block;} .baseline-proposal {padding:12px;} }
+
+.incident-console {border-top:1px solid var(--line);margin-top:24px;padding-top:20px;}
+.operations .action-row {display:flex;gap:12px;flex-wrap:wrap;margin:16px 0;}
+.operations input[type="checkbox"] {width:auto;margin-right:8px;}
+.monitor-health {border-left:3px solid var(--blue);padding-left:12px;}
+.monitor-health.attention {border-color:var(--amber);}
+.incident {border-top:1px solid var(--line);padding:16px 0;}
+.incident.open summary {color:var(--amber);}
+.evidence-diff {display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.evidence-diff>div {min-width:0;background:var(--bg);padding:12px;border-radius:8px;}
+@media(max-width:600px){.evidence-diff{grid-template-columns:1fr;}}

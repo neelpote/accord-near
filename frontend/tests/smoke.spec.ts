@@ -165,7 +165,7 @@ test("each agent listing opens its own input schema", async ({ page }) => {
 
 test("application onboarding requires review before baseline approval",async({page})=>{
  const snapshot={block_height:123,block_hash:"1".repeat(32),observed_at:new Date().toISOString(),accounts:[{account_id:"app.testnet",code_hash:"1".repeat(32),keys:[]}]};
- let workspace:any=null;
+ let workspace:any=null;let acknowledged=false;
  await page.route("**/api/near/**",async r=>{
  const path=new URL(r.request().url()).pathname.replace("/api/near","");
  let json:any=[];
@@ -177,6 +177,10 @@ test("application onboarding requires review before baseline approval",async({pa
   if(r.request().method()==="POST")workspace={id:"fixture",...r.request().postDataJSON(),baseline:null,pending_baseline:null,baseline_version:0,monitoring:false};
   json=r.request().method()==="POST"?workspace:(workspace?[workspace]:[]);
  }
+ if(path.endsWith("/incidents")&&workspace?.baseline)json=[{id:"1",type:"code_changed",account_id:"app.testnet",state:"open",observations:2,occurrences:1,acknowledged_at:acknowledged?new Date().toISOString():null,first_seen:snapshot.observed_at,evidence:{change:{before:"old-code",after:"new-code"},baseline_block:snapshot.block_hash,observation:snapshot}}];
+ if(path==="/notification-config")json={webhook_available:false};
+ if(path.endsWith("/monitoring")){workspace.monitoring=r.request().postDataJSON().enabled;json={saved:true};}
+ if(path.endsWith("/acknowledge")){acknowledged=true;json={acknowledged:true};}
  if(path.endsWith("/capture")){workspace.pending_baseline=snapshot;json={snapshot};}
  if(path.endsWith("/approve")){expect(r.request().postDataJSON().proposal_hash).toMatch(/^[a-f0-9]{64}$/);workspace.baseline=snapshot;workspace.pending_baseline=null;workspace.baseline_version=1;json={approved:true};}
  await r.fulfill({json});
@@ -191,6 +195,12 @@ test("application onboarding requires review before baseline approval",async({pa
  await expect(page.getByRole("heading",{name:"Review proposed baseline"})).toBeVisible();
  await page.getByRole("button",{name:/I reviewed this snapshot/}).click();
  await expect(page.getByText("Baseline 1",{exact:true})).toBeVisible();
+ await page.getByRole("button",{name:"Start read-only monitoring"}).click();
+ await expect(page.getByRole("button",{name:"Pause monitoring"})).toBeVisible();
+ await page.getByText("code changed · app.testnet · open",{exact:true}).click();
+ await expect(page.getByText('"old-code"',{exact:true})).toBeVisible();
+ await page.getByRole("button",{name:"Acknowledge incident"}).click();
+ await expect(page.getByText(/code changed · app.testnet · open · acknowledged/)).toBeVisible();
  await page.setViewportSize({width:390,height:844});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
 });

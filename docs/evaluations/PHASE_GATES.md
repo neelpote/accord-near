@@ -17,3 +17,11 @@ Reviewed onboarding increment after d5985d1 / 5c07af7 plus the workspace UI. 16 
 Verified strengths: operations.ts pins account/code and key reads to the same finalized block; workspaces.ts locks approvals, checks owner, exact proposal digest and ten-minute expiry. Workspace creation is bounded under an owner advisory lock. UI requires review, calls out that initial state is not automatically safe and discloses zero pilot charges. Marketplace agreements are separate.
 
 Feedback applied: avoid automatically accepting observed keys; keep full public-key permissions inspectable; bound workspace/account counts and capture frequency. Remove nonces from baselines. Upcoming change comparison must ignore ordinary gas-allowance consumption, otherwise it will generate useless alerts. Decision: proceed to incident implementation with that requirement. Distinct-team and unassisted-customer validation remain pending; mocked browser presentation is not customer evidence.
+
+## Phase 3 — actionable incidents
+
+Reviewed incidents.ts, notifications.ts, operations-worker.ts, operations-api.ts and WorkspaceIncidents.tsx. 17 unit tests, typechecks, isolated HTTP/DB changes/recovery/deduplication tests, actual signed local HTTP retry tests and three browser presentation checks passed.
+
+Strengths: exact before/after code/key evidence; deduplication by baseline and change, automatic resolution/reopening; notifications are inserted in the incident transaction. Worker failures retain evidence. No gas-consumption noise, no model verdict or automatic wallet changes. Webhook URLs are not user-supplied, secrets remain server-side, redirects are rejected and delivery is at least once with stable IDs.
+
+Feedback applied: make acknowledgement distinct from baseline approval, show unavailable external delivery explicitly, and state that in-app notifications do not reach a user while the app is closed. Remaining limitation: one sequential pilot worker and no configured external customer receiver. Polling can miss transient changes; there is no SLA. Decision: proceed to evidence/paid-report integration; production reliability and actual customer alert usefulness remain unvalidated.

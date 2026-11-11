@@ -28,3 +28,6 @@ Pilot interview guide and authenticated, wallet-private feedback capture are imp
 
 ### Phase 2 result
 Workspace onboarding, finalized code/key capture, explicit baseline approval and mobile presentation checks are implemented. Read-only pilot cost is zero; existing paid offers retain separate exact-term approvals. RPC failure cannot create a fake baseline. The UI test is a presentation fixture; real signed onboarding and a controlled chain change are verified later in the release phase. Loops-prompt review: docs/evaluations/PHASE_GATES.md.
+
+### Phase 3 result
+Deterministic code/key changes now open grouped incidents, resolve on return to baseline and reopen on recurrence without duplicating every poll. Ordinary allowance consumption is ignored. Failed observations retain prior evidence and show unhealthy/stale monitoring. The user explicitly enables/pause monitoring and acknowledges incidents without approving changes. In-app delivery is persistent. Optional signed HTTPS webhook delivery is selected explicitly and uses an operator-configured destination, durable leases, bounded retries and stable receiver deduplication IDs. Real local HTTP receiver tests exercised 503 → retry → delivered; no external third-party notification was sent. UI and ownership tests passed. No always-on delivery guarantee is claimed.
