@@ -15,7 +15,8 @@ export async function evidenceExport(id:unknown,owner:string){
  const events=(await c.query("SELECT * FROM accord_workspace_events WHERE workspace_id=$1 ORDER BY id LIMIT 1001",[w.id])).rows;
  const incidents=(await c.query("SELECT * FROM accord_incidents WHERE workspace_id=$1 ORDER BY id LIMIT 1001",[w.id])).rows;
  const notifications=(await c.query("SELECT * FROM accord_notifications WHERE workspace_id=$1 ORDER BY id LIMIT 1001",[w.id])).rows;
- const body=JSON.parse(JSON.stringify({format:"accord-operations-evidence-v1",network:"testnet",exported_at:new Date().toISOString(),workspace,events:events.slice(0,1000),incidents:incidents.slice(0,1000),notifications:notifications.slice(0,1000),truncated:[events,incidents,notifications].some(r=>r.length>1000),disclosure:"RPC observations and application records, not an independent audit or proof of report quality. Pilot observations are unbilled; linked paid reports are separately identified."}));
+ const paidReports=(await c.query("SELECT * FROM accord_workspace_reports WHERE workspace_id=$1 ORDER BY subscription_id,cycle LIMIT 1001",[w.id])).rows;
+ const body=JSON.parse(JSON.stringify({format:"accord-operations-evidence-v1",network:"testnet",exported_at:new Date().toISOString(),workspace,events:events.slice(0,1000),incidents:incidents.slice(0,1000),notifications:notifications.slice(0,1000),paid_reports:paidReports.slice(0,1000),truncated:[events,incidents,notifications,paidReports].some(r=>r.length>1000),disclosure:"RPC observations and application records, not an independent audit or proof of report quality. Pilot observations are unbilled; linked paid reports are separately identified."}));
  await c.query("COMMIT");return {body,sha256:digest(body)};
  }catch(e){await c.query("ROLLBACK");throw e;}finally{c.release();}
 }

@@ -1,6 +1,7 @@
 import type express from "express";
 import {randomUUID} from "node:crypto";
 import {db} from "./db.js";
+import {linkPaidReport,explainIncident} from "./workspace-reports.js";
 import {timeline,evidenceExport,numericId} from "./evidence.js";
 import {observeWorkspace} from "./incidents.js";
 import {notificationConfig} from "./notifications.js";
@@ -14,6 +15,9 @@ export function mountOperations(app: express.Express, owner: (req: express.Reque
  app.post("/workspaces/:id/approve",async(req,res)=>res.json(await approveBaseline(req.params.id,await owner(req),req.body.proposal_hash)));
  app.get("/workspaces/:id/events",async(req,res)=>res.json(await timeline(req.params.id,await owner(req),req.query.before)));
  app.get("/workspaces/:id/export",async(req,res)=>{res.setHeader("Content-Disposition","attachment; filename=accord-evidence.json");res.json(await evidenceExport(req.params.id,await owner(req)));});
+ app.post("/workspaces/:id/reports",async(req,res)=>res.json(await linkPaidReport(req.params.id,await owner(req),req.body.subscription_id,req.body.cycle)));
+ app.get("/workspaces/:id/reports",async(req,res)=>{const w=await ownedWorkspace(req.params.id,await owner(req));res.json((await db.query("SELECT * FROM accord_workspace_reports WHERE workspace_id=$1 ORDER BY subscription_id,cycle LIMIT 100",[w.id])).rows);});
+ app.post("/workspaces/:id/incidents/:incident/explain",async(req,res)=>res.json(await explainIncident(req.params.id,await owner(req),req.params.incident)));
  app.get("/notification-config",async(req,res)=>{await owner(req);res.json({webhook_available:!!notificationConfig(),channel:"Operator-configured signed webhook; destination is not user-supplied"});});
  app.post("/workspaces/:id/monitoring",async(req,res)=>{
   const w=await ownedWorkspace(req.params.id,await owner(req));

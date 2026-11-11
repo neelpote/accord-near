@@ -92,6 +92,22 @@ try{
  assert((await request(`/workspaces/${workspace.id}/events`)).body.events.length>=5);
  assert.equal((await request(`/workspaces/${workspace.id}/events?before=invalid`)).status,400);
  checks.push("Owner-scoped consistent evidence export, artifact hash verification and bounded timeline cursor validation");
+ const {linkPaidReport}=await import("./workspace-reports.js");
+ const paidReport={summary:"Synthetic report, not live financial proof"},hash=digest(paidReport);
+ await db.query("INSERT INTO accord_subscriptions(id,owner,input,delegate_cipher) VALUES('99','alpha.testnet',$1,'test-no-key')",[{account_id:"app.testnet"}]);
+ await db.query("INSERT INTO accord_cycles(subscription_id,cycle,state,artifact_hash,report) VALUES('99',0,'DELIVERED',$1,$2)",[hash,paidReport]);
+ const read=(async(method:string)=>method==='get_receipt'?{subscription_id:"99",cycle:0,artifact_hash:hash,amount:"100",provider:"provider.testnet"}:method==='get_subscription'?{owner:"alpha.testnet",service_id:"1"}:{price:"100",provider:"provider.testnet"}) as typeof import("./config.js").view;
+ await linkPaidReport(workspace.id,"alpha.testnet","99",0,read);await linkPaidReport(workspace.id,"alpha.testnet","99",0,read);
+ assert.equal((await request(`/workspaces/${workspace.id}/reports`)).body.length,1);
+ await assert.rejects(linkPaidReport(workspace.id,"beta.testnet","99",0,read));
+ await assert.rejects(linkPaidReport(workspace.id,"alpha.testnet","99",0,(async(method:string)=>method==='get_receipt'?{artifact_hash:hash,amount:"999",provider:"provider.testnet"}:read(method,{})) as typeof read));
+ await db.query("UPDATE accord_subscriptions SET input=$1 WHERE id='99'",[{account_id:"unrelated.testnet"}]);
+ await assert.rejects(linkPaidReport(workspace.id,"alpha.testnet","99",0,read));
+ process.env.GROQ_ENABLED="false";
+ assert.equal((await request(`/workspaces/${workspace.id}/incidents/${incidents[0].id}/explain`,{})).status,400);
+ assert.equal((await request(`/workspaces/${workspace.id}/incidents/${incidents[0].id}/explain`,{})).status,400);
+ assert.equal((await db.query("SELECT state FROM accord_incident_explanations WHERE incident_id=$1",[incidents[0].id])).rows[0].state,"needs_review");
+ checks.push("Paid-report linking verifies owner, account association, immutable price/provider/hash and deduplicates; disabled AI fails without payment or retries");
  console.log(JSON.stringify({scope:"Isolated PostgreSQL schema + HTTP fixture authorization",checks},null,2));
 }finally{
  await new Promise<void>(r=>server.close(()=>r()));await db.end();await admin.query(`DROP SCHEMA ${schema} CASCADE`);await admin.end();
