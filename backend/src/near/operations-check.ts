@@ -35,6 +35,21 @@ try{
  const list=await request("/pilot");assert.equal(list.body.records.length,1);assert.equal(list.body.summary.demand_validated,false);
  assert.equal((await request(`/pilot/${added.body.id}`,undefined,"alpha.testnet","DELETE")).body.deleted,true);
  checks.push("Authenticated fixture access, owner isolation, honest pilot summary and feedback deletion");
+ const created=await request("/workspaces",{name:"Synthetic application",accounts:["app.testnet"]});
+ assert.equal(created.status,200);const workspace=created.body;
+ assert.equal(workspace.baseline,null);assert.equal(workspace.monitoring,false);
+ assert.equal((await request(`/workspaces/${workspace.id}`,undefined,"beta.testnet")).status,400);
+ const {proposeBaseline}=await import("./workspaces.js");
+ const snapshot={block_height:123,block_hash:"1".repeat(32),observed_at:new Date().toISOString(),accounts:[{account_id:"app.testnet",code_hash:"1".repeat(32),keys:[]}]};
+ const proposed=await proposeBaseline(workspace.id,"alpha.testnet",async()=>snapshot);
+ assert.equal((await request(`/workspaces/${workspace.id}/approve`,{proposal_hash:"wrong"})).status,400);
+ assert.equal((await request(`/workspaces/${workspace.id}/approve`,{proposal_hash:proposed.proposal_hash},"beta.testnet")).status,400);
+ assert.equal((await request(`/workspaces/${workspace.id}/approve`,{proposal_hash:proposed.proposal_hash})).body.version,1);
+ assert.equal((await request(`/workspaces/${workspace.id}/approve`,{proposal_hash:proposed.proposal_hash})).status,400);
+ await assert.rejects(proposeBaseline(workspace.id,"alpha.testnet",async()=>snapshot),/30 seconds/);
+ const parallel=await Promise.all(Array.from({length:4},()=>request("/workspaces",{name:"Bounded fixture",accounts:["app.testnet"]})));
+ assert.equal(parallel.filter(r=>r.status===200).length,2);
+ checks.push("Workspace ownership, explicit hash-bound approval, repeated approval rejection, capture cooldown and concurrent three-workspace cap");
  console.log(JSON.stringify({scope:"Isolated PostgreSQL schema + HTTP fixture authorization",checks},null,2));
 }finally{
  await new Promise<void>(r=>server.close(()=>r()));await db.end();await admin.query(`DROP SCHEMA ${schema} CASCADE`);await admin.end();

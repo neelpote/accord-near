@@ -1,8 +1,14 @@
 import type express from "express";
 import {randomUUID} from "node:crypto";
 import {db} from "./db.js";
+import {createWorkspace,ownedWorkspace,proposeBaseline,approveBaseline} from "./workspaces.js";
 import {pilotFeedback, pilotSummary} from "./pilot.js";
 export function mountOperations(app: express.Express, owner: (req: express.Request)=>Promise<string>) {
+ app.get("/workspaces",async(req,res)=>res.json((await db.query("SELECT * FROM accord_workspaces WHERE owner=$1 ORDER BY created_at",[await owner(req)])).rows));
+ app.post("/workspaces",async(req,res)=>res.json(await createWorkspace(await owner(req),req.body)));
+ app.get("/workspaces/:id",async(req,res)=>res.json(await ownedWorkspace(req.params.id,await owner(req))));
+ app.post("/workspaces/:id/capture",async(req,res)=>res.json(await proposeBaseline(req.params.id,await owner(req))));
+ app.post("/workspaces/:id/approve",async(req,res)=>res.json(await approveBaseline(req.params.id,await owner(req),req.body.proposal_hash)));
  app.get("/pilot",async(req,res)=>{
   const account=await owner(req);
   const rows=(await db.query("SELECT id,body,created_at FROM accord_pilot_feedback WHERE owner=$1 ORDER BY created_at DESC",[account])).rows;
