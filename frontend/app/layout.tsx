@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./experience.css";
 export const metadata: Metadata = {
-  title: "Accord · agent services, on your terms",
+  title: "Accord · Your agents. Your rules.",
   description:
     "Finite, cancellable recurring purchases for agent services on NEAR testnet.",
 };

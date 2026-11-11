@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test:browser": "playwright test tests/smoke.spec.ts",
+    "test:browser": "playwright test tests/smoke.spec.ts tests/design.spec.ts",
     "test:testnet": "ACCORD_LIVE_BROWSER=1 playwright test",
     "test:agents": "ACCORD_LIVE_BROWSER=1 ACCORD_AGENTS_SHOWCASE=1 playwright test tests/agent-catalog.spec.ts",
     "test:agent-wallet": "ACCORD_LIVE_BROWSER=1 ACCORD_AGENT_UI=1 playwright test tests/live-wallet.spec.ts"
@@ -17,13 +17,15 @@
     "near-api-js": "7.4.0",
     "next": "16.4.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.187.0",
     "typescript": "^5"
   },
   "engines": {

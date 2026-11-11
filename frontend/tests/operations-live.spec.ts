@@ -29,11 +29,11 @@ test("real operations workspace shows controlled change, linked payment and expo
  const download=await downloadPromise;expect(download.suggestedFilename()).toContain("accord-evidence");
  await expect(operations.getByText("Evidence downloaded; SHA-256 verified in this browser.")).toBeVisible();
  await dwell(1500);
- await operations.screenshot({path:"../docs/demo/operations-workspace.png"});
+ await operations.screenshot({path:process.env.ACCORD_REDESIGN==="1"?"../docs/demo/redesign-workspace.png":"../docs/demo/operations-workspace.png"});
  await historyLoaded;await expect(page.locator("#agreement-9")).toBeVisible();
  await page.setViewportSize({width:390,height:844});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
  await dwell(1500);
  expect(errors).toEqual([]);
 });
-test.afterEach(async({page},info)=>{if(process.env.ACCORD_RECORD_DEMO==="1"&&info.status==="passed"){const video=page.video();if(video){await page.close();await video.saveAs(resolve(process.cwd(),"../docs/demo/operations-workspace.webm"));}}});
+test.afterEach(async({page},info)=>{if(process.env.ACCORD_RECORD_DEMO==="1"&&info.status==="passed"){const video=page.video();if(video){await page.close();await video.saveAs(resolve(process.cwd(),process.env.ACCORD_REDESIGN==="1"?"../docs/demo/redesign-workspace.webm":"../docs/demo/operations-workspace.webm"));}}});

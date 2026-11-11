@@ -9,6 +9,7 @@ import {
   near,
   sendWalletTransaction,
 } from "@/lib/near";
+import AgentExperience,{AgentGlyph,WorkflowStrip,SiteMotion} from "@/components/AgentExperience";
 import OperationsWorkspace from "@/components/OperationsWorkspace";
 import PilotFeedback from "@/components/PilotFeedback";
 import ReportView, { type ServiceReport } from "@/components/ReportView";
@@ -418,17 +419,19 @@ export default function Home() {
   }
   return (
     <>
+      <SiteMotion/>
+      <a className="skip-link" href="#operations">Skip to application workspace</a>
       <div className="network">
         NEAR TESTNET <span>Free test tokens · no mainnet payments</span>
       </div>
       <header>
         <a className="brand" href="/" aria-label="Accord home">
-          <span className="mark">a</span>accord
+          <span className="mark" aria-hidden="true"><i/><i/><i/></span>accord<span className="brand-tag">/ NEAR</span>
         </a>
         <nav>
-          <a href="#operations">Application workspace</a>
+          <a href="#operations">Workspace</a>
           <a href="#market">Services</a>
-          <a href="#agreements">My agreements</a>
+          <a href="#agreements">Agreements</a>
           <button className="quiet" onClick={() => setCreator(!creator)}>
             List a service
           </button>
@@ -452,40 +455,8 @@ export default function Home() {
         </button>
       </header>
       <main>
-        <section className="intro">
-          <div>
-            <p className="eyebrow">AGENT SERVICES, ON YOUR TERMS</p>
-            <h1>
-              Delegate the work.
-              <br />
-              <span>Keep the limits.</span>
-            </h1>
-            <p className="lede">
-              Monitor code and access-key changes in your NEAR application.
-              Review evidence in the unbilled pilot, or buy agent reports with
-              a finite budget and a billing schedule the worker cannot change.
-            </p>
-          </div>
-          <aside className="agreement-preview">
-            <p className="eyebrow">YOUR AGREEMENT</p>
-            <div>
-              <strong>Fixed price</strong>
-              <span>One service. One recipient.</span>
-            </div>
-            <div>
-              <strong>Finite budget</strong>
-              <span>No automatic top-ups.</span>
-            </div>
-            <div>
-              <strong>Cancel on NEAR</strong>
-              <span>Withdraw what remains.</span>
-            </div>
-            <p className="caption">
-              The contract enforces billing terms. The provider is responsible
-              for the report.
-            </p>
-          </aside>
-        </section>
+        <AgentExperience/>
+        <WorkflowStrip/>
         {error && (
           <div role="alert" className="alert">
             {error}
@@ -644,15 +615,15 @@ export default function Home() {
           </section>
         )}
         <OperationsWorkspace key={account||"anonymous"} account={account}/>
-        <section id="market">
+        <section id="market" data-reveal>
           <div className="section-heading">
-            <h2>Services</h2>
-            <span>Independent providers · fixed terms</span>
+            <div><p className="eyebrow">THE AGENT ROSTER</p><h2>Small crew.<br/><span>Clear responsibilities.</span></h2></div>
+            <span>Read the terms. Choose your specialist.</span>
           </div>
           <div className="service-grid">
             {services.map((s) => (
-              <article className="service" key={s.id}>
-                <div className="service-icon">↗</div>
+              <article className="service" key={s.id} data-reveal>
+                <div className="service-top"><div className="service-icon"><AgentGlyph kind={s.metadata.kind}/></div><span className="service-number">SERVICE / {s.id.padStart(2,"0")}</span></div>
                 <p className="eyebrow">
                   {s.metadata.analysis_mode === "near-ai-cloud"
                     ? "NEAR AI CLOUD · VERIFIED INFERENCE"
@@ -815,7 +786,7 @@ export default function Home() {
             </button>
           </section>
         )}
-        <section id="agreements">
+        <section id="agreements" data-reveal>
           <div className="section-heading">
             <h2>My agreements</h2>
             <button
@@ -1026,7 +997,8 @@ export default function Home() {
       <details id="pilot"><summary>Pilot feedback</summary><PilotFeedback account={account}/></details>
       </main>
       <footer>
-        <span>accord · agent commerce with limits</span>
+        <a className="footer-wordmark" href="#">accord<span>↗</span></a>
+        <span>Good agents. Clear limits.</span>
         <a
           href="https://github.com/neelpote/accord-near"
           target="_blank"
