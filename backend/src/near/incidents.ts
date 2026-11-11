@@ -43,7 +43,7 @@ export async function observeWorkspace(id:string,observe=capture,manual=false){
  active.push(incident.id);
  if(!old||old.state==='resolved'){
  const event=(await c.query("INSERT INTO accord_workspace_events(workspace_id,type,body) VALUES($1,$2,$3) RETURNING id",[id,old?'incident_reopened':'incident_opened',{incident_id:incident.id,change:diff,baseline_version:w.baseline_version,source:{block_height:snapshot.block_height,block_hash:snapshot.block_hash,observed_at:snapshot.observed_at}}])).rows[0];
- await c.query("INSERT INTO accord_notifications(workspace_id,event_id,payload) VALUES($1,$2,$3) ON CONFLICT DO NOTHING",[id,event.id,{workspace:w.name,incident_id:incident.id,type:diff.type,account_id:diff.account_id,source_block:snapshot.block_hash}]);
+ await c.query("INSERT INTO accord_notifications(workspace_id,event_id,payload,channel) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING",[id,event.id,{workspace:w.name,incident_id:incident.id,type:diff.type,account_id:diff.account_id,source_block:snapshot.block_hash},w.webhook_enabled?"webhook":"in_app"]);
  }
  }
  const resolved=await c.query("UPDATE accord_incidents SET state='resolved',resolved_at=now() WHERE workspace_id=$1 AND state='open' AND NOT(id=ANY($2::bigint[])) RETURNING id",[id,active]);

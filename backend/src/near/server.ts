@@ -1,3 +1,4 @@
+import { runOperations } from "./operations-worker.js";
 import { mountOperations } from "./operations-api.js";
 import { groqConfigured } from "./groq-budget.js";
 import "express-async-errors";
@@ -465,3 +466,5 @@ async function run() {
   }
 }
 if (process.env["RUN_WORKER"] !== "false") void run();
+
+if (process.env["RUN_OPERATIONS"] !== "false") void runOperations();
