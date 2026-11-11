@@ -25,3 +25,6 @@ Each phase has three reviewable increments, with runnable checks before commits.
 
 ### Phase 1 result
 Pilot interview guide and authenticated, wallet-private feedback capture are implemented. Feedback can be deleted. The model rejects empty problems and acceptance without explicit terms, and never converts self-reports into validated demand or revenue. Target conversations and distinct-team verification remain pending; no outreach was sent. API authorization and deletion are included in the operations integration check added in phase 2.
+
+### Phase 2 result
+Workspace onboarding, finalized code/key capture, explicit baseline approval and mobile presentation checks are implemented. Read-only pilot cost is zero; existing paid offers retain separate exact-term approvals. RPC failure cannot create a fake baseline. The UI test is a presentation fixture; real signed onboarding and a controlled chain change are verified later in the release phase. Loops-prompt review: docs/evaluations/PHASE_GATES.md.

@@ -9,6 +9,7 @@ import {
   near,
   sendWalletTransaction,
 } from "@/lib/near";
+import OperationsWorkspace from "@/components/OperationsWorkspace";
 import PilotFeedback from "@/components/PilotFeedback";
 import ReportView, { type ServiceReport } from "@/components/ReportView";
 type AgentExample = {
@@ -425,6 +426,7 @@ export default function Home() {
           <span className="mark">a</span>accord
         </a>
         <nav>
+          <a href="#operations">Application workspace</a>
           <a href="#market">Services</a>
           <a href="#agreements">My agreements</a>
           <button className="quiet" onClick={() => setCreator(!creator)}>
@@ -640,6 +642,7 @@ export default function Home() {
             </button>
           </section>
         )}
+        <OperationsWorkspace key={account||"anonymous"} account={account}/>
         <section id="market">
           <div className="section-heading">
             <h2>Services</h2>

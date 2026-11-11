@@ -162,3 +162,35 @@ test("each agent listing opens its own input schema", async ({ page }) => {
     await page.getByRole("button", { name: "Close", exact: true }).click();
   }
 });
+
+test("application onboarding requires review before baseline approval",async({page})=>{
+ const snapshot={block_height:123,block_hash:"1".repeat(32),observed_at:new Date().toISOString(),accounts:[{account_id:"app.testnet",code_hash:"1".repeat(32),keys:[]}]};
+ let workspace:any=null;
+ await page.route("**/api/near/**",async r=>{
+ const path=new URL(r.request().url()).pathname.replace("/api/near","");
+ let json:any=[];
+ if(path==="/config")json={network:"testnet",contract:"accord.testnet",rpc:"http://unused.invalid",recipient:"localhost:3100"};
+ if(path==="/me")json={accountId:"owner.testnet"};
+ if(path==="/balances")json={available:"0",earned:"0",pending:"0"};
+ if(path==="/pilot")json={records:[],summary:{demand_validated:false}};
+ if(path==="/workspaces"){
+  if(r.request().method()==="POST")workspace={id:"fixture",...r.request().postDataJSON(),baseline:null,pending_baseline:null,baseline_version:0,monitoring:false};
+  json=r.request().method()==="POST"?workspace:(workspace?[workspace]:[]);
+ }
+ if(path.endsWith("/capture")){workspace.pending_baseline=snapshot;json={snapshot};}
+ if(path.endsWith("/approve")){expect(r.request().postDataJSON().proposal_hash).toMatch(/^[a-f0-9]{64}$/);workspace.baseline=snapshot;workspace.pending_baseline=null;workspace.baseline_version=1;json={approved:true};}
+ await r.fulfill({json});
+ });
+ await page.goto("http://localhost:3100");
+ await page.getByRole("textbox",{name:"Application name",exact:true}).fill("Example application");
+ await page.getByRole("textbox",{name:"Testnet account IDs",exact:true}).fill("app.testnet");
+ await page.getByRole("button",{name:"Create read-only workspace"}).click();
+ await expect(page.getByText("Baseline not approved",{exact:true})).toBeVisible();
+ await expect(page.getByRole("button",{name:/I reviewed this snapshot/})).toHaveCount(0);
+ await page.getByRole("button",{name:"Capture baseline for review"}).click();
+ await expect(page.getByRole("heading",{name:"Review proposed baseline"})).toBeVisible();
+ await page.getByRole("button",{name:/I reviewed this snapshot/}).click();
+ await expect(page.getByText("Baseline 1",{exact:true})).toBeVisible();
+ await page.setViewportSize({width:390,height:844});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
+});

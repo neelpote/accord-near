@@ -599,3 +599,16 @@ footer p {
   font-size: 12px;
   color: var(--blue);
 }
+
+/* Application operations uses the existing Accord palette and a readable evidence ledger. */
+.operations { margin: 60px 0; scroll-margin-top: 20px; }
+.operations .panel { margin: 20px 0; }
+.operations form { display: grid; gap: 16px; margin-top: 20px; }
+.operations input,.operations textarea,.operations select { width:100%; }
+.operations code { font: 12px/1.6 ui-monospace, monospace; overflow-wrap:anywhere; }
+.operations pre { white-space:pre-wrap; overflow-wrap:anywhere; font-size:12px; }
+.baseline { border-left:3px solid var(--blue); padding:0 0 0 18px; margin:18px 0; }
+.baseline-proposal { border:1px solid var(--line); padding:20px; margin-top:20px; border-radius:8px; }
+.key-review { padding:12px 0; border-bottom:1px solid var(--line); }
+.operations details { overflow-wrap:anywhere; }
+@media(max-width:600px) { .operations .section-title {display:block;} .baseline-proposal {padding:12px;} }
