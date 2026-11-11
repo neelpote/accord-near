@@ -1,6 +1,6 @@
 """Fail closed on recognizable credential formats, without printing matched secrets."""
 import re, subprocess, sys
-patterns=[r'\bsk-[A-Za-z0-9_-]{20,}',r'ed25519:[1-9A-HJ-NP-Za-km-z]{80,90}',r'gh[pousr]_[A-Za-z0-9]{30,}',r'github_pat_[A-Za-z0-9_]{60,}',r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',r'(?i)(?:private_key|secret_key)\s*["\x27]?\s*[:=]\s*["\x27]0x[0-9a-f]{64}']
+patterns=[r'\bgsk_[A-Za-z0-9]{20,}',r'\bsk-[A-Za-z0-9_-]{20,}',r'ed25519:[1-9A-HJ-NP-Za-km-z]{80,90}',r'gh[pousr]_[A-Za-z0-9]{30,}',r'github_pat_[A-Za-z0-9_]{60,}',r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',r'(?i)(?:private_key|secret_key)\s*["\x27]?\s*[:=]\s*["\x27]0x[0-9a-f]{64}']
 files=subprocess.check_output(['git','ls-files','-z']).decode().split('\0');bad=[]
 for path in filter(None,files):
  try:data=open(path,'rb').read().decode('utf8')

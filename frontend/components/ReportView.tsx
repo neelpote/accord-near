@@ -1,5 +1,6 @@
 import { near } from "@/lib/near";
 export type ServiceReport = {
+  explanation?: {provider: string; model: string; summary: string; next_steps: string[]; disclosure: string};
   risk_score?: number;
   risk_level?: string;
   summary: string;
@@ -74,6 +75,12 @@ export default function ReportView({ report: r }: { report: ServiceReport }) {
             Block hash: {r.source.block_hash}
           </p>
         )}
+        {r.explanation && <aside className="panel">
+          <h4>What to review next</h4>
+          <p>{r.explanation.summary}</p>
+          <ol>{r.explanation.next_steps.map((step,i) => <li key={i}>{step}</li>)}</ol>
+          <p className="caption">Groq · {r.explanation.model} · {r.explanation.disclosure}</p>
+        </aside>}
         {r.disclosure && <p className="caption">{r.disclosure}</p>}
         {r.findings.map((f, i) => (
           <p key={i}>{f}</p>

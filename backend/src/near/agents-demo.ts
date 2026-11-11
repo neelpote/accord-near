@@ -22,6 +22,7 @@ import {
 } from "./agents.js";
 import { digest } from "./core.js";
 import { tick } from "./worker.js";
+const groqDemo = process.env["ACCORD_GROQ_DEMO"] === "1";
 const root = resolve(import.meta.dirname, "../../..");
 if (config.network !== "testnet" || (await rpc.getNetworkId()) !== "testnet")
   throw Error("This demonstration is testnet only");
@@ -131,11 +132,12 @@ for (const row of (
   });
   if (sub.active) await finalized(buyer, "cancel", { subscription_id: row.id });
 }
-for (const definition of agentDefinitions()) {
+for (const definition of agentDefinitions().filter(d => !groqDemo || d.kind === "near-network-pulse-v1")) {
   const metadata = {
     ...definition,
     provider_url: config.provider,
-    analysis_mode: "deterministic",
+    analysis_mode: groqDemo ? "groq" : "deterministic",
+    ...(groqDemo ? {name: "Network Pulse Copilot", description: "Live NEAR network evidence with a separate Groq explanation and manual review steps. Public chain data is sent to Groq; no private inference or automatic remediation."} : {}),
   };
   const published = await request("/services", undefined, providerCookie);
   let serviceId = published.find(
@@ -269,6 +271,7 @@ for (const agent of evidence.agents) {
   );
   for (const row of cycles.slice(0, 2)) {
     verifyChainReport(row.report, agent.kind);
+    if (groqDemo) { assert.equal(row.report.explanation.provider, "groq"); assert(row.report.explanation.completion_id); }
     assert.equal(digest(row.report), row.artifact_hash);
     const receipt = await view<Receipt>("get_receipt", {
       subscription_id: agent.subscription_id,
@@ -287,7 +290,7 @@ for (const agent of evidence.agents) {
   await db.query(
     "INSERT INTO accord_agent_demos(kind,service_id,subscription_id,cycle,input,report,artifact_hash,receipt) VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(kind) DO UPDATE SET service_id=excluded.service_id,subscription_id=excluded.subscription_id,cycle=excluded.cycle,input=excluded.input,report=excluded.report,artifact_hash=excluded.artifact_hash,receipt=excluded.receipt,updated_at=now()",
     [
-      agent.kind,
+      groqDemo ? `${agent.kind}:${agent.service_id}` : agent.kind,
       agent.service_id,
       agent.subscription_id,
       0,
@@ -332,7 +335,7 @@ evidence.checks.push(
 );
 evidence.completed_at = new Date().toISOString();
 await writeFile(
-  resolve(root, "docs/agents-demo-proof.json"),
+  resolve(root, groqDemo ? "docs/groq-paid-proof.json" : "docs/agents-demo-proof.json"),
   JSON.stringify(evidence, null, 2) + "\n",
 );
 await mkdir(resolve(root, ".tools"), { recursive: true });
@@ -341,5 +344,5 @@ await writeFile(
   JSON.stringify({ cookie: buyerCookie, account_id: buyer.accountId }),
   { mode: 0o600 },
 );
-console.log("FIVE AGENTS DEMONSTRATION PASSED");
+console.log(groqDemo ? "GROQ PAID DEMONSTRATION PASSED" : "FIVE AGENTS DEMONSTRATION PASSED");
 await db.end();

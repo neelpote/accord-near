@@ -58,3 +58,11 @@ Added Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector and Netwo
 [Application CI run 42835706811](https://github.com/neelpote/accord-near/actions/runs/42835706811) passed for expansion code `a1be98823be52efe53b99c4c435f711a0574da1e`, including 13 backend unit tests, types, repeat schema migration, production build, dependency audits, two browser presentation tests and the credential-format scan. See docs/AGENT_SERVICES.md for service descriptions, IDs, inputs, outputs and reproduction commands.
 
 The final Wallet Watch UI run tested committed source `a1be98823be52efe53b99c4c435f711a0574da1e` with `application_source_dirty: false`; it passed the full flow in 1.5 minutes. The separate five-agent evidence retains its original working-tree provenance.
+
+## Groq extension — 11 November 2026
+
+14 backend tests, backend/frontend typechecks, production build and two presentation browser checks passed. Actual Groq inference on live testnet observations succeeded; see docs/groq-live-proof.json. A new Network Pulse Copilot offer (service 7, agreement 16) delivered two actual paid cycles with explanations bound into their artifact hashes. Cancellation, restricted-key deletion and buyer/provider withdrawals passed; see docs/groq-paid-proof.json. These live runs honestly record working-tree provenance. Existing five-agent evidence was preserved. Public fixture samples expose six distinct service examples, with kind derived from the report and internal publication keys separating service versions.
+
+Groq calls use server-only credentials, a persistent atomic request ceiling, bounded JSON reads, timeouts and local schema validation. No model attestation is claimed; inference is explanatory and cannot change deterministic status or authorize transactions. Controlled-incident demo and account-focused operations screen are recommendations in docs/HACKATHON_DIFFERENTIATION.md, not completed features.
+
+The live Copilot browser check passed and captured docs/demo/groq-copilot.png. Its first run used the metadata display name while the card correctly displayed the immutable onchain service name; the locator was corrected to select the Groq disclosure, and the rerun passed. Service 7 is named Network Pulse onchain, with Network Pulse Copilot in its pinned metadata. No onchain name was changed.

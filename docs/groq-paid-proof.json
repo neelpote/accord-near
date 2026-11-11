@@ -1,0 +1,196 @@
+{
+  "network": "testnet",
+  "contract": "contract.accord-dev-261110.testnet",
+  "source_commit_at_start": "7adce82e3d32106f8171d3174554860f5f4353c0",
+  "source_dirty": true,
+  "started_at": "2026-11-11T05:33:30.678Z",
+  "agents": [
+    {
+      "kind": "near-network-pulse-v1",
+      "name": "Network Pulse",
+      "service_id": "7",
+      "subscription_id": "16",
+      "input": {
+        "max_block_age_seconds": 60
+      },
+      "delegate_public_key": "ed25519:GaFWuEfk7diy8N1CNbz6VX4fjLWtReKj6G5iBuQjAdxv",
+      "cycles": [
+        {
+          "cycle": 0,
+          "report": {
+            "kind": "near-network-pulse-v1",
+            "title": "Network Pulse",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "Hy4E4JF927mK71LZAZWUVd5L8d8TRXne4B3Y1baDEzXs",
+              "block_height": 277172656
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Network",
+                "value": "testnet"
+              },
+              {
+                "label": "Finalized height",
+                "value": "277172656"
+              },
+              {
+                "label": "Block age · seconds",
+                "value": "3"
+              },
+              {
+                "label": "RPC syncing",
+                "value": "false"
+              },
+              {
+                "label": "RPC-reported validators",
+                "value": "20"
+              },
+              {
+                "label": "Gas price · yoctoNEAR/gas",
+                "value": "100000000"
+              },
+              {
+                "label": "1 TGas · yoctoNEAR",
+                "value": "100000000000000000000"
+              }
+            ],
+            "summary": "The configured RPC is serving a recent finalized block.",
+            "findings": [
+              "Freshness depends on this RPC and the provider clock; this is not a full-network consensus or availability audit."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "explanation": {
+              "model": "openai/gpt-oss-20b",
+              "summary": "The NEAR testnet RPC reported a finalized block at height 277172656 with hash Hy4E4JF927mK71LZAZWUVd5L8d8TRXne4B3Y1baDEzXs, only 3 seconds old, indicating the RPC is in sync. RPC syncing flag is false and validator count matches the expected 20. Gas price and 1 TGas values are within expected ranges. However, the check notes that block freshness depends on the RPC and provider clock, so it does not constitute a full consensus or availability audit.",
+              "provider": "groq",
+              "disclosure": "Public chain evidence sent to Groq. AI explanation may be wrong; verify the source block. No TEE attestation, private inference or transaction authority is claimed.",
+              "next_steps": [
+                "Verify the reported block hash against other trusted RPC endpoints to confirm consistency.",
+                "Check the system clock of the RPC provider to ensure accurate timekeeping.",
+                "Monitor block age over a longer period to detect any sudden increases in latency.",
+                "Cross‑check the reported validator set against the official validator list for the testnet.",
+                "If deeper assurance is required, perform additional consensus‑level checks or use a multi‑RPC approach."
+              ],
+              "completion_id": "chatcmpl-fa802a32-2346-4dc0-90c5-188a317d59cf"
+            },
+            "observed_at": "2026-11-11T05:33:50.037Z",
+            "recommendations": []
+          },
+          "artifact_hash": "5e108c6ab5a5f03a39ffe3cf3d66986f6c8cb18a70a2f4df6b189874305a37a0",
+          "receipt": {
+            "cycle": 0,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794375233573307485",
+            "artifact_hash": "5e108c6ab5a5f03a39ffe3cf3d66986f6c8cb18a70a2f4df6b189874305a37a0",
+            "subscription_id": "16"
+          }
+        },
+        {
+          "cycle": 1,
+          "report": {
+            "kind": "near-network-pulse-v1",
+            "title": "Network Pulse",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "Hhs7UD3RSdatb91QhvLZdkbdZG2JQdvr3fGgADJTuxwc",
+              "block_height": 277172766
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Network",
+                "value": "testnet"
+              },
+              {
+                "label": "Finalized height",
+                "value": "277172766"
+              },
+              {
+                "label": "Block age · seconds",
+                "value": "3"
+              },
+              {
+                "label": "RPC syncing",
+                "value": "false"
+              },
+              {
+                "label": "RPC-reported validators",
+                "value": "20"
+              },
+              {
+                "label": "Gas price · yoctoNEAR/gas",
+                "value": "100000000"
+              },
+              {
+                "label": "1 TGas · yoctoNEAR",
+                "value": "100000000000000000000"
+              }
+            ],
+            "summary": "The configured RPC is serving a recent finalized block.",
+            "findings": [
+              "Freshness depends on this RPC and the provider clock; this is not a full-network consensus or availability audit."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "explanation": {
+              "model": "openai/gpt-oss-20b",
+              "summary": "The RPC reports a finalized block at height 277172766 with a block hash of Hhs7UD3RSdatb91QhvLZdkbdZG2JQdvr3fGgADJTuxwc, 3 seconds old, RPC syncing false, 20 validators, and a gas price of 100000000 yoctoNEAR/gas. Freshness depends on the RPC and provider clock; this is not a full‑network consensus or availability audit.",
+              "provider": "groq",
+              "disclosure": "Public chain evidence sent to Groq. AI explanation may be wrong; verify the source block. No TEE attestation, private inference or transaction authority is claimed.",
+              "next_steps": [
+                "Verify that the reported block hash matches the official block hash for height 277172766 on the testnet consensus data.",
+                "Check the block timestamp against the local system clock to assess clock drift or potential mis‑reporting.",
+                "Monitor the RPC over a period (e.g., 10 minutes) to confirm consistent block age and finalized height reporting.",
+                "Cross‑reference the reported validator set (20 validators) with the official validator list for testnet to ensure alignment.",
+                "If discrepancies arise or for higher confidence, query an additional independent RPC endpoint and compare results."
+              ],
+              "completion_id": "chatcmpl-7ef47b3e-3d59-481e-97da-3a5e09f6ccc9"
+            },
+            "observed_at": "2026-11-11T05:34:56.675Z",
+            "recommendations": []
+          },
+          "artifact_hash": "8f28a3be90299c69ca7e93e3389d9455df8bb009ee3822943ef518797980d501",
+          "receipt": {
+            "cycle": 1,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794375299592248147",
+            "artifact_hash": "8f28a3be90299c69ca7e93e3389d9455df8bb009ee3822943ef518797980d501",
+            "subscription_id": "16"
+          }
+        }
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "method": "register_service",
+      "hash": "AehgKt5azgjSJUzCFGypoPVw1MzNnaxwKD6cMJdCMw4T"
+    },
+    {
+      "method": "subscribe",
+      "hash": "C3y23ximjonQupk5cMk7zsH52nWVwpe8ofYQnJhRXRgP"
+    },
+    {
+      "method": "cancel",
+      "hash": "DsnBZ49Wqb6ydL7dcK6v6AaK4DvDQ3vRvksehysqbh4q"
+    },
+    {
+      "method": "withdraw",
+      "hash": "2M64TECdqso2h9qnooXfUgn5nXATYUR7Fqwpb9N3tQU3"
+    },
+    {
+      "method": "withdraw",
+      "hash": "AiGN9xdSVgEjEca27pLc3J3qrzG1FXQ2LVyrAoYfgXAd"
+    }
+  ],
+  "checks": [
+    "Network Pulse: two due cycles, exact paid artifacts, final receipts, cancellation and key removal",
+    "Customer remainder and provider earnings reached the actual testnet wallets"
+  ],
+  "completed_at": "2026-11-11T05:35:24.575Z"
+}

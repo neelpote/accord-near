@@ -1,0 +1,66 @@
+{
+  "scope": "Live RPC + Groq inference; not a paid subscription proof",
+  "artifact_hash": "271f76cd16f03851b1401966fad1bbd24e899942d0de5f8ae285ce85f0b2002e",
+  "report": {
+    "kind": "near-network-pulse-v1",
+    "title": "Network Pulse",
+    "method": "near-rpc-rules-v1",
+    "status": "ok",
+    "summary": "The configured RPC is serving a recent finalized block.",
+    "metrics": [
+      {
+        "label": "Network",
+        "value": "testnet"
+      },
+      {
+        "label": "Finalized height",
+        "value": "277172462"
+      },
+      {
+        "label": "Block age · seconds",
+        "value": "3"
+      },
+      {
+        "label": "RPC syncing",
+        "value": "false"
+      },
+      {
+        "label": "RPC-reported validators",
+        "value": "20"
+      },
+      {
+        "label": "Gas price · yoctoNEAR/gas",
+        "value": "100000000"
+      },
+      {
+        "label": "1 TGas · yoctoNEAR",
+        "value": "100000000000000000000"
+      }
+    ],
+    "findings": [
+      "Freshness depends on this RPC and the provider clock; this is not a full-network consensus or availability audit."
+    ],
+    "recommendations": [],
+    "source": {
+      "network": "testnet",
+      "block_height": 277172462,
+      "block_hash": "3WwB5ZSJAShYNXQbU1fg5XQ5tUXLuJYhsboeNx2cJApf"
+    },
+    "observed_at": "2026-11-11T05:31:57.557Z",
+    "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+    "explanation": {
+      "summary": "The NEAR testnet RPC reported a finalized block at height 277172462 with hash 3WwB5ZSJAShYNXQbU1fg5XQ5tUXLuJYhsboeNx2cJApf that is 3 seconds old. The RPC is not syncing, reports 20 validators, and the gas price is 100000000 yoctoNEAR per gas. The check notes that block freshness depends on the RPC and provider clock and does not constitute a full network consensus or availability audit.",
+      "next_steps": [
+        "Verify the reported block hash against the official NEAR testnet explorer to confirm consistency.",
+        "Check the provider’s system clock accuracy to ensure the 3‑second age is reliable.",
+        "Monitor the RPC’s sync status over a period to detect any future desynchronization.",
+        "Compare the reported gas price with recent network averages to assess pricing accuracy.",
+        "If deeper consensus validation is required, perform additional checks against multiple independent RPCs or the official node data."
+      ],
+      "provider": "groq",
+      "model": "openai/gpt-oss-20b",
+      "completion_id": "chatcmpl-c6573a4e-fe0b-46bd-9922-f041e9532a4e",
+      "disclosure": "Public chain evidence sent to Groq. AI explanation may be wrong; verify the source block. No TEE attestation, private inference or transaction authority is claimed."
+    }
+  }
+}

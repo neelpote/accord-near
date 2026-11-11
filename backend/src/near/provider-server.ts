@@ -11,6 +11,8 @@ import {
   type Receipt,
 } from "./config.js";
 import { isAgentKind, validateServiceInput, runChainAgent } from "./agents.js";
+import { reserveGroqRequest } from "./groq-budget.js";
+import { explainWithGroq } from "./groq.js";
 import { inferVerified } from "./ai.js";
 import { analyze, digest } from "./core.js";
 const app = express();
@@ -114,6 +116,11 @@ app.post("/prepare", async (req, res) => {
       report = isAgentKind(metadata.kind)
         ? await runChainAgent(metadata.kind, input)
         : analyze(input);
+    if (metadata.analysis_mode === "groq") {
+      if (!isAgentKind(metadata.kind)) throw Error("Groq requires chain evidence");
+      await reserveGroqRequest();
+      report = await explainWithGroq(report as Parameters<typeof explainWithGroq>[0]);
+    }
     const artifact_hash = digest(report);
     await db.query(
       "UPDATE accord_provider_artifacts SET artifact_hash=$3,report=$4,state='READY' WHERE subscription_id=$1 AND cycle=$2 AND prepare_id=$5",

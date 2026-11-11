@@ -1,3 +1,4 @@
+import { groqConfigured } from "./groq-budget.js";
 import "express-async-errors";
 import express from "express";
 import { randomBytes, randomUUID, createHash } from "node:crypto";
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
   }
   next();
 });
+app.get("/inference/status", (_req,res) => res.json({groq_configured: groqConfigured()}));
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
 const id = (s: unknown) => {
   if (
@@ -151,7 +153,7 @@ app.post("/auth/logout", async (req, res) => {
 app.get("/agent-examples", async (_req, res) =>
   res.json(
     (await db.query("SELECT * FROM accord_agent_demos ORDER BY service_id"))
-      .rows,
+      .rows.map(row => ({...row, kind: row.report.kind})),
   ),
 );
 app.get("/agent-types", (_req, res) => res.json(agentDefinitions()));
@@ -192,16 +194,18 @@ app.post("/services", async (req, res) => {
     typeof metadata.description !== "string" ||
     metadata.description.length > 2000 ||
     metadata.provider_url !== config.provider ||
-    !["deterministic", "near-ai-cloud", undefined].includes(
+    !["deterministic", "near-ai-cloud", "groq", undefined].includes(
       metadata.analysis_mode,
     )
   )
     throw new Error("Use the approved risk-provider endpoint and schema");
   if (isAgentKind(metadata.kind)) {
-    if (metadata.analysis_mode !== "deterministic")
+    if (!["deterministic", "groq"].includes(metadata.analysis_mode))
       throw new Error("Live RPC agents use deterministic rules");
     validateServiceInput(metadata.kind, metadata.input_example);
   }
+  if (metadata.analysis_mode === "groq" && (!isAgentKind(metadata.kind) || !groqConfigured()))
+    throw Error("Groq chain explanations require an enabled provider and key");
   const service = await view<Service | null>("get_service", {
     service_id: serviceId,
   });

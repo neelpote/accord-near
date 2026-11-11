@@ -1,3 +1,4 @@
+import { verifyGroqExplanation } from "./groq.js";
 import { Account, KeyPair } from "near-api-js";
 import { db } from "./db.js";
 import {
@@ -206,6 +207,7 @@ export async function tick() {
       if (isAgentKind(metadata.kind))
         verifyChainReport(delivered.report, metadata.kind);
       else verifyReport(delivered.report);
+      if (metadata.analysis_mode === "groq") verifyGroqExplanation(delivered.report.explanation);
       if (digest(delivered.report) !== receipt.artifact_hash)
         throw new Error("Delivered artifact hash mismatch");
       await db.query(

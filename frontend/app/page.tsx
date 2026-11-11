@@ -355,6 +355,10 @@ export default function Home() {
     if (!config) throw new Error("Configuration unavailable");
     if (!/^\d+(\.\d{1,24})?$/.test(price))
       throw new Error("Use a positive NEAR amount with at most 24 decimals");
+    if (analysisMode === "groq") {
+      const status = await api("/inference/status");
+      if (!status.groq_configured) throw new Error("Groq provider is not configured; no offer transaction was requested");
+    }
     const [whole, fraction = ""] = price.split(".");
     const amount =
       BigInt(whole) * 10n ** 24n + BigInt(fraction.padEnd(24, "0"));
@@ -602,7 +606,10 @@ export default function Home() {
                   onChange={(e) => setAnalysisMode(e.target.value)}
                 >
                   <option value="deterministic">
-                    Deterministic concentration report
+                    Rule-based report
+                  </option>
+                  <option value="groq" disabled={!creatorKind.startsWith("near-")}>
+                    Live chain evidence + Groq explanation
                   </option>
                   <option value="near-ai-cloud" disabled>
                     NEAR AI Cloud · awaiting credits
@@ -648,6 +655,7 @@ export default function Home() {
                 </p>
                 <h3>{s.service.name}</h3>
                 <p>{s.metadata.description}</p>
+                {s.metadata.analysis_mode === "groq" && <p className="caption">Groq explains public chain evidence. No private inference or automatic remediation.</p>}
                 {s.metadata.analysis_mode === "near-ai-cloud" && (
                   <p>
                     AI report · signed model response. Preparation must verify

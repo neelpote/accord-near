@@ -146,3 +146,7 @@ The existing Daemon marketplace, Express/PostgreSQL structure, independent provi
 `upstream-baseline` identifies the imported source. The NEAR contract, wallet authentication, limited-key integration, persistent worker/provider protocol, active Accord interface and verification work were implemented during the November 2026 hackathon. See [PROVENANCE.md](PROVENANCE.md), the [baseline-to-current diff](https://github.com/neelpote/accord-near/compare/upstream-baseline...main), and [LICENSE](LICENSE). Third-party tools/docs retain their own licenses.
 
 Best-fit tracks are Agent Economy and AI Security & Defense. Final track selection, team details, payout account, consent and the exact submission payload remain the human's decisions. Loops reviews are agent-run reviews using fetched event prompts, not official judge scores. No hackathon application or social post has been sent. The live rules require rereading before submission; see [HACKATHON.md](HACKATHON.md).
+
+## Groq copilot extension
+
+New chain-agent offers can include a separate Groq explanation of the public NEAR evidence. Existing deterministic offers remain unchanged. See [setup and limits](docs/GROQ.md), [live inference proof](docs/groq-live-proof.json) and the [submission improvement assessment](docs/HACKATHON_DIFFERENTIATION.md). This does not claim private inference, automatic remediation or independent providers.
