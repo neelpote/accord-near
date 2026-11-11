@@ -12,6 +12,12 @@ export async function migrate() {
  CREATE UNIQUE INDEX IF NOT EXISTS accord_one_unresolved_cycle ON accord_cycles(subscription_id) WHERE state <> 'DELIVERED';
  ALTER TABLE accord_services ADD COLUMN IF NOT EXISTS listed boolean NOT NULL DEFAULT true;
  ALTER TABLE accord_provider_artifacts ADD COLUMN IF NOT EXISTS state text NOT NULL DEFAULT 'READY';
+ CREATE TABLE IF NOT EXISTS accord_workspaces(id uuid PRIMARY KEY,owner text NOT NULL,name text NOT NULL,accounts jsonb NOT NULL,baseline jsonb,pending_baseline jsonb,baseline_version integer NOT NULL DEFAULT 0,approved_at timestamptz,created_at timestamptz NOT NULL DEFAULT now());
+ ALTER TABLE accord_workspaces ADD COLUMN IF NOT EXISTS last_capture_at timestamptz;
+ ALTER TABLE accord_workspaces ADD COLUMN IF NOT EXISTS monitoring boolean NOT NULL DEFAULT false;
+ ALTER TABLE accord_workspaces ADD COLUMN IF NOT EXISTS last_success_at timestamptz;
+ ALTER TABLE accord_workspaces ADD COLUMN IF NOT EXISTS last_error text;
+ CREATE TABLE IF NOT EXISTS accord_workspace_events(id bigserial PRIMARY KEY,workspace_id uuid NOT NULL REFERENCES accord_workspaces(id) ON DELETE CASCADE,type text NOT NULL,body jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
  CREATE TABLE IF NOT EXISTS accord_groq_budget(id integer PRIMARY KEY,requests integer NOT NULL);
  INSERT INTO accord_groq_budget VALUES(1,0) ON CONFLICT DO NOTHING;
  CREATE TABLE IF NOT EXISTS accord_ai_budget(id integer PRIMARY KEY,requests integer NOT NULL);
