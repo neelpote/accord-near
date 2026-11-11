@@ -1,91 +1,64 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 const Scene = dynamic(() => import("./AgentScene"), {
   ssr: false,
   loading: () => (
     <div className="scene-loading" aria-hidden="true">
-      <AgentGlyph kind="near-contract-sentinel-v1" />
+      Loading character study…
     </div>
   ),
 });
 const crew = [
+  { name: "Wallet Watch", role: "Balances" },
+  { name: "Access Guard", role: "Permissions" },
+  { name: "Contract Sentinel", role: "Code identity" },
+  { name: "Receipt Inspector", role: "Transactions" },
+  { name: "Network Pulse", role: "Network" },
+];
+const chapters = [
   {
-    name: "Wallet Watch",
-    role: "Balances",
-    description: "Review spendable funds and the reserve you choose.",
-    kind: "near-wallet-watch-v1",
+    label: "01 / OBSERVE",
+    title: (
+      <>
+        Know what
+        <br />
+        changed.
+      </>
+    ),
+    body: "Code changes. Keys change. Your baseline should not change without you. Put your NEAR application under a watch you can inspect.",
   },
   {
-    name: "Access Guard",
-    role: "Permissions",
-    description: "Review public keys and the authority they hold.",
-    kind: "near-access-guard-v1",
+    label: "02 / INSPECT",
+    title: (
+      <>
+        Evidence.
+        <br />
+        Then opinion.
+      </>
+    ),
+    body: "Compare the approved and observed state. Read the source evidence. Ask for an AI explanation when you need one—not instead of the facts.",
   },
   {
-    name: "Contract Sentinel",
-    role: "Code identity",
-    description: "Compare deployed code with your approved baseline.",
-    kind: "near-contract-sentinel-v1",
-  },
-  {
-    name: "Receipt Inspector",
-    role: "Transactions",
-    description: "Inspect finalized outcomes and exact gas burn.",
-    kind: "near-receipt-inspector-v1",
-  },
-  {
-    name: "Network Pulse",
-    role: "Network",
-    description: "Check block freshness and the configured RPC.",
-    kind: "near-network-pulse-v1",
+    label: "03 / LIMIT",
+    title: (
+      <>
+        Delegate work.
+        <br />
+        Keep control.
+      </>
+    ),
+    body: "Choose the provider, price and finite budget for a paid report. The contract holds the terms. You keep the exit.",
   },
 ];
-export function AgentGlyph({ kind }: { kind?: string }) {
-  const index = crew.findIndex((c) => c.kind === kind);
-  return (
-    <svg
-      className={`agent-glyph glyph-${index}`}
-      viewBox="0 0 80 80"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="m16 22 25-10 24 12-25 12Z"
-        fill="#fcf5e9"
-        stroke="currentColor"
-        strokeOpacity=".18"
-      />
-      <path
-        d="M16 22v32l24 15V36Z"
-        fill="#d9d5cc"
-        stroke="currentColor"
-        strokeOpacity=".18"
-      />
-      <path
-        d="m40 36 25-12v31L40 69Z"
-        fill="#efebe3"
-        stroke="currentColor"
-        strokeOpacity=".18"
-      />
-      <path d="m20 30 16 10v18L20 48Z" fill="#252d2d" />
-      <path
-        className="glyph-eyes"
-        d="m24 37 2 1v6l-2-1zm7 4 2 1v6l-2-1Z"
-        fill="#b5e6d4"
-      />
-      <path
-        d="m48 42 10-5v10l-10 5Z"
-        fill={index === 2 ? "#ec692e" : "#b6c2b3"}
-      />
-      <path d="m27 18 14-5 14 7-14 5Z" fill="#e96832" fillOpacity=".65" />
-    </svg>
-  );
-}
 export default function AgentExperience() {
+  const section = useRef<HTMLElement>(null),
+    stage = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(2),
     [paused, setPaused] = useState(false),
-    [reduced, setReduced] = useState(false);
+    [reduced, setReduced] = useState(false),
+    [progress, setProgress] = useState(0);
+  const phase = Math.min(2, Math.floor(progress * 3));
   useEffect(() => {
     const m = matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReduced(m.matches);
@@ -100,72 +73,174 @@ export default function AgentExperience() {
       delete document.documentElement.dataset.motion;
     };
   }, [paused, reduced]);
-  const agent = crew[active]!;
+  useEffect(() => {
+    let frame = 0;
+    function update() {
+      frame = 0;
+      if (!section.current || !stage.current || reduced) return;
+      const rect = section.current.getBoundingClientRect(),
+        top = parseFloat(getComputedStyle(stage.current).top) || 0;
+      const range = Math.max(
+        1,
+        section.current.offsetHeight - stage.current.offsetHeight,
+      );
+      const p = reduced
+        ? 0
+        : Math.max(0, Math.min(1, (top - rect.top) / range));
+      setProgress(p);
+      section.current.style.setProperty("--story-progress", p.toFixed(4));
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    schedule();
+    addEventListener("scroll", schedule, { passive: true });
+    addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      removeEventListener("scroll", schedule);
+      removeEventListener("resize", schedule);
+    };
+  }, [reduced]);
+  function jump(index: number) {
+    if (reduced) {
+      setProgress((index + 0.2) / 3);
+      return;
+    }
+    if (!section.current || !stage.current) return;
+    const rect = section.current.getBoundingClientRect(),
+      top = parseFloat(getComputedStyle(stage.current).top) || 0;
+    const range = section.current.offsetHeight - stage.current.offsetHeight;
+    scrollTo({
+      top:
+        scrollY +
+        rect.top -
+        top +
+        range * (index === 0 ? 0 : (index + 0.2) / 3),
+      behavior: paused || reduced ? "auto" : "smooth",
+    });
+  }
   return (
-    <section className="intro" aria-labelledby="hero-heading">
-      <div className="hero-copy">
-        <p className="eyebrow">
-          <span className="orange-square" /> AUTONOMY, WITH BOUNDARIES
-        </p>
-        <h1 id="hero-heading">
-          Your agents.
-          <br />
-          <span>Your rules.</span>
-        </h1>
-        <p className="lede">
-          A watchful crew for your NEAR application. Catch code and key changes,
-          inspect the evidence, and keep paid reports inside your limits.
-        </p>
-        <div className="hero-actions">
-          <a className="primary-link" href="#operations">
-            Open workspace <span>↗</span>
-          </a>
-          <a className="text-link" href="#market">
-            Meet the agents <span>↓</span>
-          </a>
+    <section
+      className={`intro agent-story ${reduced ? "story-static" : ""}`}
+      ref={section}
+      data-chapter={phase}
+      aria-label="Accord: observe, inspect and limit"
+    >
+      <div className="story-stage" ref={stage}>
+        <div className="story-top">
+          <span>ACCORD / NEAR APPLICATION OPERATIONS</span>
+          <span>SCROLL TO INSPECT ↓</span>
         </div>
-        <div className="hero-footnote">
-          <span className="small-cross">+</span>
-          <p>
-            You approve the baseline.
-            <br />
-            You set the spending limit.
-          </p>
-        </div>
-      </div>
-      <div className="hero-lab">
-        <div className="lab-topline">
-          <span>ACCORD / AGENT LAB</span>
-          <span className="lab-cross">+</span>
-        </div>
-        <Scene active={active} paused={paused || reduced} />
-        <div className="lab-agent">
-          <span className="agent-serial">0{active + 1} / 05</span>
-          <div>
-            <h2>{agent.name}</h2>
-            <p>{agent.description}</p>
-          </div>
-          <a href="#market" aria-label={`Explore ${agent.name}`}>
-            ↗
-          </a>
-        </div>
-        <div
-          className="lab-selector"
-          role="group"
-          aria-label="Explore agent roles"
-        >
-          {crew.map((c, i) => (
-            <button
-              key={c.kind}
-              onClick={() => setActive(i)}
-              aria-pressed={active === i}
+        <div className="story-copy">
+          {chapters.map((c, i) => (
+            <div
+              className={`story-chapter ${phase === i ? "current" : ""}`}
+              key={i}
+              aria-hidden={phase !== i}
             >
-              {c.role}
-            </button>
+              <p className="eyebrow">{c.label}</p>
+              {i === 0 ? <h1>{c.title}</h1> : <h2>{c.title}</h2>}
+              <p className="story-description">{c.body}</p>
+            </div>
           ))}
+          <div className="hero-actions">
+            <a className="primary-link" href="#operations">
+              Open workspace <span>↗</span>
+            </a>
+            <a className="text-link" href="#market">
+              Browse services <span>↓</span>
+            </a>
+          </div>
         </div>
-        <div className="lab-bottomline">
-          <span>Illustrative crew · explore reports below</span>
+        <div className="story-visual">
+          <svg
+            className="story-circuit"
+            viewBox="0 0 500 600"
+            aria-hidden="true"
+          >
+            <path
+              className="circuit-base"
+              d="M20 150H135V250H320V80H460M70 500H180V390H420V540M20 320H80V50H210"
+            />
+            <path
+              className="circuit-progress"
+              pathLength="1"
+              d="M20 150H135V250H320V80H460M70 500H180V390H420V540"
+            />
+            <rect x="12" y="142" width="16" height="16" />
+            <rect x="452" y="72" width="16" height="16" />
+            <rect x="412" y="532" width="16" height="16" />
+          </svg>
+          <div className="evidence-plane" aria-hidden="true">
+            <span>APPROVED</span>
+            <i />
+            <i />
+            <i />
+            <b>COMPARE WITH OBSERVED STATE</b>
+          </div>
+          <Scene
+            active={active}
+            paused={paused || reduced}
+            progress={progress}
+          />
+          <div className="budget-plane" aria-hidden="true">
+            <span>AUTHORITY / BOUNDED</span>
+            <dl>
+              <div>
+                <dt>Price</dt>
+                <dd>Fixed</dd>
+              </div>
+              <div>
+                <dt>Cycles</dt>
+                <dd>Finite</dd>
+              </div>
+              <div>
+                <dt>Exit</dt>
+                <dd>Owner</dd>
+              </div>
+            </dl>
+          </div>
+          <div className="lab-agent">
+            <span>FOCUS</span>
+            <h2>{crew[active]!.name}</h2>
+          </div>
+          <div
+            className="lab-selector"
+            role="group"
+            aria-label="Explore agent roles"
+          >
+            {crew.map((c, i) => (
+              <button
+                key={c.name}
+                aria-pressed={i === active}
+                onClick={() => setActive(i)}
+              >
+                {c.role}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="story-bottom">
+          <div
+            className="chapter-selector"
+            role="group"
+            aria-label="Workflow chapters"
+          >
+            {["Observe", "Inspect", "Limit"].map((name, i) => (
+              <button
+                key={name}
+                aria-pressed={phase === i}
+                onClick={() => jump(i)}
+              >
+                <span>0{i + 1}</span>
+                {name}
+              </button>
+            ))}
+          </div>
+          <span className="illustration-note">
+            Illustrated workflow · not live telemetry
+          </span>
           <button
             className="motion-toggle"
             disabled={reduced}
@@ -175,60 +250,13 @@ export default function AgentExperience() {
             {reduced
               ? "Reduced motion"
               : paused
-                ? "▶ Resume animations"
-                : "Ⅱ Pause animations"}
+                ? "Resume animations"
+                : "Pause animations"}
           </button>
         </div>
-      </div>
-    </section>
-  );
-}
-export function WorkflowStrip() {
-  return (
-    <section
-      className="workflow-strip"
-      aria-label="How Accord works"
-      data-reveal
-    >
-      <div>
-        <span className="flow-index">01 / OBSERVE</span>
-        <svg viewBox="0 0 180 80" aria-hidden="true">
-          <path d="M10 40H170M90 8V72" />
-          <rect x="61" y="15" width="58" height="50" />
-          <rect className="scan-block" x="80" y="30" width="20" height="20" />
-        </svg>
-        <h2>A baseline you approve.</h2>
-        <p>
-          Start with your deployment records. Keep code identity and key
-          permissions in view.
-        </p>
-      </div>
-      <div>
-        <span className="flow-index">02 / UNDERSTAND</span>
-        <svg viewBox="0 0 180 80" aria-hidden="true">
-          <path d="M12 20H55V40H125V60H168M90 40V10M90 40V72" />
-          <rect x="5" y="13" width="14" height="14" />
-          <rect className="signal-block" x="83" y="33" width="14" height="14" />
-          <rect x="161" y="53" width="14" height="14" />
-        </svg>
-        <h2>Evidence, before opinion.</h2>
-        <p>
-          Inspect what changed. Ask for an optional AI explanation when you need
-          context.
-        </p>
-      </div>
-      <div>
-        <span className="flow-index">03 / STAY IN CONTROL</span>
-        <svg viewBox="0 0 180 80" aria-hidden="true">
-          <path d="M12 40H57M123 40H168" />
-          <path d="m90 9 30 13v23c0 13-30 27-30 27S60 58 60 45V22Z" />
-          <path className="shield-tick" d="m78 39 9 9 17-20" />
-        </svg>
-        <h2>Terms that stay put.</h2>
-        <p>
-          Fixed price. Finite budget. Separate approval for every paid
-          agreement.
-        </p>
+        <div className="story-progress" aria-hidden="true">
+          <span />
+        </div>
       </div>
     </section>
   );

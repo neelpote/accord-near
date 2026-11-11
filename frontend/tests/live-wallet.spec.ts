@@ -191,7 +191,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
     path: resolve(
       root,
       process.env.ACCORD_AGENT_UI === "1"
-        ? (process.env.ACCORD_REDESIGN === "1" ? "docs/demo/redesign-wallet-watch.png" : "docs/demo/wallet-watch-live.png")
+        ? (process.env.ACCORD_REDESIGN === "1" ? (process.env.ACCORD_EDITORIAL === "1" ? "docs/demo/editorial-wallet-watch.png" : "docs/demo/redesign-wallet-watch.png") : "docs/demo/wallet-watch-live.png")
         : "docs/demo/marketplace-and-delivery.png",
     ),
     fullPage: true,
@@ -231,7 +231,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
     resolve(
       root,
       process.env.ACCORD_AGENT_UI === "1"
-        ? (process.env.ACCORD_REDESIGN === "1" ? "docs/redesign-wallet-proof.json" : "docs/browser-live-agent-proof.json")
+        ? (process.env.ACCORD_REDESIGN === "1" ? (process.env.ACCORD_EDITORIAL === "1" ? "docs/editorial-wallet-proof.json" : "docs/redesign-wallet-proof.json") : "docs/browser-live-agent-proof.json")
         : "docs/browser-testnet-proof.json",
     ),
     JSON.stringify(
@@ -260,7 +260,7 @@ test.afterEach(async ({ page }, info) => {
         resolve(
           process.cwd(),
           process.env.ACCORD_AGENT_UI === "1"
-            ? (process.env.ACCORD_REDESIGN === "1" ? "../docs/demo/redesign-wallet-demo.webm" : "../docs/demo/live-agent-wallet-demo.webm")
+            ? (process.env.ACCORD_REDESIGN === "1" ? (process.env.ACCORD_EDITORIAL === "1" ? "../docs/demo/editorial-wallet-demo.webm" : "../docs/demo/redesign-wallet-demo.webm") : "../docs/demo/live-agent-wallet-demo.webm")
             : "../docs/demo/accord-testnet-demo.webm",
         ),
       );

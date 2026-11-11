@@ -9,7 +9,7 @@ import {
   near,
   sendWalletTransaction,
 } from "@/lib/near";
-import AgentExperience,{AgentGlyph,WorkflowStrip,SiteMotion} from "@/components/AgentExperience";
+import AgentExperience,{SiteMotion} from "@/components/AgentExperience";
 import OperationsWorkspace from "@/components/OperationsWorkspace";
 import PilotFeedback from "@/components/PilotFeedback";
 import ReportView, { type ServiceReport } from "@/components/ReportView";
@@ -132,6 +132,11 @@ export default function Home() {
     ),
     [price, setPrice] = useState("0.01"),
     [interval, setIntervalSeconds] = useState(60);
+  useEffect(()=>{
+    if(!selected)return;
+    const form=document.getElementById("service-terms");
+    form?.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches||document.documentElement.dataset.motion==="paused"?"auto":"smooth",block:"start"});
+  },[selected]);
   async function refresh(c = config) {
     if (!c) return;
     const [rows, examples] = await Promise.all([
@@ -456,7 +461,6 @@ export default function Home() {
       </header>
       <main>
         <AgentExperience/>
-        <WorkflowStrip/>
         {error && (
           <div role="alert" className="alert">
             {error}
@@ -617,20 +621,20 @@ export default function Home() {
         <OperationsWorkspace key={account||"anonymous"} account={account}/>
         <section id="market" data-reveal>
           <div className="section-heading">
-            <div><p className="eyebrow">THE AGENT ROSTER</p><h2>Small crew.<br/><span>Clear responsibilities.</span></h2></div>
+            <div><p className="eyebrow">SERVICE DIRECTORY</p><h2>Choose the work.<br/><span>Read the terms.</span></h2></div>
             <span>Read the terms. Choose your specialist.</span>
           </div>
           <div className="service-grid">
             {services.map((s) => (
               <article className="service" key={s.id} data-reveal>
-                <div className="service-top"><div className="service-icon"><AgentGlyph kind={s.metadata.kind}/></div><span className="service-number">SERVICE / {s.id.padStart(2,"0")}</span></div>
+                <div className="service-identity"><span className="service-number">SERVICE / {s.id.padStart(2,"0")}</span>
                 <p className="eyebrow">
                   {s.metadata.analysis_mode === "near-ai-cloud"
                     ? "NEAR AI CLOUD · VERIFIED INFERENCE"
                     : (s.metadata.category ?? "PORTFOLIO ANALYSIS")}
                 </p>
-                <h3>{s.service.name}</h3>
-                <p>{s.metadata.description}</p>
+                <h3>{s.service.name}</h3></div>
+                <div className="service-description"><p>{s.metadata.description}</p>
                 {s.metadata.analysis_mode === "groq" && <p className="caption">Groq explains public chain evidence. No private inference or automatic remediation.</p>}
                 {s.metadata.analysis_mode === "near-ai-cloud" && (
                   <p>
@@ -638,7 +642,7 @@ export default function Home() {
                     before billing.
                   </p>
                 )}
-                <dl>
+                </div><div className="service-terms"><dl>
                   <div>
                     <dt>Per report</dt>
                     <dd>{near(s.service.price)} test NEAR</dd>
@@ -655,6 +659,21 @@ export default function Home() {
                     <dd className="account">{s.service.provider}</dd>
                   </div>
                 </dl>
+                <button
+                  disabled={busy || !account}
+                  onClick={() => {
+                    setSelected(s);
+                    setInput(
+                      JSON.stringify(
+                        s.metadata.input_example ?? JSON.parse(sample),
+                        null,
+                        2,
+                      ),
+                    );
+                  }}
+                >
+                  Choose terms →
+                </button></div>
                 {examples
                   .filter(
                     (e) => e.service_id === s.id && e.kind === s.metadata.kind,
@@ -685,21 +704,7 @@ export default function Home() {
                       </a>
                     </details>
                   ))}
-                <button
-                  disabled={busy || !account}
-                  onClick={() => {
-                    setSelected(s);
-                    setInput(
-                      JSON.stringify(
-                        s.metadata.input_example ?? JSON.parse(sample),
-                        null,
-                        2,
-                      ),
-                    );
-                  }}
-                >
-                  Choose terms →
-                </button>
+
               </article>
             ))}
             {services.length === 0 && (
@@ -714,7 +719,7 @@ export default function Home() {
           </div>
         </section>
         {selected && (
-          <section className="panel">
+          <section className="panel" id="service-terms">
             <div className="section-heading">
               <h2>Your terms · {selected.service.name}</h2>
               <button className="quiet" onClick={() => setSelected(undefined)}>
@@ -999,6 +1004,7 @@ export default function Home() {
       <footer>
         <a className="footer-wordmark" href="#">accord<span>↗</span></a>
         <span>Good agents. Clear limits.</span>
+        <a href="https://quaternius.com/packs/animatedrobot.html" target="_blank" rel="noreferrer">Character / Quaternius · CC0 ↗</a>
         <a
           href="https://github.com/neelpote/accord-near"
           target="_blank"

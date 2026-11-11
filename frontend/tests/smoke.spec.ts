@@ -26,7 +26,7 @@ test("marketplace renders real terms without horizontal overflow", async ({
   }
   await page.goto(base);
   await expect(
-    page.getByRole("heading", { name: /Your agents/ }),
+    page.getByRole("heading", { name: /Know what changed/, level: 1 }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Sign in with NEAR" }),
