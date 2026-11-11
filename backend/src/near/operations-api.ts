@@ -1,6 +1,7 @@
 import type express from "express";
 import {randomUUID} from "node:crypto";
 import {db} from "./db.js";
+import {timeline,evidenceExport,numericId} from "./evidence.js";
 import {observeWorkspace} from "./incidents.js";
 import {notificationConfig} from "./notifications.js";
 import {createWorkspace,ownedWorkspace,proposeBaseline,approveBaseline} from "./workspaces.js";
@@ -11,6 +12,8 @@ export function mountOperations(app: express.Express, owner: (req: express.Reque
  app.get("/workspaces/:id",async(req,res)=>res.json(await ownedWorkspace(req.params.id,await owner(req))));
  app.post("/workspaces/:id/capture",async(req,res)=>res.json(await proposeBaseline(req.params.id,await owner(req))));
  app.post("/workspaces/:id/approve",async(req,res)=>res.json(await approveBaseline(req.params.id,await owner(req),req.body.proposal_hash)));
+ app.get("/workspaces/:id/events",async(req,res)=>res.json(await timeline(req.params.id,await owner(req),req.query.before)));
+ app.get("/workspaces/:id/export",async(req,res)=>{res.setHeader("Content-Disposition","attachment; filename=accord-evidence.json");res.json(await evidenceExport(req.params.id,await owner(req)));});
  app.get("/notification-config",async(req,res)=>{await owner(req);res.json({webhook_available:!!notificationConfig(),channel:"Operator-configured signed webhook; destination is not user-supplied"});});
  app.post("/workspaces/:id/monitoring",async(req,res)=>{
   const w=await ownedWorkspace(req.params.id,await owner(req));
@@ -24,9 +27,10 @@ export function mountOperations(app: express.Express, owner: (req: express.Reque
  app.get("/workspaces/:id/incidents",async(req,res)=>{const w=await ownedWorkspace(req.params.id,await owner(req));res.json((await db.query("SELECT * FROM accord_incidents WHERE workspace_id=$1 ORDER BY first_seen DESC LIMIT 100",[w.id])).rows);});
  app.get("/workspaces/:id/notifications",async(req,res)=>{const w=await ownedWorkspace(req.params.id,await owner(req));res.json((await db.query("SELECT * FROM accord_notifications WHERE workspace_id=$1 ORDER BY id DESC LIMIT 100",[w.id])).rows);});
  app.post("/workspaces/:id/incidents/:incident/acknowledge",async(req,res)=>{
-  const w=await ownedWorkspace(req.params.id,await owner(req));if(!/^\d{1,20}$/.test(String(req.params.incident)))throw Error("Invalid incident ID");
+  const w=await ownedWorkspace(req.params.id,await owner(req));numericId(req.params.incident);
   const result=await db.query("UPDATE accord_incidents SET acknowledged_at=COALESCE(acknowledged_at,now()) WHERE id=$1 AND workspace_id=$2 RETURNING id",[req.params.incident,w.id]);
-  if(!result.rowCount)throw Error("Incident not found");res.json({acknowledged:true});
+  if(!result.rowCount)throw Error("Incident not found");
+  await db.query("INSERT INTO accord_workspace_events(workspace_id,type,body) SELECT $1,'incident_acknowledged',$2 WHERE NOT EXISTS(SELECT 1 FROM accord_workspace_events WHERE workspace_id=$1 AND type='incident_acknowledged' AND body->>'incident_id'=$3)",[w.id,{incident_id:req.params.incident},req.params.incident]);res.json({acknowledged:true});
  });
  app.get("/pilot",async(req,res)=>{
   const account=await owner(req);

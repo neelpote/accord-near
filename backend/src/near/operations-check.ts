@@ -85,6 +85,13 @@ try{
  assert.equal((await request(`/workspaces/${workspace.id}/incidents/${incidents[0].id}/acknowledge`,{})).body.acknowledged,true);
  checks.push("Signed real HTTP delivery to local receiver, persisted retry after 503, successful delivery and no redelivery, owner-scoped incident acknowledgement");
  }finally{await new Promise<void>(r=>receiver.close(()=>r()));}
+ const exported=await request(`/workspaces/${workspace.id}/export`);
+ const {digest}=await import("./core.js");assert.equal(digest(exported.body.body),exported.body.sha256);
+ assert.equal(exported.body.body.workspace.owner,"alpha.testnet");assert(!JSON.stringify(exported.body).includes("delegate_cipher"));
+ assert.equal((await request(`/workspaces/${workspace.id}/export`,undefined,"beta.testnet")).status,400);
+ assert((await request(`/workspaces/${workspace.id}/events`)).body.events.length>=5);
+ assert.equal((await request(`/workspaces/${workspace.id}/events?before=invalid`)).status,400);
+ checks.push("Owner-scoped consistent evidence export, artifact hash verification and bounded timeline cursor validation");
  console.log(JSON.stringify({scope:"Isolated PostgreSQL schema + HTTP fixture authorization",checks},null,2));
 }finally{
  await new Promise<void>(r=>server.close(()=>r()));await db.end();await admin.query(`DROP SCHEMA ${schema} CASCADE`);await admin.end();
