@@ -2,7 +2,8 @@ import pg from "pg";
 import { config } from "./config.js";
 export const db = new pg.Pool({ connectionString: config.database, max: 10 });
 export async function migrate() {
-  await db.query(`CREATE TABLE IF NOT EXISTS accord_challenges(id text PRIMARY KEY, nonce text NOT NULL, expires_at timestamptz NOT NULL);
+  await db.query(`CREATE TABLE IF NOT EXISTS accord_pilot_feedback(id uuid PRIMARY KEY,owner text NOT NULL,body jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
+ CREATE TABLE IF NOT EXISTS accord_challenges(id text PRIMARY KEY, nonce text NOT NULL, expires_at timestamptz NOT NULL);
  CREATE TABLE IF NOT EXISTS accord_sessions(token_hash text PRIMARY KEY, account_id text NOT NULL, expires_at timestamptz NOT NULL);
  CREATE TABLE IF NOT EXISTS accord_services(id text PRIMARY KEY, metadata jsonb NOT NULL);
  CREATE TABLE IF NOT EXISTS accord_subscriptions(id text PRIMARY KEY, owner text NOT NULL, input jsonb NOT NULL, delegate_cipher text NOT NULL, state text NOT NULL DEFAULT 'ACTIVE', last_error text);
