@@ -623,3 +623,6 @@ footer p {
 .evidence-diff {display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .evidence-diff>div {min-width:0;background:var(--bg);padding:12px;border-radius:8px;}
 @media(max-width:600px){.evidence-diff{grid-template-columns:1fr;}}
+
+.event-ledger {padding-left:22px;}
+.event-ledger>li {border-bottom:1px solid var(--line);padding:12px 0;}

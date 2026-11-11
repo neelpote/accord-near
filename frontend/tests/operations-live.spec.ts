@@ -1,0 +1,29 @@
+import {test,expect} from "@playwright/test";
+import {readFile} from "node:fs/promises";
+import {resolve} from "node:path";
+test("real operations workspace shows controlled change, linked payment and export",async({page,context})=>{
+ test.skip(process.env.ACCORD_OPERATIONS_DEMO!=="1");
+ const fixture=JSON.parse(await readFile(resolve(process.cwd(),"../.tools/operations-demo-browser.json"),"utf8"));
+ // Reuse a real NEP-413-authenticated developer fixture session, not a wallet-vendor UI certification.
+ await context.addCookies([{name:"accord_session",value:fixture.cookie.split("=")[1],url:"http://localhost:3000",httpOnly:true,sameSite:"Strict"}]);
+ const errors:string[]=[];page.on("pageerror",e=>errors.push(e.message));
+ await page.goto("/");
+ const operations=page.locator("#operations");
+ await operations.getByRole("combobox",{name:"Application",exact:true}).selectOption(fixture.workspace_id,{timeout:30000});
+ await expect(operations.getByRole("heading",{name:"Controlled testnet canary",exact:true})).toBeVisible();
+ const incident=operations.locator("details.incident").filter({hasText:"code changed"}).first();
+ await incident.locator("summary").click();
+ await expect(incident.getByRole("heading",{name:"Approved value"})).toBeVisible();
+ await expect(incident.getByText(/acknowledged/).first()).toBeVisible();
+ await expect(operations.getByText(/test NEAR credited to/)).toBeVisible({timeout:30000});
+ await expect(operations.getByText("paid report linked",{exact:true})).toBeVisible();
+ const downloadPromise=page.waitForEvent("download");
+ await operations.getByRole("button",{name:"Download evidence JSON"}).click();
+ const download=await downloadPromise;expect(download.suggestedFilename()).toContain("accord-evidence");
+ await expect(operations.getByText("Evidence downloaded; SHA-256 verified in this browser.")).toBeVisible();
+ await operations.screenshot({path:"../docs/demo/operations-workspace.png"});
+ await page.setViewportSize({width:390,height:844});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
+ expect(errors).toEqual([]);
+});
+test.afterEach(async({page},info)=>{if(process.env.ACCORD_RECORD_DEMO==="1"&&info.status==="passed"){const video=page.video();if(video){await page.close();await video.saveAs(resolve(process.cwd(),"../docs/demo/operations-workspace.webm"));}}});

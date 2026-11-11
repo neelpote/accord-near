@@ -835,7 +835,7 @@ export default function Home() {
             </div>
           ) : (
             subs.map((s) => (
-              <article className="panel" key={s.id}>
+              <article className="panel" key={s.id} id={`agreement-${s.id}`}>
                 <div className="section-heading">
                   <h3>Agreement #{s.id}</h3>
                   <span className="badge">

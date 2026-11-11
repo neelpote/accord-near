@@ -178,6 +178,7 @@ test("application onboarding requires review before baseline approval",async({pa
   json=r.request().method()==="POST"?workspace:(workspace?[workspace]:[]);
  }
  if(path.endsWith("/incidents")&&workspace?.baseline)json=[{id:"1",type:"code_changed",account_id:"app.testnet",state:"open",observations:2,occurrences:1,acknowledged_at:acknowledged?new Date().toISOString():null,first_seen:snapshot.observed_at,evidence:{change:{before:"old-code",after:"new-code"},baseline_block:snapshot.block_hash,observation:snapshot}}];
+ if(path.endsWith("/events"))json={events:[],next_cursor:null};
  if(path==="/notification-config")json={webhook_available:false};
  if(path.endsWith("/monitoring")){workspace.monitoring=r.request().postDataJSON().enabled;json={saved:true};}
  if(path.endsWith("/acknowledge")){acknowledged=true;json={acknowledged:true};}

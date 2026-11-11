@@ -1,0 +1,467 @@
+{
+  "network": "testnet",
+  "source_commit": "8c7ea3e4d2aa096e766dabf401d0df5d05639868",
+  "source_dirty": true,
+  "scope": "Controlled no-op WASM custom-section identity change; not an exploit or behavior change. Background detection is unbilled. Linked Wallet Watch report is historical paid evidence for the separate escrow account.",
+  "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+  "canary": "canary.buyer.accord-dev-261110.testnet",
+  "transactions": [
+    {
+      "method": "create_disposable_canary",
+      "hash": "5YHnvQfhkefmSYFZs1b1ii6RkbNuds4qVuMriQL8xbm1"
+    },
+    {
+      "method": "deploy_canary_marker_v1",
+      "hash": "CRK4CZdzBcKgfx8Zoyr1uP2WEJAnnnuRTPebJH1AQ7ZE"
+    },
+    {
+      "method": "deploy_canary_marker_v2",
+      "hash": "JA4ajc2zp7P87sYSSD1Ywcm7QbXuMcweJRpqL5VBr1eY"
+    }
+  ],
+  "ai": "Actual Groq explanation recorded separately in evidence timeline",
+  "escrow_code_hash_unchanged": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+  "incident": {
+    "id": "1",
+    "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+    "baseline_version": 1,
+    "fingerprint": "c38739f6a0bdd68fb3b808b29843f1fb2b1202eb8ecb75e5ef2bcea7691d009e",
+    "type": "code_changed",
+    "account_id": "canary.buyer.accord-dev-261110.testnet",
+    "evidence": {
+      "change": {
+        "type": "code_changed",
+        "after": "A6hkpkzvnnSDK9f59RcSFqpXZ88MF1gpdbGbns2rTL19",
+        "before": "5oTr3kJDti7mJhdrsJehPDxFKZVtUFxkSEDAcsoSt7bj",
+        "account_id": "canary.buyer.accord-dev-261110.testnet",
+        "fingerprint": "c38739f6a0bdd68fb3b808b29843f1fb2b1202eb8ecb75e5ef2bcea7691d009e"
+      },
+      "observation": {
+        "accounts": [
+          {
+            "keys": [
+              {
+                "permission": "FullAccess",
+                "public_key": "ed25519:3hRaw3S1yRCdzsGWH54mzVcVQxAhSm6PbHN1ZvyEUoub"
+              }
+            ],
+            "code_hash": "A6hkpkzvnnSDK9f59RcSFqpXZ88MF1gpdbGbns2rTL19",
+            "account_id": "canary.buyer.accord-dev-261110.testnet"
+          },
+          {
+            "keys": [
+              {
+                "permission": "FullAccess",
+                "public_key": "ed25519:FPQ4zk4rqLCYhL3YPomoGbdR6P3zvGiS1YWE7FMfLBBT"
+              }
+            ],
+            "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+            "account_id": "contract.accord-dev-261110.testnet"
+          }
+        ],
+        "block_hash": "FB4kRu9VGF7nFvoXz46WWzD5rHZcVxsPRBm1yekpQ13W",
+        "observed_at": "2026-11-11T06:15:27.958Z",
+        "block_height": 277176956
+      },
+      "baseline_block": "HZfa6Ljat3DbKJVCUk15X6EbVmKKciKRrxkfSXumpMRS"
+    },
+    "state": "open",
+    "observations": 1,
+    "occurrences": 1,
+    "acknowledged_at": null,
+    "first_seen": "2026-11-11T06:15:27.959Z",
+    "last_seen": "2026-11-11T06:15:27.959Z",
+    "resolved_at": null
+  },
+  "evidence_export": {
+    "body": {
+      "format": "accord-operations-evidence-v1",
+      "network": "testnet",
+      "exported_at": "2026-11-11T06:15:31.406Z",
+      "workspace": {
+        "id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+        "owner": "buyer.accord-dev-261110.testnet",
+        "name": "Controlled testnet canary",
+        "accounts": [
+          "canary.buyer.accord-dev-261110.testnet",
+          "contract.accord-dev-261110.testnet"
+        ],
+        "baseline": {
+          "accounts": [
+            {
+              "keys": [
+                {
+                  "permission": "FullAccess",
+                  "public_key": "ed25519:3hRaw3S1yRCdzsGWH54mzVcVQxAhSm6PbHN1ZvyEUoub"
+                }
+              ],
+              "code_hash": "5oTr3kJDti7mJhdrsJehPDxFKZVtUFxkSEDAcsoSt7bj",
+              "account_id": "canary.buyer.accord-dev-261110.testnet"
+            },
+            {
+              "keys": [
+                {
+                  "permission": "FullAccess",
+                  "public_key": "ed25519:FPQ4zk4rqLCYhL3YPomoGbdR6P3zvGiS1YWE7FMfLBBT"
+                }
+              ],
+              "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+              "account_id": "contract.accord-dev-261110.testnet"
+            }
+          ],
+          "block_hash": "HZfa6Ljat3DbKJVCUk15X6EbVmKKciKRrxkfSXumpMRS",
+          "observed_at": "2026-11-11T06:14:26.121Z",
+          "block_height": 277176846
+        },
+        "pending_baseline": null,
+        "baseline_version": 1,
+        "approved_at": "2026-11-11T06:14:26.132Z",
+        "created_at": "2026-11-11T06:14:25.198Z",
+        "last_capture_at": "2026-11-11T06:15:26.998Z",
+        "monitoring": false,
+        "last_success_at": "2026-11-11T06:15:27.959Z",
+        "last_error": null,
+        "last_observation": {
+          "accounts": [
+            {
+              "keys": [
+                {
+                  "permission": "FullAccess",
+                  "public_key": "ed25519:3hRaw3S1yRCdzsGWH54mzVcVQxAhSm6PbHN1ZvyEUoub"
+                }
+              ],
+              "code_hash": "A6hkpkzvnnSDK9f59RcSFqpXZ88MF1gpdbGbns2rTL19",
+              "account_id": "canary.buyer.accord-dev-261110.testnet"
+            },
+            {
+              "keys": [
+                {
+                  "permission": "FullAccess",
+                  "public_key": "ed25519:FPQ4zk4rqLCYhL3YPomoGbdR6P3zvGiS1YWE7FMfLBBT"
+                }
+              ],
+              "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+              "account_id": "contract.accord-dev-261110.testnet"
+            }
+          ],
+          "block_hash": "FB4kRu9VGF7nFvoXz46WWzD5rHZcVxsPRBm1yekpQ13W",
+          "observed_at": "2026-11-11T06:15:27.958Z",
+          "block_height": 277176956
+        },
+        "webhook_enabled": false
+      },
+      "events": [
+        {
+          "id": "1",
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "type": "monitoring_changed",
+          "body": {
+            "enabled": false,
+            "webhook_enabled": false
+          },
+          "created_at": "2026-11-11T06:14:25.208Z"
+        },
+        {
+          "id": "2",
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "type": "baseline_approved",
+          "body": {
+            "version": 1,
+            "snapshot": {
+              "accounts": [
+                {
+                  "keys": [
+                    {
+                      "permission": "FullAccess",
+                      "public_key": "ed25519:3hRaw3S1yRCdzsGWH54mzVcVQxAhSm6PbHN1ZvyEUoub"
+                    }
+                  ],
+                  "code_hash": "5oTr3kJDti7mJhdrsJehPDxFKZVtUFxkSEDAcsoSt7bj",
+                  "account_id": "canary.buyer.accord-dev-261110.testnet"
+                },
+                {
+                  "keys": [
+                    {
+                      "permission": "FullAccess",
+                      "public_key": "ed25519:FPQ4zk4rqLCYhL3YPomoGbdR6P3zvGiS1YWE7FMfLBBT"
+                    }
+                  ],
+                  "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                  "account_id": "contract.accord-dev-261110.testnet"
+                }
+              ],
+              "block_hash": "HZfa6Ljat3DbKJVCUk15X6EbVmKKciKRrxkfSXumpMRS",
+              "observed_at": "2026-11-11T06:14:26.121Z",
+              "block_height": 277176846
+            },
+            "proposal_hash": "17d3775e80df3c24001da3f668e59a81a681a644a9307a6c68c1a4fed12f308c"
+          },
+          "created_at": "2026-11-11T06:14:26.132Z"
+        },
+        {
+          "id": "3",
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "type": "monitoring_changed",
+          "body": {
+            "enabled": true,
+            "webhook_enabled": false
+          },
+          "created_at": "2026-11-11T06:14:26.155Z"
+        },
+        {
+          "id": "4",
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "type": "incident_opened",
+          "body": {
+            "change": {
+              "type": "code_changed",
+              "after": "A6hkpkzvnnSDK9f59RcSFqpXZ88MF1gpdbGbns2rTL19",
+              "before": "5oTr3kJDti7mJhdrsJehPDxFKZVtUFxkSEDAcsoSt7bj",
+              "account_id": "canary.buyer.accord-dev-261110.testnet",
+              "fingerprint": "c38739f6a0bdd68fb3b808b29843f1fb2b1202eb8ecb75e5ef2bcea7691d009e"
+            },
+            "source": {
+              "block_hash": "FB4kRu9VGF7nFvoXz46WWzD5rHZcVxsPRBm1yekpQ13W",
+              "observed_at": "2026-11-11T06:15:27.958Z",
+              "block_height": 277176956
+            },
+            "incident_id": "1",
+            "baseline_version": 1
+          },
+          "created_at": "2026-11-11T06:15:27.959Z"
+        },
+        {
+          "id": "5",
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "type": "incident_acknowledged",
+          "body": {
+            "incident_id": "1"
+          },
+          "created_at": "2026-11-11T06:15:29.979Z"
+        },
+        {
+          "id": "6",
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "type": "explanation_created",
+          "body": {
+            "report": {
+              "kind": "near-contract-sentinel-v1",
+              "title": "Incident review",
+              "method": "near-rpc-rules-v1",
+              "source": {
+                "network": "testnet",
+                "block_hash": "FB4kRu9VGF7nFvoXz46WWzD5rHZcVxsPRBm1yekpQ13W",
+                "block_height": 277176956
+              },
+              "status": "attention",
+              "metrics": [
+                {
+                  "label": "Account",
+                  "value": "canary.buyer.accord-dev-261110.testnet"
+                },
+                {
+                  "label": "Approved baseline version",
+                  "value": "1"
+                }
+              ],
+              "summary": "code_changed observed for canary.buyer.accord-dev-261110.testnet; this does not establish malicious activity.",
+              "findings": [
+                "{\"type\":\"code_changed\",\"after\":\"A6hkpkzvnnSDK9f59RcSFqpXZ88MF1gpdbGbns2rTL19\",\"before\":\"5oTr3kJDti7mJhdrsJehPDxFKZVtUFxkSEDAcsoSt7bj\",\"account_id\":\"canary.buyer.accord-dev-261110.testnet\",\"fingerprint\":\"c38739f6a0bdd68fb3b808b29843f1fb2b1202eb8ecb75e5ef2bcea7691d009e\"}"
+              ],
+              "disclosure": "Public observations. AI commentary is not an audit and has no transaction authority.",
+              "explanation": {
+                "model": "openai/gpt-oss-20b",
+                "summary": "A code change was detected on account canary.buyer.accord-dev-261110.testnet at block 277176956. The new code hash (A6hkpkzvnnSDK9f59RcSFqpXZ88MF1gpdbGbns2rTL19) differs from the previous baseline (5oTr3kJDti7mJhdrsJehPDxFKZVtUFxkSEDAcsoSt7bj). No evidence of malicious activity is present, but the change should be manually verified against deployment records before updating the baseline.",
+                "provider": "groq",
+                "disclosure": "Public chain evidence sent to Groq. AI explanation may be wrong; verify the source block. No TEE attestation, private inference or transaction authority is claimed.",
+                "next_steps": [
+                  "Retrieve deployment logs for canary.buyer.accord-dev-261110.testnet around block 277176956.",
+                  "Compare the before and after code hashes with the artifacts used in the authorized deployment.",
+                  "Confirm that the change matches an approved deployment and that the new hash is expected.",
+                  "If verified, update the baseline version to reflect the new code hash.",
+                  "If not verified, investigate the source of the change and consider reverting or blocking the account until clarification."
+                ],
+                "completion_id": "chatcmpl-a8f6e407-da21-4c4c-836b-352312f2d5a9"
+              },
+              "observed_at": "2026-11-11T06:15:27.958Z",
+              "recommendations": [
+                "Compare this change with your deployment records before acknowledging or approving a new baseline."
+              ]
+            },
+            "billing": "Unbilled pilot explanation; uses capped server Groq requests",
+            "incident_id": "1",
+            "artifact_hash": "99aa99a14798fc4cc11e25de75da271984c9653247b95d999eda44fdb3553de3"
+          },
+          "created_at": "2026-11-11T06:15:30.802Z"
+        },
+        {
+          "id": "7",
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "type": "paid_report_linked",
+          "body": {
+            "cycle": 0,
+            "receipt": {
+              "cycle": 0,
+              "amount": "1000000000000000000000",
+              "provider": "provider.accord-dev-261110.testnet",
+              "paid_at_ns": "1794320104886091795",
+              "artifact_hash": "7c14a6562a87a0677b179fb886f8aa69c69f1c4c0977e5708d8e7330a52c4a1e",
+              "subscription_id": "9"
+            },
+            "artifact_hash": "7c14a6562a87a0677b179fb886f8aa69c69f1c4c0977e5708d8e7330a52c4a1e",
+            "subscription_id": "9"
+          },
+          "created_at": "2026-11-11T06:15:31.370Z"
+        },
+        {
+          "id": "8",
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "type": "monitoring_changed",
+          "body": {
+            "enabled": false,
+            "webhook_enabled": false
+          },
+          "created_at": "2026-11-11T06:15:31.384Z"
+        }
+      ],
+      "incidents": [
+        {
+          "id": "1",
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "baseline_version": 1,
+          "fingerprint": "c38739f6a0bdd68fb3b808b29843f1fb2b1202eb8ecb75e5ef2bcea7691d009e",
+          "type": "code_changed",
+          "account_id": "canary.buyer.accord-dev-261110.testnet",
+          "evidence": {
+            "change": {
+              "type": "code_changed",
+              "after": "A6hkpkzvnnSDK9f59RcSFqpXZ88MF1gpdbGbns2rTL19",
+              "before": "5oTr3kJDti7mJhdrsJehPDxFKZVtUFxkSEDAcsoSt7bj",
+              "account_id": "canary.buyer.accord-dev-261110.testnet",
+              "fingerprint": "c38739f6a0bdd68fb3b808b29843f1fb2b1202eb8ecb75e5ef2bcea7691d009e"
+            },
+            "observation": {
+              "accounts": [
+                {
+                  "keys": [
+                    {
+                      "permission": "FullAccess",
+                      "public_key": "ed25519:3hRaw3S1yRCdzsGWH54mzVcVQxAhSm6PbHN1ZvyEUoub"
+                    }
+                  ],
+                  "code_hash": "A6hkpkzvnnSDK9f59RcSFqpXZ88MF1gpdbGbns2rTL19",
+                  "account_id": "canary.buyer.accord-dev-261110.testnet"
+                },
+                {
+                  "keys": [
+                    {
+                      "permission": "FullAccess",
+                      "public_key": "ed25519:FPQ4zk4rqLCYhL3YPomoGbdR6P3zvGiS1YWE7FMfLBBT"
+                    }
+                  ],
+                  "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                  "account_id": "contract.accord-dev-261110.testnet"
+                }
+              ],
+              "block_hash": "FB4kRu9VGF7nFvoXz46WWzD5rHZcVxsPRBm1yekpQ13W",
+              "observed_at": "2026-11-11T06:15:27.958Z",
+              "block_height": 277176956
+            },
+            "baseline_block": "HZfa6Ljat3DbKJVCUk15X6EbVmKKciKRrxkfSXumpMRS"
+          },
+          "state": "open",
+          "observations": 1,
+          "occurrences": 1,
+          "acknowledged_at": "2026-11-11T06:15:29.976Z",
+          "first_seen": "2026-11-11T06:15:27.959Z",
+          "last_seen": "2026-11-11T06:15:27.959Z",
+          "resolved_at": null
+        }
+      ],
+      "notifications": [
+        {
+          "id": "1",
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "event_id": "4",
+          "payload": {
+            "type": "code_changed",
+            "workspace": "Controlled testnet canary",
+            "account_id": "canary.buyer.accord-dev-261110.testnet",
+            "incident_id": "1",
+            "source_block": "FB4kRu9VGF7nFvoXz46WWzD5rHZcVxsPRBm1yekpQ13W"
+          },
+          "state": "delivered",
+          "attempts": 1,
+          "next_attempt_at": "2026-11-11T06:15:57.983Z",
+          "last_error": null,
+          "delivered_at": "2026-11-11T06:15:27.986Z",
+          "channel": "in_app"
+        }
+      ],
+      "paid_reports": [
+        {
+          "workspace_id": "de2ce4de-c4c1-4190-8089-ff046d7a6a48",
+          "subscription_id": "9",
+          "cycle": 0,
+          "report": {
+            "kind": "near-wallet-watch-v1",
+            "title": "Wallet Watch",
+            "method": "near-rpc-rules-v1",
+            "source": {
+              "network": "testnet",
+              "block_hash": "8qD9V69GVXDzyaoKkAF2r823p1HamSBQ3487enT8uRT5",
+              "block_height": 277078326
+            },
+            "status": "ok",
+            "metrics": [
+              {
+                "label": "Account",
+                "value": "contract.accord-dev-261110.testnet"
+              },
+              {
+                "label": "Total balance · yoctoNEAR",
+                "value": "3166969175840854400000017"
+              },
+              {
+                "label": "Storage requirement · yoctoNEAR",
+                "value": "2011020000000000000000000"
+              },
+              {
+                "label": "Available balance · yoctoNEAR",
+                "value": "1155949175840854400000017"
+              },
+              {
+                "label": "Locked stake · yoctoNEAR",
+                "value": "0"
+              },
+              {
+                "label": "Storage · bytes",
+                "value": "201102"
+              }
+            ],
+            "summary": "Spendable balance meets your configured reserve.",
+            "findings": [
+              "Account and storage cost were read at the same finalized block."
+            ],
+            "disclosure": "Live NEAR RPC data with deterministic rules. No AI inference, private-key access, automatic wallet changes or financial advice.",
+            "observed_at": "2026-11-10T14:15:02.812Z",
+            "recommendations": []
+          },
+          "receipt": {
+            "cycle": 0,
+            "amount": "1000000000000000000000",
+            "provider": "provider.accord-dev-261110.testnet",
+            "paid_at_ns": "1794320104886091795",
+            "artifact_hash": "7c14a6562a87a0677b179fb886f8aa69c69f1c4c0977e5708d8e7330a52c4a1e",
+            "subscription_id": "9"
+          },
+          "artifact_hash": "7c14a6562a87a0677b179fb886f8aa69c69f1c4c0977e5708d8e7330a52c4a1e"
+        }
+      ],
+      "truncated": false,
+      "disclosure": "RPC observations and application records, not an independent audit or proof of report quality. Pilot observations are unbilled; linked paid reports are separately identified."
+    },
+    "sha256": "7f4b24f7a63e86fedc195f711074512075a43a3d816717bad981fe4236046a68"
+  },
+  "completed_at": "2026-11-11T06:15:31.745Z"
+}
