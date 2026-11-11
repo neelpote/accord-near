@@ -6,6 +6,9 @@ export default defineConfig({
   reporter: "list",
   use: {
     baseURL: "http://localhost:3000",
+    // CI runners have no reliable GPU. Exercise the explicit static fallback there;
+    // the real WebGL scene is checked locally and in the recorded browser evidence.
+    launchOptions: process.env.CI ? {args:["--disable-webgl"]} : {},
     viewport: { width: 1440, height: 1100 },
     screenshot: "only-on-failure",
     video: process.env.ACCORD_RECORD_DEMO === "1" ? "on" : "off",
