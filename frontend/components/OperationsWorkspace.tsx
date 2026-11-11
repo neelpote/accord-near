@@ -29,6 +29,7 @@ export default function OperationsWorkspace({account}:{account:string}){
  {w.baseline&&<details><summary>Approved baseline · version {w.baseline_version}</summary><Baseline snapshot={w.baseline}/></details>}
  <WorkspaceIncidents key={w.id} workspace={w} onChange={load}/>
  <WorkspaceEvidence key={"evidence-"+w.id} id={w.id} accounts={w.accounts}/>
+ <details><summary>Delete application pilot records</summary><p>Pause monitoring and download evidence first. This removes the workspace, baselines, incidents and report links. Separate paid agreements and onchain history remain; manage them under My agreements.</p><form onSubmit={e=>{e.preventDefault();const d=new FormData(e.currentTarget);void act(()=>api(`/workspaces/${w.id}/delete`,{confirm_name:d.get("confirm_name")}));}}><label>Enter the exact application name<input name="confirm_name" required maxLength={80}/></label><button className="quiet" disabled={busy||w.monitoring}>Delete pilot records</button></form></details>
  </article>}
  </>}
  <p role="status">{notice}</p>

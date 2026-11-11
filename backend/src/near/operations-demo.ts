@@ -8,6 +8,7 @@ import {AccountDoesNotExistError} from "near-api-js/rpc-errors";
 import {signMessage} from "near-api-js/nep413";
 import {fixtureKey} from "./fixture-keys.js";
 import {config,rpc,networkCheck} from "./config.js";
+import {db} from "./db.js";
 import {digest} from "./core.js";
 const root=resolve(import.meta.dirname,"../../..");
 await networkCheck();assert.equal(config.network,"testnet");
@@ -45,6 +46,7 @@ const old=(await request("/workspaces")).result;
 const name="Controlled testnet canary";
 let workspace=old.find((w:any)=>w.name===name&&w.accounts.includes(canaryId));
 if(!workspace)workspace=(await request("/workspaces",{name,accounts:[canaryId,config.contract]})).result;
+await db.query("UPDATE accord_workspaces SET is_demo=true WHERE id=$1 AND owner=$2",[workspace.id,buyer.accountId]);
 // Explicit pause before replacing a developer-fixture baseline; never alters customer workspaces.
 await request(`/workspaces/${workspace.id}/monitoring`,{enabled:false,webhook_enabled:false});
 async function captureProposal(){for(let i=0;i<10;i++){try{return (await request(`/workspaces/${workspace.id}/capture`,{})).result;}catch(e){if(!(e as Error).message.includes("30 seconds"))throw e;await new Promise(r=>setTimeout(r,4000));}}throw Error("Capture cooldown did not clear");}
@@ -77,4 +79,5 @@ assert.equal((await rpc.viewAccount({accountId:config.contract})).code_hash,escr
 const proof={network:"testnet",source_commit:execFileSync("git",["rev-parse","HEAD"],{cwd:root}).toString().trim(),source_dirty:!!execFileSync("git",["status","--porcelain"],{cwd:root}).toString().trim(),scope:"Controlled no-op WASM custom-section identity change; not an exploit or behavior change. Background detection is unbilled. Linked Wallet Watch report is historical paid evidence for the separate escrow account.",workspace_id:workspace.id,canary:canaryId,transactions,ai,escrow_code_hash_unchanged:escrowBefore,incident,evidence_export:exported,completed_at:new Date().toISOString()};
 await writeFile(resolve(root,"docs/operations-demo-proof.json"),JSON.stringify(proof,null,2)+"\n");
 await writeFile(resolve(root,".tools/operations-demo-browser.json"),JSON.stringify({cookie,workspace_id:workspace.id,account_id:buyer.accountId}),{mode:0o600});
+await db.end();
 console.log("CONTROLLED OPERATIONS DEMO PASSED",workspace.id,canaryId);

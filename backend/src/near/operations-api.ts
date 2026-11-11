@@ -1,6 +1,7 @@
 import type express from "express";
 import {randomUUID} from "node:crypto";
 import {db} from "./db.js";
+import {pilotMetrics} from "./pilot-metrics.js";
 import {linkPaidReport,explainIncident} from "./workspace-reports.js";
 import {timeline,evidenceExport,numericId} from "./evidence.js";
 import {observeWorkspace} from "./incidents.js";
@@ -35,6 +36,14 @@ export function mountOperations(app: express.Express, owner: (req: express.Reque
   const result=await db.query("UPDATE accord_incidents SET acknowledged_at=COALESCE(acknowledged_at,now()) WHERE id=$1 AND workspace_id=$2 RETURNING id",[req.params.incident,w.id]);
   if(!result.rowCount)throw Error("Incident not found");
   await db.query("INSERT INTO accord_workspace_events(workspace_id,type,body) SELECT $1,'incident_acknowledged',$2 WHERE NOT EXISTS(SELECT 1 FROM accord_workspace_events WHERE workspace_id=$1 AND type='incident_acknowledged' AND body->>'incident_id'=$3)",[w.id,{incident_id:req.params.incident},req.params.incident]);res.json({acknowledged:true});
+ });
+ app.get("/pilot/metrics",async(req,res)=>res.json(await pilotMetrics(await owner(req))));
+ app.post("/workspaces/:id/delete",async(req,res)=>{
+  const w=await ownedWorkspace(req.params.id,await owner(req));
+  if(req.body.confirm_name!==w.name)throw Error("Enter the exact application name to delete its pilot records");
+  if(w.monitoring)throw Error("Pause monitoring before deleting its records");
+  await db.query("DELETE FROM accord_workspaces WHERE id=$1 AND owner=$2",[w.id,w.owner]);
+  res.json({deleted:true,paid_agreements_unchanged:true});
  });
  app.get("/pilot",async(req,res)=>{
   const account=await owner(req);

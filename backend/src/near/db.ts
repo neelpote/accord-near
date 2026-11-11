@@ -25,6 +25,7 @@ export async function migrate() {
  ALTER TABLE accord_notifications ADD COLUMN IF NOT EXISTS channel text NOT NULL DEFAULT 'in_app';
  CREATE TABLE IF NOT EXISTS accord_workspace_reports(workspace_id uuid NOT NULL REFERENCES accord_workspaces(id) ON DELETE CASCADE,subscription_id text NOT NULL,cycle integer NOT NULL,report jsonb NOT NULL,receipt jsonb NOT NULL,artifact_hash text NOT NULL,PRIMARY KEY(workspace_id,subscription_id,cycle));
  CREATE TABLE IF NOT EXISTS accord_incident_explanations(incident_id bigint PRIMARY KEY REFERENCES accord_incidents(id) ON DELETE CASCADE,state text NOT NULL,report jsonb);
+ ALTER TABLE accord_workspaces ADD COLUMN IF NOT EXISTS is_demo boolean NOT NULL DEFAULT false;
  CREATE TABLE IF NOT EXISTS accord_groq_budget(id integer PRIMARY KEY,requests integer NOT NULL);
  INSERT INTO accord_groq_budget VALUES(1,0) ON CONFLICT DO NOTHING;
  CREATE TABLE IF NOT EXISTS accord_ai_budget(id integer PRIMARY KEY,requests integer NOT NULL);

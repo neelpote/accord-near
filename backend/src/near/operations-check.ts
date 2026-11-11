@@ -108,6 +108,16 @@ try{
  assert.equal((await request(`/workspaces/${workspace.id}/incidents/${incidents[0].id}/explain`,{})).status,400);
  assert.equal((await db.query("SELECT state FROM accord_incident_explanations WHERE incident_id=$1",[incidents[0].id])).rows[0].state,"needs_review");
  checks.push("Paid-report linking verifies owner, account association, immutable price/provider/hash and deduplicates; disabled AI fails without payment or retries");
+ let metrics=(await request("/pilot/metrics")).body;
+ assert.equal(metrics.workspaces,3);assert.equal(metrics.customer_validation,"pending");assert.equal(metrics.revenue_verified,false);
+ await db.query("UPDATE accord_workspaces SET is_demo=true WHERE id=$1",[workspace.id]);
+ metrics=(await request("/pilot/metrics")).body;assert.equal(metrics.workspaces,2);assert.equal(metrics.excluded_demo_workspaces,1);
+ assert.equal((await request(`/workspaces/${workspace.id}/delete`,{confirm_name:"wrong"})).status,400);
+ assert.equal((await request(`/workspaces/${workspace.id}/delete`,{confirm_name:workspace.name},"beta.testnet")).status,400);
+ assert.equal((await request(`/workspaces/${workspace.id}/delete`,{confirm_name:workspace.name})).body.paid_agreements_unchanged,true);
+ assert.equal((await db.query("SELECT count(*) FROM accord_incidents WHERE workspace_id=$1",[workspace.id])).rows[0].count,"0");
+ assert.equal((await db.query("SELECT count(*) FROM accord_subscriptions WHERE id='99'")).rows[0].count,"1");
+ checks.push("Pilot metrics exclude synthetic demos and never claim revenue; confirmed workspace deletion cascades private pilot data while preserving paid agreements");
  console.log(JSON.stringify({scope:"Isolated PostgreSQL schema + HTTP fixture authorization",checks},null,2));
 }finally{
  await new Promise<void>(r=>server.close(()=>r()));await db.end();await admin.query(`DROP SCHEMA ${schema} CASCADE`);await admin.end();
