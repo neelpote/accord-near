@@ -208,3 +208,17 @@ test("application onboarding requires review before baseline approval",async({pa
  await page.setViewportSize({width:390,height:844});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBeTruthy();
 });
+
+
+test("financial refresh failure preserves the signed-in workspace",async({page})=>{
+ await page.route("**/api/near/**",async route=>{
+ const path=new URL(route.request().url()).pathname.replace("/api/near","");
+ if(path==="/subscriptions")return route.fulfill({status:503,json:{error:"Synthetic history outage"}});
+ const json=path==="/config"?{network:"testnet",contract:"accord.testnet",rpc:"http://unused.invalid",recipient:"localhost:3100"}:path==="/me"?{accountId:"owner.testnet"}:path==="/balances"?{available:"0",earned:"0",pending:"0"}:path==="/pilot"?{records:[]}:path==="/pilot/metrics"?{}:[];
+ await route.fulfill({json});
+ });
+ await page.goto("http://localhost:3100");
+ await expect(page.getByRole("button",{name:"owner.testnet",exact:true})).toBeVisible();
+ await expect(page.getByText(/Financial history could not be refreshed/)).toBeVisible();
+ await expect(page.getByRole("button",{name:"Create read-only workspace"})).toBeVisible();
+});

@@ -164,10 +164,18 @@ export default function Home() {
     try {
       const me = await api("/me");
       setAccount(me.accountId);
-      setSubs(await api("/subscriptions"));
-      setBalance(await api("/balances"));
     } catch {
       setAccount("");
+      return;
+    }
+    const refreshError = "Financial history could not be refreshed. Last loaded values are retained; your workspace remains signed in.";
+    try {
+      const [nextSubs, nextBalance] = await Promise.all([api("/subscriptions"), api("/balances")]);
+      setSubs(nextSubs);
+      setBalance(nextBalance);
+      setError(current => current === refreshError ? "" : current);
+    } catch {
+      setError(refreshError);
     }
   }
   useEffect(() => {
