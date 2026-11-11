@@ -160,3 +160,9 @@ The operations pilot is **unbilled**; existing recurring paid reports remain sep
 Start at [localhost:3000](http://localhost:3000), sign in and choose Application workspace. See the [user/operator guide](docs/OPERATIONS.md), [five-phase delivery log](docs/PHASE_DELIVERY.md), [Loops-prompt review gates](docs/evaluations/PHASE_GATES.md), [pilot interviews](docs/pilot/INTERVIEWS.md) and [measurement/pricing test](docs/pilot/MEASUREMENT.md).
 
 Working evidence: [controlled testnet change](docs/operations-demo-proof.json), [HTTP/DB integration checks](docs/operations-integration-proof.json), [release browser checks](docs/operations-release-proof.json), [workspace screenshot](docs/demo/operations-workspace.png) and [browser walkthrough](docs/demo/operations-workspace.webm). The controlled canary changes only a no-op WASM marker; it does not demonstrate an exploit, behavioral regression or an escrow upgrade.
+
+## Animated interface
+
+The frontend combines an original interactive 3D agent crew with a quieter evidence/workspace interface. Select a specialist, pause decorative motion, or use the OS reduced-motion preference. Devices without WebGL receive a static illustration. Existing approvals, exact spending terms and report provenance remain functional.
+
+[Desktop preview](docs/demo/redesign-desktop.png) · [Mobile preview](docs/demo/redesign-mobile.png) · [Visual walkthrough](docs/demo/redesign-experience.webm) · [Design decisions](docs/design/FRONTEND_DIRECTION.md) · [Verification](docs/redesign-proof.json)

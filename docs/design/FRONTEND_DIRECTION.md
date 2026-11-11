@@ -19,3 +19,13 @@ A visible pause/resume control stops decorative animation. The OS reduced-motion
 ## Verification boundaries
 
 Five presentation/browser checks cover selection, pause/resume, reduced motion, 320/390 px overflow, WebGL fallback, existing agent inputs and baseline/incident forms. Separate real-data browser and wallet/testnet checks verify that the redesigned interface still delivers the existing application flow. These are implementation checks, not customer preference validation or independent usability research. No benchmark score or production FPS guarantee is claimed.
+
+## Final results
+
+Application revision ac0e339 passed frontend types, production build, dependency audit (zero vulnerabilities), five local presentation/browser checks and the same five checks in explicit no-GPU mode. Production Chromium rendered the actual WebGL scene with no page errors, and 320/390 px layout checks passed. Real-data workspace acceptance passed; a new Wallet Watch agreement (#17) completed actual testnet funding, restricted-key activation, delivery, cancellation, key deletion and withdrawal. Separate redesign artifacts preserve prior evidence.
+
+The initial hosted CI run was canceled while Playwright was waiting on failing Ubuntu 26.04 apt mirror DNS; no browser result from that run is counted. The runner is now pinned to Ubuntu 24.04, which includes browser system libraries, and only the matching Playwright Chromium binary is downloaded. The browser tests still run. CI explicitly covers the supported static fallback; actual WebGL rendering was verified locally. This does not imply a GPU failure was observed in CI—the apt delay occurred before browser tests began.
+
+Primary references: https://threejs.org/docs/ and https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md. User-provided inspiration files remain untouched and are not shipped in the app.
+
+[Application CI 43037940816](https://github.com/neelpote/accord-near/actions/runs/43037940816) passed for bbbb959. The production visual walkthrough, actual workspace check and actual testnet wallet flow are saved as separate redesign artifacts.

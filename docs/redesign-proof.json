@@ -1,0 +1,37 @@
+{
+  "application_commit_tested": "ac0e339a7ab4b8da4eff9cd6f7c929350513a9e5",
+  "application_source_dirty": false,
+  "local_checks": {
+    "frontend_typecheck": "passed",
+    "production_build": "passed",
+    "npm_audit": "0 vulnerabilities",
+    "presentation_browser_tests": 5,
+    "explicit_no_gpu_browser_tests": 5,
+    "real_webgl_state": "ready",
+    "mobile_widths": [
+      320,
+      390
+    ],
+    "production_capture_mobile_fits": true,
+    "production_capture_page_errors": [],
+    "real_operations_browser": "passed: cached Groq, incident, historical receipt and verified export",
+    "real_wallet_browser": "passed: sign-in, subscribe, AddKey, delivered report, cancel, DeleteKey and withdrawal"
+  },
+  "wallet_agreement": "17",
+  "artifacts": [
+    "demo/redesign-desktop.png",
+    "demo/redesign-mobile.png",
+    "demo/redesign-roster.png",
+    "demo/redesign-experience.webm",
+    "demo/redesign-workspace.webm",
+    "demo/redesign-wallet-demo.webm"
+  ],
+  "scope": "Original illustrative 3D scene and unchanged live product operations. No claim of independent usability research, FPS certification or autonomous LLM telemetry. CI explicitly exercises no-GPU fallback; real GPU rendering was verified locally.",
+  "recorded_at": "2026-11-11T14:25:53.566255+00:00",
+  "ci": {
+    "run": "https://github.com/neelpote/accord-near/actions/runs/43037940816",
+    "tested_commit": "bbbb959a8630d4c95fdbf9348e76cb43c6b5b393",
+    "conclusion": "success",
+    "renderer_scope": "No-GPU fallback in hosted CI; real WebGL rendering separately passed locally"
+  }
+}
