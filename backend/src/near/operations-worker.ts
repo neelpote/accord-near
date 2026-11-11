@@ -2,9 +2,11 @@ import {db} from "./db.js";
 import {observeWorkspace} from "./incidents.js";
 import {dispatchNotifications} from "./notifications.js";
 export async function operationsTick(){
+ await db.query("INSERT INTO accord_worker_health(name,last_started) VALUES('operations',now()) ON CONFLICT(name) DO UPDATE SET last_started=now() ");
  const rows=(await db.query("SELECT id FROM accord_workspaces WHERE monitoring AND baseline IS NOT NULL AND (last_capture_at IS NULL OR last_capture_at<now()-interval '60 seconds') ORDER BY last_capture_at NULLS FIRST LIMIT 10")).rows;
  for(const w of rows)await observeWorkspace(w.id).catch(()=>{});
  await dispatchNotifications();
+ await db.query("UPDATE accord_worker_health SET last_completed=now(),last_error=NULL WHERE name='operations'");
 }
 export async function runOperations(){
  // ponytail: one sequential pilot worker; shard by workspace if pilot volume requires it.

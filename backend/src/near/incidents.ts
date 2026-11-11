@@ -38,7 +38,7 @@ export async function observeWorkspace(id:string,observe=capture,manual=false){
  for(const diff of differences){
  const old=(await c.query("SELECT * FROM accord_incidents WHERE workspace_id=$1 AND baseline_version=$2 AND fingerprint=$3",[id,w.baseline_version,diff.fingerprint])).rows[0];
  let incident;
- if(old){incident=(await c.query("UPDATE accord_incidents SET observations=observations+1,last_seen=now(),state='open',occurrences=occurrences+CASE WHEN state='resolved' THEN 1 ELSE 0 END,acknowledged_at=CASE WHEN state='resolved' THEN NULL ELSE acknowledged_at END WHERE id=$1 RETURNING *",[old.id])).rows[0];}
+ if(old){incident=(await c.query("UPDATE accord_incidents SET observations=observations+1,last_seen=now(),state='open',resolved_at=NULL,occurrences=occurrences+CASE WHEN state='resolved' THEN 1 ELSE 0 END,acknowledged_at=CASE WHEN state='resolved' THEN NULL ELSE acknowledged_at END WHERE id=$1 RETURNING *",[old.id])).rows[0];}
  else incident=(await c.query("INSERT INTO accord_incidents(workspace_id,baseline_version,fingerprint,type,account_id,evidence) VALUES($1,$2,$3,$4,$5,$6) RETURNING *",[id,w.baseline_version,diff.fingerprint,diff.type,diff.account_id,{change:diff,baseline_block:w.baseline.block_hash,observation:snapshot}])).rows[0];
  active.push(incident.id);
  if(!old||old.state==='resolved'){

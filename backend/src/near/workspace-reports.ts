@@ -7,7 +7,8 @@ import {explainWithGroq} from "./groq.js";
 import {reserveGroqRequest} from "./groq-budget.js";
 import type {ChainReport} from "./agents.js";
 export async function linkPaidReport(id:unknown,owner:string,subscriptionId:unknown,cycle:unknown,read:typeof view=view){
- const w=await ownedWorkspace(id,owner),subscription=numericId(subscriptionId);
+ const w=await ownedWorkspace(id,owner),subscription=String(subscriptionId);
+ if(typeof subscriptionId!=="string"||!/^\d{1,20}$/.test(subscription)||BigInt(subscription)>18446744073709551615n)throw Error("Invalid subscription ID");
  if(!Number.isInteger(cycle)||Number(cycle)<0||Number(cycle)>19)throw Error("Invalid paid cycle");
  const local=(await db.query("SELECT s.input,s.owner,c.* FROM accord_subscriptions s JOIN accord_cycles c ON c.subscription_id=s.id WHERE s.id=$1 AND c.cycle=$2 AND s.owner=$3 AND c.state='DELIVERED'",[subscription,cycle,owner])).rows[0];
  if(!local||!w.accounts.includes(local.input.account_id??local.input.signer_account_id))throw Error("Choose your delivered report for an account in this workspace");
@@ -15,8 +16,12 @@ export async function linkPaidReport(id:unknown,owner:string,subscriptionId:unkn
  const agreement=await read<{owner:string;service_id:string}>("get_subscription",{subscription_id:subscription});
  const service=await read<Service>("get_service",{service_id:agreement.service_id});
  if(!receipt||agreement.owner!==owner||digest(local.report)!==receipt.artifact_hash||receipt.artifact_hash!==local.artifact_hash||receipt.amount!==service.price||receipt.provider!==service.provider)throw Error("Live receipt does not match the delivered artifact and immutable offer");
- const inserted=await db.query("INSERT INTO accord_workspace_reports(workspace_id,subscription_id,cycle,report,receipt,artifact_hash) VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING RETURNING subscription_id",[w.id,subscription,cycle,local.report,receipt,receipt.artifact_hash]);
- if(inserted.rowCount)await db.query("INSERT INTO accord_workspace_events(workspace_id,type,body) VALUES($1,'paid_report_linked',$2)",[w.id,{subscription_id:subscription,cycle,artifact_hash:receipt.artifact_hash,receipt}]);
+ const c=await db.connect();
+ try{await c.query("BEGIN");
+ const inserted=await c.query("INSERT INTO accord_workspace_reports(workspace_id,subscription_id,cycle,report,receipt,artifact_hash) VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING RETURNING subscription_id",[w.id,subscription,cycle,local.report,receipt,receipt.artifact_hash]);
+ if(inserted.rowCount)await c.query("INSERT INTO accord_workspace_events(workspace_id,type,body) VALUES($1,'paid_report_linked',$2)",[w.id,{subscription_id:subscription,cycle,artifact_hash:receipt.artifact_hash,receipt}]);
+ await c.query("COMMIT");
+ }catch(e){await c.query("ROLLBACK");throw e;}finally{c.release();}
  return {linked:true,artifact_hash:receipt.artifact_hash};
 }
 export async function explainIncident(id:unknown,owner:string,incidentId:unknown){

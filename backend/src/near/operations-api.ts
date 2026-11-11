@@ -25,17 +25,21 @@ export function mountOperations(app: express.Express, owner: (req: express.Reque
   if(typeof req.body.enabled!=="boolean"||typeof req.body.webhook_enabled!=="boolean")throw Error("Choose monitoring and notification preferences");
   if(req.body.enabled&&!w.baseline)throw Error("Approve a baseline first");
   if(req.body.webhook_enabled&&!notificationConfig())throw Error("An operator must configure a signed webhook destination first");
-  await db.query("UPDATE accord_workspaces SET monitoring=$2,webhook_enabled=$3 WHERE id=$1",[w.id,req.body.enabled,req.body.webhook_enabled]);
-  await db.query("INSERT INTO accord_workspace_events(workspace_id,type,body) VALUES($1,'monitoring_changed',$2)",[w.id,{enabled:req.body.enabled,webhook_enabled:req.body.webhook_enabled}]);res.json({saved:true});
+  const c=await db.connect();try{await c.query("BEGIN");
+  await c.query("UPDATE accord_workspaces SET monitoring=$2,webhook_enabled=$3 WHERE id=$1",[w.id,req.body.enabled,req.body.webhook_enabled]);
+  await c.query("INSERT INTO accord_workspace_events(workspace_id,type,body) VALUES($1,'monitoring_changed',$2)",[w.id,{enabled:req.body.enabled,webhook_enabled:req.body.webhook_enabled}]);
+  await c.query("COMMIT");res.json({saved:true});}catch(e){await c.query("ROLLBACK");throw e;}finally{c.release();}
  });
  app.post("/workspaces/:id/check",async(req,res)=>{const w=await ownedWorkspace(req.params.id,await owner(req));res.json(await observeWorkspace(w.id,undefined,true));});
  app.get("/workspaces/:id/incidents",async(req,res)=>{const w=await ownedWorkspace(req.params.id,await owner(req));res.json((await db.query("SELECT * FROM accord_incidents WHERE workspace_id=$1 ORDER BY first_seen DESC LIMIT 100",[w.id])).rows);});
  app.get("/workspaces/:id/notifications",async(req,res)=>{const w=await ownedWorkspace(req.params.id,await owner(req));res.json((await db.query("SELECT * FROM accord_notifications WHERE workspace_id=$1 ORDER BY id DESC LIMIT 100",[w.id])).rows);});
  app.post("/workspaces/:id/incidents/:incident/acknowledge",async(req,res)=>{
   const w=await ownedWorkspace(req.params.id,await owner(req));numericId(req.params.incident);
-  const result=await db.query("UPDATE accord_incidents SET acknowledged_at=COALESCE(acknowledged_at,now()) WHERE id=$1 AND workspace_id=$2 RETURNING id",[req.params.incident,w.id]);
-  if(!result.rowCount)throw Error("Incident not found");
-  await db.query("INSERT INTO accord_workspace_events(workspace_id,type,body) SELECT $1,'incident_acknowledged',$2 WHERE NOT EXISTS(SELECT 1 FROM accord_workspace_events WHERE workspace_id=$1 AND type='incident_acknowledged' AND body->>'incident_id'=$3)",[w.id,{incident_id:req.params.incident},req.params.incident]);res.json({acknowledged:true});
+  const c=await db.connect();try{await c.query("BEGIN");
+  const result=await c.query("UPDATE accord_incidents SET acknowledged_at=now() WHERE id=$1 AND workspace_id=$2 AND acknowledged_at IS NULL RETURNING id",[req.params.incident,w.id]);
+  if(result.rowCount)await c.query("INSERT INTO accord_workspace_events(workspace_id,type,body) VALUES($1,'incident_acknowledged',$2)",[w.id,{incident_id:req.params.incident}]);
+  else if(!(await c.query("SELECT id FROM accord_incidents WHERE id=$1 AND workspace_id=$2",[req.params.incident,w.id])).rowCount)throw Error("Incident not found");
+  await c.query("COMMIT");res.json({acknowledged:true});}catch(e){await c.query("ROLLBACK");throw e;}finally{c.release();}
  });
  app.get("/pilot/metrics",async(req,res)=>res.json(await pilotMetrics(await owner(req))));
  app.post("/workspaces/:id/delete",async(req,res)=>{
@@ -52,9 +56,10 @@ export function mountOperations(app: express.Express, owner: (req: express.Reque
  });
  app.post("/pilot",async(req,res)=>{
   const account=await owner(req), body=pilotFeedback(req.body);
-  const result=await db.query("INSERT INTO accord_pilot_feedback(id,owner,body) SELECT $1,$2,$3 WHERE (SELECT count(*) FROM accord_pilot_feedback WHERE owner=$2)<20 RETURNING id",[randomUUID(),account,body]);
-  if(!result.rowCount) throw Error("Pilot feedback limit reached (20 per wallet)");
-  res.json(result.rows[0]);
+  const c=await db.connect();try{await c.query("BEGIN");await c.query("SELECT pg_advisory_xact_lock(hashtext($1))",[account]);
+  if(Number((await c.query("SELECT count(*) FROM accord_pilot_feedback WHERE owner=$1",[account])).rows[0].count)>=20)throw Error("Pilot feedback limit reached (20 per wallet)");
+  const result=await c.query("INSERT INTO accord_pilot_feedback(id,owner,body) VALUES($1,$2,$3) RETURNING id",[randomUUID(),account,body]);
+  await c.query("COMMIT");res.json(result.rows[0]);}catch(e){await c.query("ROLLBACK");throw e;}finally{c.release();}
  });
  app.delete("/pilot/:id",async(req,res)=>{
   const account=await owner(req);

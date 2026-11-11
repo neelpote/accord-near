@@ -66,6 +66,12 @@ const limits = new Map<string, { at: number; count: number }>();
 app.get("/health", (_req, res) =>
   res.json({ ok: true, network: config.network, contract: config.contract }),
 );
+app.get("/ready",async(_req,res)=>{
+ try{await db.query("SELECT 1");const h=(await db.query("SELECT last_completed FROM accord_worker_health WHERE name='operations'")).rows[0];
+ const enabled=process.env.RUN_OPERATIONS!=="false",fresh=!!h?.last_completed&&Date.now()-new Date(h.last_completed).getTime()<180000;
+ res.status(!enabled||fresh?200:503).json({database:"ready",operations_worker:enabled?(fresh?"recent completion":"stale or starting"):"disabled",network:config.network});
+ }catch{res.status(503).json({database:"unavailable"});}
+});
 app.get("/config", (_req, res) =>
   res.json({
     network: config.network,

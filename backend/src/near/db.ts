@@ -26,6 +26,10 @@ export async function migrate() {
  CREATE TABLE IF NOT EXISTS accord_workspace_reports(workspace_id uuid NOT NULL REFERENCES accord_workspaces(id) ON DELETE CASCADE,subscription_id text NOT NULL,cycle integer NOT NULL,report jsonb NOT NULL,receipt jsonb NOT NULL,artifact_hash text NOT NULL,PRIMARY KEY(workspace_id,subscription_id,cycle));
  CREATE TABLE IF NOT EXISTS accord_incident_explanations(incident_id bigint PRIMARY KEY REFERENCES accord_incidents(id) ON DELETE CASCADE,state text NOT NULL,report jsonb);
  ALTER TABLE accord_workspaces ADD COLUMN IF NOT EXISTS is_demo boolean NOT NULL DEFAULT false;
+ CREATE TABLE IF NOT EXISTS accord_worker_health(name text PRIMARY KEY,last_started timestamptz,last_completed timestamptz,last_error text);
+ CREATE INDEX IF NOT EXISTS accord_workspace_event_lookup ON accord_workspace_events(workspace_id,id);
+ CREATE INDEX IF NOT EXISTS accord_workspace_incident_lookup ON accord_incidents(workspace_id,first_seen);
+ CREATE INDEX IF NOT EXISTS accord_notification_due ON accord_notifications(state,next_attempt_at);
  CREATE TABLE IF NOT EXISTS accord_groq_budget(id integer PRIMARY KEY,requests integer NOT NULL);
  INSERT INTO accord_groq_budget VALUES(1,0) ON CONFLICT DO NOTHING;
  CREATE TABLE IF NOT EXISTS accord_ai_budget(id integer PRIMARY KEY,requests integer NOT NULL);

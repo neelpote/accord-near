@@ -7,6 +7,8 @@ export async function ownedWorkspace(id:unknown,owner:string){
  if(!r)throw Error("Workspace not found");return r;
 }
 export async function createWorkspace(owner:string,value:unknown){
+ const allowed=(process.env.OPS_PILOT_OWNERS??"").split(",").map(s=>s.trim()).filter(Boolean);
+ if(allowed.length&&!allowed.includes(owner))throw Error("This wallet is not enabled for the operator’s pilot");
  const v=workspaceInput(value), c=await db.connect();
  try{await c.query("BEGIN");await c.query("SELECT pg_advisory_xact_lock(hashtext($1))",[owner]);
  if(Number((await c.query("SELECT count(*) FROM accord_workspaces WHERE owner=$1",[owner])).rows[0].count)>=3)throw Error("Pilot limit: three workspaces per wallet");

@@ -12,6 +12,7 @@ export async function evidenceExport(id:unknown,owner:string){
  const c=await db.connect();
  try{await c.query("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY");
  const workspace=(await c.query("SELECT * FROM accord_workspaces WHERE id=$1 AND owner=$2",[w.id,owner])).rows[0];
+ if(!workspace)throw Error("Workspace not found");
  const events=(await c.query("SELECT * FROM accord_workspace_events WHERE workspace_id=$1 ORDER BY id LIMIT 1001",[w.id])).rows;
  const incidents=(await c.query("SELECT * FROM accord_incidents WHERE workspace_id=$1 ORDER BY id LIMIT 1001",[w.id])).rows;
  const notifications=(await c.query("SELECT * FROM accord_notifications WHERE workspace_id=$1 ORDER BY id LIMIT 1001",[w.id])).rows;

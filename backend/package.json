@@ -27,7 +27,9 @@
     "start": "tsx src/near/server.ts",
     "dev": "tsx watch src/near/server.ts",
     "db:migrate": "tsx src/near/migrate.ts",
-    "near:demo:agents": "tsx src/near/agents-demo.ts"
+    "near:demo:agents": "tsx src/near/agents-demo.ts",
+    "near:test:operations": "tsx src/near/operations-check.ts",
+    "near:demo:operations": "tsx src/near/operations-demo.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",

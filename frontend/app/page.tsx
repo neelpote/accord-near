@@ -461,8 +461,9 @@ export default function Home() {
               <span>Keep the limits.</span>
             </h1>
             <p className="lede">
-              Buy recurring reports from independent agents. Choose a finite
-              budget and a billing schedule that the worker cannot change.
+              Monitor code and access-key changes in your NEAR application.
+              Review evidence in the unbilled pilot, or buy agent reports with
+              a finite budget and a billing schedule the worker cannot change.
             </p>
           </div>
           <aside className="agreement-preview">

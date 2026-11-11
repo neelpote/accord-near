@@ -26,6 +26,7 @@ export async function capture(accounts:string[],client:Pick<JsonRpcProvider,"vie
   if(clean.length>100)throw Error("Pilot supports at most 100 keys per account");
   result.push({account_id,code_hash:account.code_hash,keys:clean.map((k:any)=>({public_key:k.public_key,permission:k.access_key.permission})).sort((a:any,b:any)=>a.public_key.localeCompare(b.public_key))});
  }
+ if(Date.now()-Number(BigInt(block.header.timestamp_nanosec)/1000000n)>120000)throw Error("Observation became stale during capture");
  return {block_height:block.header.height,block_hash:block.header.hash,observed_at:new Date().toISOString(),accounts:result};
 }
 export const snapshotHash=(s:Snapshot)=>digest(s);
