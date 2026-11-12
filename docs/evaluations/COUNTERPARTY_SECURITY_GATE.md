@@ -41,3 +41,7 @@ AI Security & Defense: implemented counterparty-check example with bounded histo
 1. Confirm the deployed version includes this backend and UI, not only a local build.
 2. Record the owner review and blocked attack in the submission video; complete actual external wallet popup testing.
 3. Obtain actual user feedback; synthetic pilot records and tests are not customer validation. Human demo post and submission details remain separate.
+
+## Release verification completed
+
+The backend and UI are deployed publicly. `counterparty-hosted-proof.json` records actual browser approval and final chain/backend readback for agreement 22, with successful delivery, owner isolation, curator authentication and cleanup. Application CI run 43243063010 passed. The hosted history timeout discovered during acceptance was fixed by batching local history reads and limiting parallel chain reads to four. The initial transport interruption remains disclosed in the proof. Public demo video, third-party wallet-device checks and genuine customer feedback remain submission/pilot tasks; they are not reclassified as implemented security requirements.

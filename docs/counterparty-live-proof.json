@@ -51,5 +51,10 @@
   "passed": true,
   "canceled": true,
   "delegate_removed": true,
-  "completed_at": "2026-11-12T14:41:46.213Z"
+  "completed_at": "2026-11-12T14:41:46.213Z",
+  "finalized_cleanup": {
+    "active": false,
+    "delegate_present": false,
+    "verified_at": "2026-11-12T14:48:32.392Z"
+  }
 }

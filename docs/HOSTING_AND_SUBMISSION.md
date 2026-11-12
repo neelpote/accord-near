@@ -60,3 +60,5 @@ Before presenting this as a device-ready MetaMask/WalletConnect demo, complete a
 ## Counterparty security update
 
 The full security-example implementation is documented in [Counterparty security](COUNTERPARTY_SECURITY.md), with separate [attack](counterparty-attack-proof.json) and [funded payment](counterparty-live-proof.json) logs. Every new automated charge can pause for review under **Payment security**. Test the owner approval on the deployed release, not only the old report flow. Configure `SECURITY_REVIEWERS` with explicit curator wallets to enable reviewed blocks; an empty list deliberately grants no curator authority. Reporting and pending warnings work without it. No new contract deployment is needed for the backend gate.
+
+Hosted counterparty acceptance is recorded in [counterparty-hosted-proof.json](counterparty-hosted-proof.json): real review-button approval, agreement 22 paid/delivered once, curator authentication and finalized cleanup. The latest application CI for code commit `5cf6aa4` passed.

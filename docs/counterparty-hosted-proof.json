@@ -1,0 +1,67 @@
+{
+  "network": "testnet",
+  "contract": "contract.accord-dev-261110.testnet",
+  "scope": "Real NEP-413 owner-fixture session, funded testnet agreement and production payment worker",
+  "started_at": "2026-11-12T14:51:51.138Z",
+  "checks": [
+    "Funded agreement stayed unpaid while exact-payment approval was pending",
+    "Readback confirmed actual hosted browser approval, one on-chain credit, delivered report and exact receipt hash, consumed authorization, cancellation and absent delegate key",
+    "Production curator wallet authenticated and owner-isolated decisions verified"
+  ],
+  "subscription_id": "22",
+  "warning": {
+    "id": "9867e5f8-976a-4aa5-8c52-99f2bdac16eb",
+    "reasons": [
+      {
+        "code": "UNREVIEWED_CODE",
+        "account": "contract.accord-dev-261110.testnet",
+        "message": "First observation of this contract identity"
+      },
+      {
+        "code": "NEW_ACCOUNT",
+        "account": "contract.accord-dev-261110.testnet",
+        "message": "Account is less than seven days old"
+      },
+      {
+        "code": "NEW_ACCOUNT",
+        "account": "provider.accord-dev-261110.testnet",
+        "message": "Account is less than seven days old"
+      }
+    ],
+    "intent_hash": "80c00d4e163b1ffd4a530bdeca7a70faa6f33eedfdbc9ee8ed2e239df3a23272",
+    "evidence_hash": "33310aab2f6134decaf5ec057c9d162cc8fb9200ca91f1dd7ffa3360b720cd58"
+  },
+  "browser_approval": true,
+  "origin": "https://accord-near-ten.vercel.app",
+  "canceled": true,
+  "delegate_removed": true,
+  "completed_at": "2026-11-12T14:55:43.385Z",
+  "initial_transport_failure": {
+    "stage": "Fetching full agreement history after browser approval",
+    "error": "fetch failed: read ETIMEDOUT",
+    "payment_result": "On-chain charge and backend delivery had succeeded; verified separately below"
+  },
+  "history_ms": 2806,
+  "artifact_hash": "9ec8b1bb8cbcfbf6d524999c27ca8f5dafd849e6b321dd696a3ec027852e9411",
+  "receipt": {
+    "subscription_id": "22",
+    "cycle": 0,
+    "provider": "provider.accord-dev-261110.testnet",
+    "amount": "1000000000000000000000",
+    "artifact_hash": "9ec8b1bb8cbcfbf6d524999c27ca8f5dafd849e6b321dd696a3ec027852e9411",
+    "paid_at_ns": "1794495204059397453"
+  },
+  "finalized_cleanup": {
+    "active": false,
+    "delegate_present": false
+  },
+  "curator_wallet_verified": "accord-dev-261110.testnet",
+  "owner_isolation": true,
+  "readiness": {
+    "database": "ready",
+    "operations_worker": "recent completion",
+    "network": "testnet"
+  },
+  "passed": true,
+  "verified_at": "2026-11-12T15:02:32.774Z"
+}

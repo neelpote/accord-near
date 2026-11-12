@@ -1,0 +1,24 @@
+{
+  "origin": "https://accord-near-ten.vercel.app",
+  "code_commit": "5cf6aa4fa3746e29b6f78f83f6c7ccba41f3f9b3",
+  "deployment": "https://accord-near-ehkh537nf-neelpote96-9476s-projects.vercel.app",
+  "application_ci": "https://github.com/neelpote/accord-near/actions/runs/43243063010",
+  "application_ci_result": "success",
+  "unit_tests": 23,
+  "browser_tests": 9,
+  "additional_checks": [
+    "Security PostgreSQL + HTTP integration",
+    "Existing operations and Ethereum authentication checks",
+    "Repeated CI-mode wallet and security browser checks",
+    "Four deployment-configuration checks",
+    "Frontend production build",
+    "Recognizable credential scan"
+  ],
+  "local_funded_agreement": "21",
+  "hosted_funded_agreement": "22",
+  "attack_log": "counterparty-attack-proof.json",
+  "hosted_log": "counterparty-hosted-proof.json",
+  "groq_inference_calls_in_this_change": 0,
+  "mainnet_transactions": 0,
+  "checked_at": "2026-11-12T15:03:53.763960+00:00"
+}
