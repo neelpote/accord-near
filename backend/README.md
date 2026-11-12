@@ -1,3 +1,5 @@
+> **Documentation status — 12 November 2026:** Historical upstream backend description follows. Active entrypoint: `src/near/server.ts` (`npm start`); provider: `npm run near:provider`. The original EVM indexer/API commands below are inactive and have `legacy:` names where retained. Use [the root README](../README.md) and [current handoff](../docs/PROJECT_HANDOFF.md).
+
 # backend
 
 The off chain brain of Daemon. It serves the REST API the frontend talks to and

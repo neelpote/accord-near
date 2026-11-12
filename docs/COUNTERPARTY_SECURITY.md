@@ -108,3 +108,7 @@ The public release at https://accord-near-ten.vercel.app includes the security s
 [The recorded warning screen](demo/counterparty-warning.png) shows the actual approval before signing. The current UI additionally displays the exact human-readable testNEAR amount. The public service requires login for personal decisions and verifies configured curator identity; the project operator and the owner's supplied funded testnet account are configured as reviewers. No demo accusation was inserted into the production blocklist.
 
 Application CI passed for commit `5cf6aa4fa3746e29b6f78f83f6c7ccba41f3f9b3`: https://github.com/neelpote/accord-near/actions/runs/43243063010. The earlier wallet retry test timed out; its polling side effects were replaced with explicit verification waiting and one chooser selection, then passed repeated CI-mode checks and GitHub CI.
+
+## Audit clarification: adversarial fixture versus prompt injection
+
+The stricter source review in [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md) found that `counterparty-attack.ts` directly constructs the malicious intent. Its injected-looking document is logged but not consumed by a model/agent, and the example agreement context is not an otherwise executable valid payment. The recorded refusal and zero signing callbacks are genuine, but the script should be presented as a signing-boundary adversarial test. A causal prompt-injected-agent demonstration remains open; eligibility for the broader Security track is a separate question from satisfying every line of that chosen example.

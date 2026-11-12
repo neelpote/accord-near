@@ -1,3 +1,5 @@
+> **Documentation status — 12 November 2026:** Superseded research alternative. The active owner-approved implementation uses native NEAR testnet escrow, not the Agent API-first proposal below. Read [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md) and [ARCHITECTURE.md](ARCHITECTURE.md).
+
 # Daemon on NEAR: product decision, design audit, and submission-readiness plan
 
 > **Architecture update — 10 November 2026:** Read [the newer architecture and complete flow design](/Users/neelsubhashpote/Desktop/near/DAEMON_NEAR_ARCHITECTURE.md) before implementation. It selects an Agent API / NEAR Intents approach first, preserves Daemon's agent-commerce product, and treats the custom native escrow and account-monitoring direction below as alternatives rather than committed requirements. The compliance checklist and baseline findings remain useful. The newer design explicitly separates application-enforced billing rules from externally enforced spending policy; it does not claim all recurring terms are onchain.

@@ -1,5 +1,9 @@
 # Verification
 
+> **Current checkpoint — 12 November 2026:** reviewed application `519f83e` passed [CI 43243745816](https://github.com/neelpote/accord-near/actions/runs/43243745816): 23 unit tests, operations/EVM-auth/security integration checks, schema, build, nine browser checks and credential scan. Contract CI [43180728469](https://github.com/neelpote/accord-near/actions/runs/43180728469) covers the unchanged Rust crates. Funded warning/approval evidence: [local agreement 21](docs/counterparty-live-proof.json), [hosted agreement 22](docs/counterparty-hosted-proof.json).
+>
+> The dated checkpoints below are historical, not a statement that their counts or pre-hosting limits describe the latest release. The current documentation audit and exact evidence boundaries are in [PROJECT_HANDOFF.md](docs/PROJECT_HANDOFF.md). The attack fixture does not establish actual prompt-injected-agent behavior; updated opt-in native/EVM scripts require a new funded rerun before a fresh live acceptance claim.
+
 Verified application source: **7587362ef72e1d3844e036f833c734584d0f9a30**. Testnet only. Optional AI generation is paused at the user's request.
 
 ## Results

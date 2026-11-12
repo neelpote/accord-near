@@ -1,6 +1,6 @@
 # Accord implementation architecture
 
-Current implementation, November 2026. Historical DAEMON_NEAR_* proposals in this directory are research alternatives, not the implemented money path.
+Current implementation, updated 12 November 2026. Full repository/deployment context and audit: [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md). Historical DAEMON_NEAR_* proposals in this directory are research alternatives, not the implemented money path.
 
 ```mermaid
 flowchart LR
@@ -10,6 +10,9 @@ flowchart LR
   API --> S[Awaited worker loop]
   S -->|prepare input-bound artifact| P[Independent provider process]
   P --> PD[(Durable provider artifacts)]
+  S --> SEC[Counterparty evidence + policy]
+  SEC -->|warn: owner review / block: refuse| API
+  SEC -->|allow or exact approved warning| S
   S -->|charge same cycle and hash| N
   P -->|independently read final receipt| N
   P -->|exact paid artifact| S
@@ -22,11 +25,11 @@ flowchart LR
 ## Agreement and payment flow
 
 1. Provider signs `register_service`. Immutable onchain terms bind its account, exact price, interval and metadata hash. The API verifies that account owns the registration before publishing its metadata. Provider URLs are limited to the configured reference deployment.
-2. Customer proves wallet ownership with a five-minute one-use challenge, fixed site recipient and network. `near-api-js/nep413` verifies the signature and the account's full-access public key. A hashed, expiring server-side session backs an HttpOnly SameSite cookie.
+2. Native NEAR customers prove wallet ownership with a five-minute one-use challenge, fixed site recipient and network. Ethereum-wallet accounts instead use the separate browser-bound finalized login-contract receipt described in [Ethereum wallets](ETHEREUM_WALLETS.md). `near-api-js/nep413` verifies the signature and the account's full-access public key. A hashed, expiring server-side session backs an HttpOnly SameSite cookie.
 3. API generates a dedicated Ed25519 charge key. Only the public key reaches the browser; AES-256-GCM encrypts the limited private key at rest. Provisioning is tied to the authenticated account.
 4. Customer approves a finite contract agreement, attaching exact service budget plus retained storage fee. A separate wallet action installs the charge-only key with a finite gas allowance. The API checks the finalized agreement, input hash, owner, public key and onchain permission before activating scheduling.
 5. A PostgreSQL session advisory lock serializes workers per subscription. A partial unique index permits only one unresolved cycle. The provider binds preparation to the subscription input hash and due cycle. Its artifact and preparation capability are persisted before any charge. AI preparation, when enabled, additionally has a persistent request cap and a fail-closed review state; it cannot silently fall back.
-6. Worker persists the original cycle/hash, requests `charge` using the restricted key, and independently reads the final contract receipt. The contract gets recipient and amount from its immutable service and checks owner/signer/key, active state, expiry, due time and exact next cycle. No catch-up billing occurs.
+6. Worker persists the original cycle/hash and calls the mandatory counterparty service for the escrow and economic provider. A block refuses signing; a warning requires an authenticated, expiring, exact-payment approval. Evidence is refreshed and approval consumed once before key decryption. Only then does it request `charge` using the restricted key and independently read the final contract receipt. The contract gets recipient and amount from its immutable service and checks owner/signer/key, active state, expiry, due time and exact next cycle. No catch-up billing occurs.
 7. Provider independently checks the same contract receipt against the frozen artifact, provider, amount and preparation capability. The worker verifies schema and SHA-256 before storing a delivered report. A later cycle cannot proceed while delivery/payment remains unresolved.
 8. Wallet cancellation atomically disables future contract charges and moves unspent reserve to the customer's available ledger. Previously paid artifacts remain retrievable. Removing the access key separately revokes its residual gas authority.
 9. Customer/provider withdrawals debit their source ledger before the native transfer. One pending withdrawal per account prevents overlap. The private callback restores the ledger on transfer failure. Direct wallet calls preserve the exit path when the API is unavailable.
@@ -45,7 +48,13 @@ sequenceDiagram
   loop Each due cycle, at most max_cycles
     Worker->>Provider: Prepare agreed input
     Provider-->>Worker: Frozen artifact hash and capability
-    Worker->>NEAR: charge(subscription, cycle, same hash)
+    Worker->>API: Check counterparties; pause block/warn
+    opt Warning requires owner review
+      API-->>Owner: Exact intent and evidence
+      Owner->>API: Approve once or decline
+      Worker->>API: Refresh evidence; consume approval
+    end
+    Worker->>NEAR: Only allowed/approved charge(subscription, cycle, same hash)
     Worker->>NEAR: Read final receipt
     Provider->>NEAR: Independently verify payment credit
     Provider-->>Worker: Exact paid artifact
@@ -94,3 +103,7 @@ Public demonstrations come only from explicitly published developer-fixture rows
 `evidence.ts` exposes owner-scoped cursor pagination and consistent, bounded JSON exports with reproducible digests. `workspace-reports.ts` rechecks separately purchased artifacts against final onchain receipts and account association before linking them. The existing billing contract, reserved funds, cancellation and withdrawal logic are unchanged. Pilot observations do not debit NEAR and are not represented as paid receipts. Groq explanations are optional, capped, cached and advisory; they never alter deterministic findings or sign actions.
 
 `pilot-metrics.ts` reports wallet-private setup/review counts excluding marked demos. Neither a wallet count nor self-reported continuation terms constitute customer validation or revenue. Deletion cascades pilot records only; independent paid agreements and chain history remain.
+
+## Counterparty trust boundary
+
+See [COUNTERPARTY_SECURITY.md](COUNTERPARTY_SECURITY.md) for sources, policy and endpoints. This gate runs in the backend; it is not an on-chain reputation attestation. Compromised dispatcher/deployer, curated-report trust, incomplete history, code-change polling and repeated young-account warnings remain documented limits. The financial contract still enforces its separate limits. [The handoff](PROJECT_HANDOFF.md) explicitly distinguishes the present adversarial-output test from a complete prompt-injected-agent demonstration.

@@ -1,3 +1,5 @@
+> **Documentation status — 12 November 2026:** Historical upstream EVM API proposal, not the active NEAR API contract. Current routes are in `backend/src/near/server.ts`, `operations-api.ts`, `counterparty-api.ts` and `evm-auth.ts`. Read [the current handoff](../docs/PROJECT_HANDOFF.md).
+
 # Daemon, API Specification v1
 
 Contract between the Next.js frontend and the backend. Both sides MUST follow the conventions

@@ -1,3 +1,5 @@
+> **Documentation status — 12 November 2026:** Historical upstream Arbitrum product requirements; not the active Accord specification. Read [the current handoff](docs/PROJECT_HANDOFF.md).
+
 # Product Requirements Document: Daemon, an Agent Subscription Marketplace
 
 **Version:** 3.0

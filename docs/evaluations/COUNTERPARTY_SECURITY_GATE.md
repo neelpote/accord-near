@@ -45,3 +45,7 @@ AI Security & Defense: implemented counterparty-check example with bounded histo
 ## Release verification completed
 
 The backend and UI are deployed publicly. `counterparty-hosted-proof.json` records actual browser approval and final chain/backend readback for agreement 22, with successful delivery, owner isolation, curator authentication and cleanup. Application CI run 43243063010 passed. The hosted history timeout discovered during acceptance was fixed by batching local history reads and limiting parallel chain reads to four. The initial transport interruption remains disclosed in the proof. Public demo video, third-party wallet-device checks and genuine customer feedback remain submission/pilot tasks; they are not reclassified as implemented security requirements.
+
+## Subsequent source-audit correction — 12 November 2026
+
+The broader track fit and wrapper/approval evidence remain valid. The chosen prompt's attack-demo row is **partial**, rather than literally complete: the script constructs malicious output directly and does not run an agent over the injected document. The logged agreement is not a valid otherwise-executable control. Do not conflate signer refusal with demonstrated prompt-injection causality. Current status, documentation supersession and remaining submission tasks are consolidated in [PROJECT_HANDOFF.md](../PROJECT_HANDOFF.md).

@@ -1,3 +1,5 @@
+> **Documentation status — 12 November 2026:** Historical upstream EVM handoff; not the active NEAR deployment/schema. Read [the current handoff](../docs/PROJECT_HANDOFF.md).
+
 # Backend Changes: Agent Marketplace (Daemon)
 
 Handoff spec for aligning the backend with the Daemon marketplace architecture.

@@ -178,6 +178,19 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
       exact: true,
     }),
   });
+  // A warning needs one owner-fixture review; an already-allowed payment can deliver directly.
+  const approval = page.locator("#security article").filter({
+    hasText: `Agreement ${pending.subscription_id} · cycle 0`,
+  }).first().getByRole("button", { name: "Approve this exact payment once", exact: true });
+  let securityWarningApproved = false;
+  await Promise.race([
+    approval.waitFor({ state: "visible", timeout: 160000 }),
+    agreement.getByText("Paid · delivered", { exact: true }).waitFor({ timeout: 160000 }),
+  ]);
+  if (await approval.isVisible()) {
+    await approval.click();
+    securityWarningApproved = true;
+  }
   await expect(
     agreement.getByText("Paid · delivered", { exact: true }),
   ).toBeVisible({ timeout: 160000 });
@@ -240,6 +253,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
         origin: process.env.ACCORD_BASE_URL || "http://localhost:3000",
         contract: config.contract,
         subscription_id: pending.subscription_id,
+        exact_security_warning_approved: securityWarningApproved,
         transactions,
         completed_at: new Date().toISOString(),
         wallet:

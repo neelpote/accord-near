@@ -10,6 +10,8 @@ A customer approves a finite agreement, funds its budget, and installs a charge-
 
 See [the five agents and their working demonstrations](docs/AGENT_SERVICES.md), including actual purchased reports and source-block evidence.
 
+**Current project context and submission audit:** [PROJECT_HANDOFF.md](docs/PROJECT_HANDOFF.md). This is the authoritative map of active code, accepted decisions, evidence, historical documents and remaining submission work.
+
 ## Hosted demo
 
 Open [Accord on NEAR testnet](https://accord-near-ten.vercel.app). Use a dedicated testnet wallet. The frontend, API and persistent workers run on Vercel; durable records are stored in Neon PostgreSQL. Testnet only; no production uptime or security-audit claim. See [hosting, verification and submission steps](docs/HOSTING_AND_SUBMISSION.md) and [MiroFish research setup](docs/pilot/MIROFISH_BRIEF.md).
@@ -23,7 +25,7 @@ MetaMask and WalletConnect can operate the same native NEAR testnet agreements t
 1. Start the API, provider and frontend with the instructions below. Open `http://localhost:3000`.
 2. Sign in with a NEAR **testnet** wallet or the Ethereum-wallet adapter. Native login verifies a one-use NEP-413 signature; Ethereum login verifies a browser-bound finalized receipt from the separate pinned authentication contract. Connecting a wallet alone does not authenticate it.
 3. Choose a live NEAR agent or the portfolio report, inspect its fixed terms, and approve a finite prepaid agreement. Then separately enable the limited key. Its 0.05 test NEAR allowance covers gas only; the contract separately enforces the service budget.
-4. See a verified provider credit and matching delivered report. Payment and delivery have distinct states. Subsequent purchases wait for the onchain interval.
+4. Open **Payment security**. A warning pauses the exact charge until you approve it; a block refuses signing. After an allowed or approved payment, see the verified provider credit and matching delivered report. Payment and delivery have distinct states. Later purchases follow the onchain interval and repeat the security check.
 5. Cancel future purchases, remove the limited key, and withdraw the available remainder. The provider signs into its own account to withdraw earnings.
 
 Test tokens are free. Never import a real customer wallet into development scripts. Use a dedicated funded testnet wallet with enough balance for the budget, gas, key storage and disclosed retained contract storage fees.
@@ -179,4 +181,4 @@ The current frontend uses a credited artist-made Robot Expressive model and a na
 
 Automated charges now pass a mandatory counterparty decision service: **allow**, **warn** (owner approval for one exact payment), or **block** (no signature). Both the escrow contract and the economic provider are checked using finalized code identity, indexed account age/recent activity, prior Accord receipts and shared evidence reports. Open **Payment security** to review paused payments or submit evidence. Curator-reviewed blocklist entries cannot be overridden by payment approval.
 
-The agent's existing finite function-call key remains `charge`-only on one contract; it is never a full-access key. The allowance pays gas, while the contract enforces the payment budget and recipient. The reputation gate runs in the backend and is not a contract-enforced guarantee against a compromised dispatcher. Full data-source coverage, access-key limits, API, threat boundaries and reproducible attack instructions: [Counterparty security](docs/COUNTERPARTY_SECURITY.md). [Captured attack log](docs/counterparty-attack-proof.json).
+The agent's existing finite function-call key remains `charge`-only on one contract; it is never a full-access key. The allowance pays gas, while the contract enforces the payment budget and recipient. The reputation gate runs in the backend and is not a contract-enforced guarantee against a compromised dispatcher. Full data-source coverage, access-key limits, API, threat boundaries and reproducible attack instructions: [Counterparty security](docs/COUNTERPARTY_SECURITY.md). [Captured attack log](docs/counterparty-attack-proof.json). This is a malicious-intent signing-boundary fixture; a complete causal prompt-injection demonstration and current submission-demo packaging remain outstanding. See the [fresh submission audit](docs/PROJECT_HANDOFF.md#4-fresh-security-track-and-submission-audit).

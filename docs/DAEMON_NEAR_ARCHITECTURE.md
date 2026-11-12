@@ -1,3 +1,5 @@
+> **Documentation status — 12 November 2026:** Superseded Agent API-first proposal. Active financial execution is the native testnet contract, with a separate backend counterparty gate. Read [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md) and [ARCHITECTURE.md](ARCHITECTURE.md).
+
 # Daemon on NEAR — architecture, implementation design, and complete flows
 
 **Design date:** 10 November 2026, India time  

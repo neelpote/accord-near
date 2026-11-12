@@ -59,6 +59,9 @@ try{
   const pending=await page.evaluate(()=>JSON.parse(localStorage.getItem('accord_pending')!));subscriptionId=pending.subscription_id;
   await enable.click();
   const agreement=page.locator('article.panel').filter({has:page.getByRole('heading',{name:`Agreement #${pending.subscription_id}`,exact:true})});
+  const approval=page.locator('#security article').filter({hasText:`Agreement ${pending.subscription_id} · cycle 0`}).first().getByRole('button',{name:'Approve this exact payment once',exact:true});
+  await Promise.race([approval.waitFor({state:'visible',timeout:180000}),agreement.getByText('Paid · delivered',{exact:true}).waitFor({timeout:180000})]);
+  if(await approval.isVisible())await approval.click();
   await agreement.getByText('Paid · delivered',{exact:true}).waitFor({timeout:180000});
   await agreement.scrollIntoViewIfNeeded();
   await page.waitForFunction(el=>getComputedStyle(el).opacity==='1',await agreement.elementHandle(),{timeout:10000});

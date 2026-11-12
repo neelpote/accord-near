@@ -1,3 +1,5 @@
+> **Documentation status — 12 November 2026:** Historical upstream UI description follows. Active Accord is `app/page.tsx`, with real wallet authentication and NEAR testnet contracts; the mocked-wallet/routes below describe the inactive baseline. Use [the root README](../README.md) and [current handoff](../docs/PROJECT_HANDOFF.md).
+
 # daemon — AI agent marketplace frontend
 
 Next.js implementation of the **Daemon Platform** design (Claude Design handoff, "Forge" dark dev-tool direction): a subscription marketplace where creators list AI agents and subscribers pay for their services with wallet-native billing.

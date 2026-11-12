@@ -23,3 +23,16 @@ Possible demo-post draft for human review only:
 > I built Accord at NEAR HACKATHON: finite recurring purchases for agent services. A NEAR contract limits each charge by provider, price, interval and expiry; a limited key automates purchases, while the owner can cancel and withdraw the remainder. Testnet demo and reproducible source: https://github.com/neelpote/accord-near @NEARProtocol #NEARHackathon
 
 Attach the actual demo video. Explain in the README/demo that the financial integration is new hackathon work built on an existing marketplace baseline. Do not invent usage or customer validation.
+
+## Current security-focused storyboard — 12 November 2026
+
+The older 63-second portfolio demo above is historical. A new recording should lead with the current user problem: an agent operator needs to control who gets paid and how much authority the worker holds.
+
+1. Show a finite report agreement and its provider, price, cycle limit and retained storage fee.
+2. Enable the contract-scoped key; show the pending warning in **Payment security** and that no receipt/payment exists yet.
+3. Inspect the exact recipient, method, amount, reason codes and evidence. Approve once through the owner's session.
+4. Show the consumed authorization, one on-chain receipt and matching delivered artifact. Agreement 22 is existing evidence, not a request to fund another demo automatically.
+5. Show the adversarial-output fixture and its zero-signing log. Label it exactly; do not claim the current script ran a prompt-injected agent. Complete the causal attack/control demonstration before making that stronger claim.
+6. Show cancellation and removed key; explain that full-access owner/admin authority is separate and the reputation gate is off chain.
+
+Before publishing, confirm the public demo is reachable and capture the current security UI. The human posts the final recording/screenshots to X with the required tags, supplies the link and approves the exact application payload. See [the current handoff and readiness audit](PROJECT_HANDOFF.md). No new demo post or application has been sent by this audit.
