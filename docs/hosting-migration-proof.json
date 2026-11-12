@@ -1,0 +1,118 @@
+{
+  "checked_at": "2026-11-12T06:15:00.635Z",
+  "source": "local testnet database",
+  "destination": "Neon free_v3 iad1",
+  "tables": [
+    {
+      "table": "accord_agent_demos",
+      "rows": 6,
+      "match": true,
+      "sha256": "ee2806d450fbac071ec123db184fe8ed3878b14209616b6c574db87ced8392c4"
+    },
+    {
+      "table": "accord_ai_budget",
+      "rows": 1,
+      "match": true,
+      "sha256": "a17941ba958054e09652980d09b33a0c32a11cc60d55c11782fabbd9394728b8"
+    },
+    {
+      "table": "accord_challenges",
+      "rows": 0,
+      "match": true,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "table": "accord_cycles",
+      "rows": 26,
+      "match": true,
+      "sha256": "6862ad01c9093cb44268eebf657e26cbeb85b3e82c0aca471e4a3da8b51bfbbf"
+    },
+    {
+      "table": "accord_groq_budget",
+      "rows": 1,
+      "match": true,
+      "sha256": "f35f9af8d3d37acb13bba17c90643efc0551c222c565fdaabb1dc983d98e920d"
+    },
+    {
+      "table": "accord_incident_explanations",
+      "rows": 1,
+      "match": true,
+      "sha256": "15d5d3319ca6819cf6d5a6713f1f38b68b2c3ea0fbb0be94eef22c228bbf73fd"
+    },
+    {
+      "table": "accord_incidents",
+      "rows": 1,
+      "match": true,
+      "sha256": "41f4c8f155b911a3fdb60fa88a1ed1092083633f0e2afd1c2a583b6b3b59215a"
+    },
+    {
+      "table": "accord_notifications",
+      "rows": 1,
+      "match": true,
+      "sha256": "fdf76c0de277a164406799ab21a7d3e0af387417c9507d1fa145a93d84f151bd"
+    },
+    {
+      "table": "accord_pilot_feedback",
+      "rows": 0,
+      "match": true,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "table": "accord_provider_artifacts",
+      "rows": 26,
+      "match": true,
+      "sha256": "b7733c02528674bcacf78deef3e3e6aa9981a3c8af314f6b2c66d88e32b78203"
+    },
+    {
+      "table": "accord_provisioning",
+      "rows": 1,
+      "match": true,
+      "sha256": "8e03c3a4a77797622e77840123662764708155d15a080b6add567c68c558f69d"
+    },
+    {
+      "table": "accord_services",
+      "rows": 8,
+      "match": true,
+      "sha256": "b9ac211d5a3ed255b9089c718e26d0903141ae0f99114c405e5779cedb23d824"
+    },
+    {
+      "table": "accord_sessions",
+      "rows": 22,
+      "match": true,
+      "sha256": "0a9e30a27898e65af12321882c5cf97a89428ad1844c61b0c2dc8b5a10e2c90d"
+    },
+    {
+      "table": "accord_subscriptions",
+      "rows": 17,
+      "match": true,
+      "sha256": "8f5b423ebf326555f50a6cc53406c0990b3509450b32c80d9103faa9e252bca2"
+    },
+    {
+      "table": "accord_worker_health",
+      "rows": 1,
+      "match": true,
+      "sha256": "dca80937680662497a2eef12de4e16df7efc1bc5d3612f88d068deeedfe61282"
+    },
+    {
+      "table": "accord_workspace_events",
+      "rows": 8,
+      "match": true,
+      "sha256": "c19d1f942102ac2568050ccfd7949fd639dae1a6f4cb5faf5bc503d2a52c4486"
+    },
+    {
+      "table": "accord_workspace_reports",
+      "rows": 1,
+      "match": true,
+      "sha256": "5b610b13cc4379a4398a2f03a58ce104859aca82db7ed90a1047b9ed00adb61c"
+    },
+    {
+      "table": "accord_workspaces",
+      "rows": 1,
+      "match": true,
+      "sha256": "eeb6aaea7272d8a0669c747c571792f49dcae603563f49ff269cd958f5f4b1ff"
+    }
+  ],
+  "groq_requests_preserved": 4,
+  "post_verification": "Inherited sessions, challenges and unused provisioning invalidated; fresh hosted wallet signatures required.",
+  "backup_sha256": "14f025c5d4e9ad64a6d49472e051e2377e3ac4c181d06f8e2a69c84d50c8e0f0"
+}

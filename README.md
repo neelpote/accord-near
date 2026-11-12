@@ -10,6 +10,10 @@ A customer approves a finite agreement, funds its budget, and installs a charge-
 
 See [the five agents and their working demonstrations](docs/AGENT_SERVICES.md), including actual purchased reports and source-block evidence.
 
+## Hosted demo
+
+Open [Accord on NEAR testnet](https://accord-near-ten.vercel.app). Use a dedicated testnet wallet. The frontend, API and persistent workers run on Vercel; durable records are stored in Neon PostgreSQL. Testnet only; no production uptime or security-audit claim. See [hosting, verification and submission steps](docs/HOSTING_AND_SUBMISSION.md) and [MiroFish research setup](docs/pilot/MIROFISH_BRIEF.md).
+
 ## What to try
 
 1. Start the API, provider and frontend with the instructions below. Open `http://localhost:3000`.

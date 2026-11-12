@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-11-12T06:27:28.798Z",
+  "origin": "https://accord-near-ten.vercel.app",
+  "deployment_id": "dpl_3UrffjesMVSJKGkiRCJ4SaE9xg4N",
+  "source_dirty": true,
+  "scope": "Unauthenticated public HTTP + actual Chromium; separate hosted-wallet-proof.json records signed payment journey",
+  "health": {
+    "ok": true,
+    "network": "testnet",
+    "contract": "contract.accord-dev-261110.testnet"
+  },
+  "readiness": {
+    "database": "ready",
+    "operations_worker": "recent completion",
+    "network": "testnet"
+  },
+  "wallet_recipient": "accord-near-ten.vercel.app",
+  "listed_services": 7,
+  "paid_examples": 6,
+  "scene": "ready",
+  "scroll_chapters": [
+    "Observe",
+    "Inspect",
+    "Limit"
+  ],
+  "mobile_widths": [
+    390,
+    320
+  ],
+  "reduced_motion": true,
+  "loopback_requests": [],
+  "page_errors": [],
+  "model_sha256": "047f5e5fb3bb6d378bd1df16ca6137f2a596c99b3a1b5690b4020c05aaf6f319",
+  "container_checks": [
+    "Both Docker stages build and serve isolated PostgreSQL",
+    "Provider child death exits supervisor with status 1",
+    "Supervisor restart restores private provider and worker readiness",
+    "SIGTERM stops isolated worker container"
+  ],
+  "migration": "hosting-migration-proof.json; 18 tables matched before inherited sessions/challenges/provisioning invalidation"
+}
