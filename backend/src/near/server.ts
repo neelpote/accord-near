@@ -68,7 +68,7 @@ app.get("/health", (_req, res) =>
 );
 app.get("/ready",async(_req,res)=>{
  try{await db.query("SELECT 1");const h=(await db.query("SELECT last_completed FROM accord_worker_health WHERE name='operations'")).rows[0];
- const enabled=process.env.RUN_OPERATIONS!=="false",fresh=!!h?.last_completed&&Date.now()-new Date(h.last_completed).getTime()<180000;
+ const enabled=process.env.RUN_OPERATIONS!=="false"||process.env.HOSTED_API==="true",fresh=!!h?.last_completed&&Date.now()-new Date(h.last_completed).getTime()<180000;
  res.status(!enabled||fresh?200:503).json({database:"ready",operations_worker:enabled?(fresh?"recent completion":"stale or starting"):"disabled",network:config.network});
  }catch{res.status(503).json({database:"unavailable"});}
 });
@@ -461,7 +461,7 @@ await migrate();
 await migrateProvisioning();
 await networkCheck();
 encryptionKey();
-app.listen(config.port, process.env["BIND_HOST"] ?? "127.0.0.1", () =>
+(process.env["HOSTED_API"] === "true" ? express().use("/api/near", app) : app).listen(config.port, process.env["BIND_HOST"] ?? "127.0.0.1", () =>
   console.log(`Accord API :${config.port} (${config.network})`),
 );
 // Await each tick before starting the next; no overlapping setInterval callbacks.

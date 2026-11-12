@@ -5,7 +5,7 @@ export default defineConfig({
   workers: 1,
   reporter: "list",
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: process.env.ACCORD_BASE_URL || "http://localhost:3000",
     // CI runners have no reliable GPU. Exercise the explicit static fallback there;
     // the real WebGL scene is checked locally and in the recorded browser evidence.
     launchOptions: process.env.CI ? {args:["--disable-webgl"]} : {},

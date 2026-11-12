@@ -39,6 +39,7 @@ jobs:
         run: |
           npm ci
           npm run typecheck
+          node --test tests/deployment.test.mjs
           npm run build
           npm audit
       - name: Browser presentation check

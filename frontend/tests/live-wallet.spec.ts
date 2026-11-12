@@ -27,7 +27,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   if ((await rpc.getNetworkId()) !== "testnet") throw Error("Testnet only");
   const buyer = new Account(key.account_id, rpc, key.private_key);
   const config = await (
-    await fetch("http://localhost:3000/api/near/config")
+    await fetch((process.env.ACCORD_BASE_URL || "http://localhost:3000") + "/api/near/config")
   ).json();
   const transactions: { method: string; hash: string }[] = [];
   await page.exposeFunction("__accordFixtureSign", async (params: any) => {
@@ -190,7 +190,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   await page.screenshot({
     path: resolve(
       root,
-      process.env.ACCORD_AGENT_UI === "1"
+      process.env.ACCORD_HOSTED === "1" ? "docs/demo/hosted-wallet-watch.png" : process.env.ACCORD_AGENT_UI === "1"
         ? (process.env.ACCORD_REDESIGN === "1" ? (process.env.ACCORD_EDITORIAL === "1" ? "docs/demo/editorial-wallet-watch.png" : "docs/demo/redesign-wallet-watch.png") : "docs/demo/wallet-watch-live.png")
         : "docs/demo/marketplace-and-delivery.png",
     ),
@@ -230,13 +230,14 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   await writeFile(
     resolve(
       root,
-      process.env.ACCORD_AGENT_UI === "1"
+      process.env.ACCORD_HOSTED === "1" ? "docs/hosted-wallet-proof.json" : process.env.ACCORD_AGENT_UI === "1"
         ? (process.env.ACCORD_REDESIGN === "1" ? (process.env.ACCORD_EDITORIAL === "1" ? "docs/editorial-wallet-proof.json" : "docs/redesign-wallet-proof.json") : "docs/browser-live-agent-proof.json")
         : "docs/browser-testnet-proof.json",
     ),
     JSON.stringify(
       {
         network: "testnet",
+        origin: process.env.ACCORD_BASE_URL || "http://localhost:3000",
         contract: config.contract,
         subscription_id: pending.subscription_id,
         transactions,
