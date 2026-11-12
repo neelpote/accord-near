@@ -15,6 +15,8 @@ async function fixture(page: Page, evm: boolean) {
       attempts++; status = attempts === 1 ? 503 : 200; authenticated = attempts > 1; json = authenticated ? { accountId: account } : { error: "Temporary verification outage" };
     } else if (path === "/auth/challenge") json = { challenge_id: "native", nonce: Buffer.alloc(32).toString("base64"), recipient: "localhost:3100", message: "Native fixture login" };
     else if (path === "/auth/verify") { authenticated = true; json = { accountId: account }; }
+    else if (path === "/pilot") json = {records:[],summary:{demand_validated:false}};
+    else if (path === "/pilot/metrics") json = {disclosure:"Synthetic browser fixture; no customer validation"};
     else if (path === "/balances") json = { available: "0", earned: "0", pending: "0" };
     await r.fulfill({ status, json });
   });
