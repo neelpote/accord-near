@@ -403,23 +403,25 @@ app.get("/subscriptions", async (req, res) => {
         [account],
       )
     ).rows;
-  for (const row of rows) {
-    row.agreement = await view<Subscription>("get_subscription", {
-      subscription_id: row.id,
-    });
-    const metadata = (
-      await db.query("SELECT metadata FROM accord_services WHERE id=$1", [
-        row.agreement.service_id,
-      ])
-    ).rows[0]?.metadata;
-    row.service_name = metadata?.name ?? "Portfolio concentration report";
-    row.service_kind = metadata?.kind ?? "portfolio-concentration-v1";
-    row.cycles = (
-      await db.query(
-        "SELECT cycle,state,artifact_hash,receipt,report,error FROM accord_cycles WHERE subscription_id=$1 ORDER BY cycle",
-        [row.id],
-      )
-    ).rows;
+  // Fetch local history in two queries; bound simultaneous RPC calls to four.
+  const [catalog, history] = await Promise.all([
+    db.query("SELECT id,metadata FROM accord_services"),
+    db.query(
+      "SELECT subscription_id,cycle,state,artifact_hash,receipt,report,error FROM accord_cycles WHERE subscription_id=ANY($1::text[]) ORDER BY cycle",
+      [rows.map((row) => row.id)],
+    ),
+  ]);
+  const metadata = new Map(catalog.rows.map((row) => [row.id, row.metadata]));
+  for (let offset = 0; offset < rows.length; offset += 4) {
+    await Promise.all(rows.slice(offset, offset + 4).map(async (row) => {
+      row.agreement = await view<Subscription>("get_subscription", {
+        subscription_id: row.id,
+      });
+      row.service_name = metadata.get(row.agreement.service_id)?.name ?? "Portfolio concentration report";
+      row.service_kind = metadata.get(row.agreement.service_id)?.kind ?? "portfolio-concentration-v1";
+      row.cycles = history.rows.filter((cycle) => cycle.subscription_id === row.id)
+        .map(({ subscription_id: _, ...cycle }) => cycle);
+    }));
   }
   res.json(rows);
 });

@@ -42,13 +42,14 @@ async function fixture(page: Page, evm: boolean) {
 test("EVM login retries verification without another transaction or a NEP-413 request", async ({page}) => {
   await fixture(page,true);
   await expect(page.getByRole("alert").filter({hasText:"Temporary verification outage"})).toHaveText("Temporary verification outage");
+  const verified=page.waitForResponse(r=>r.url().endsWith("/auth/evm/verify")&&r.status()===200,{timeout:30000});
   await page.getByRole("button", { name: "Sign in with NEAR" }).click();
-  // near-connect may reuse its preferred wallet or show the chooser again.
-  await expect.poll(async () => {
-    const choice = page.getByText("Wallet auth fixture", { exact: true });
-    if(await choice.isVisible()) await choice.click();
-    return await page.getByRole("button", { name: ethereum, exact: true }).isVisible();
-  }).toBeTruthy();
+  // Resolve either preferred-wallet reuse or one chooser click; keep side effects out of a polling assertion.
+  const choice=page.getByText("Wallet auth fixture",{exact:true});
+  await Promise.race([choice.waitFor({state:"visible",timeout:30000}),verified]);
+  if(await choice.isVisible())await choice.click();
+  await verified;
+  await expect(page.getByRole("button",{name:ethereum,exact:true})).toBeVisible({timeout:15000});
   expect(await page.evaluate(() => (window as any).__evmCalls)).toBe(1);
   expect(await page.evaluate(() => (window as any).__messageCalls)).toBe(0);
   expect(await page.evaluate(() => sessionStorage.getItem("accord_evm_login_pending"))).toBeNull();

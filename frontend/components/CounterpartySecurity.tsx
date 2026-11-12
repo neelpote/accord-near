@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/near";
+import { api, near } from "@/lib/near";
 type Decision = {
   id: string;
   state: string;
@@ -114,7 +114,7 @@ export default function CounterpartySecurity({ account }: { account: string }) {
               </h4>
               <p>
                 Agreement {d.body.intent.args.subscription_id} · cycle{" "}
-                {d.body.intent.args.cycle} · {d.body.intent.amount} yoctoNEAR
+                {d.body.intent.args.cycle} · {near(d.body.intent.amount)} test NEAR
               </p>
               <p>
                 Receiver <code>{d.body.intent.receiver}</code>
