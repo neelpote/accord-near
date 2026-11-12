@@ -1,17 +1,20 @@
 name: NEAR contract
 on:
   push:
-    paths: ["contracts-near/**", ".github/workflows/contract.yml"]
+    paths: ["contracts-near/**", "contracts-auth/**", ".github/workflows/contract.yml"]
   pull_request:
-    paths: ["contracts-near/**", ".github/workflows/contract.yml"]
+    paths: ["contracts-near/**", "contracts-auth/**", ".github/workflows/contract.yml"]
 permissions:
   contents: read
 jobs:
   contract:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        contract: [contracts-near, contracts-auth]
     defaults:
       run:
-        working-directory: contracts-near
+        working-directory: ${{ matrix.contract }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -34,4 +37,4 @@ jobs:
       - name: Build and execute real WASM
         run: |
           cargo near build non-reproducible-wasm --locked --no-abi
-          cargo test --locked --test test_basics -- --nocapture
+          if [ -f tests/test_basics.rs ]; then cargo test --locked --test test_basics -- --nocapture; fi

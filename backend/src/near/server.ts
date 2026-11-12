@@ -1,4 +1,6 @@
 import { runOperations } from "./operations-worker.js";
+import { mountEvmAuth, evmAuthConfig } from "./evm-auth.js";
+import { sessionResponse } from "./auth-session.js";
 import { mountOperations } from "./operations-api.js";
 import { groqConfigured } from "./groq-budget.js";
 import "express-async-errors";
@@ -79,9 +81,10 @@ app.get("/config", (_req, res) =>
     rpc: config.rpc,
     recipient: new URL(config.origin).host,
     provider_url: config.provider,
+    evm_auth: evmAuthConfig(),
   }),
 );
-app.post("/auth/challenge", async (req, res) => {
+const challengeLimit: express.RequestHandler = (req, res, next) => {
   const key = req.ip ?? "unknown";
   const entry = limits.get(key);
   const now = Date.now();
@@ -96,6 +99,10 @@ app.post("/auth/challenge", async (req, res) => {
       : { at: now, count: 1 },
   );
   if (limits.size > 10000) limits.clear();
+  next();
+};
+mountEvmAuth(app, challengeLimit);
+app.post("/auth/challenge", challengeLimit, async (req, res) => {
   const challenge_id = randomUUID(),
     nonce = randomBytes(32).toString("base64");
   await db.query("DELETE FROM accord_challenges WHERE expires_at<now()");
@@ -141,14 +148,7 @@ app.post("/auth/verify", async (req, res) => {
     "INSERT INTO accord_sessions VALUES($1,$2,now()+interval '12 hours')",
     [sha(token), accountId],
   );
-  res.cookie("accord_session", token, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: config.origin.startsWith("https:"),
-    maxAge: 43200000,
-    path: "/",
-  });
-  res.json({ accountId });
+  sessionResponse(res, token, accountId);
 });
 app.get("/me", async (req, res) => {
   res.json({ accountId: await owner(req) });

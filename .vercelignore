@@ -4,6 +4,7 @@
 tools
 contracts
 contracts-near
+contracts-auth
 agents
 docs/demo
 **/node_modules

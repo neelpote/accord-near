@@ -29,6 +29,7 @@ node_modules/
 *.key
 *.pem
 contracts-near/target/
+contracts-auth/target/
 frontend/.next/
 .env.local
 .env.*.local

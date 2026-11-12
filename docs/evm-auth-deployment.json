@@ -1,0 +1,10 @@
+{
+  "network": "testnet",
+  "contract": "login.accord-dev-261110.testnet",
+  "transaction": "9HXDNoVyaYmUf5z4q1g69S899t3cGT9Ep3fFhLqCMi49",
+  "code_hash": "GX7CRevc8AW5pY1LxcWepKMrGpz6Tr51usCh62gbjRgz",
+  "wasm_sha256": "e695bc30cbfae6e15aac1977bee0f597881b7ad1080d19dcf37ff575303d3f3f",
+  "escrow_contract": "contract.accord-dev-261110.testnet",
+  "escrow_code_hash_unchanged": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+  "deployed_at": "2026-11-12T07:34:26.519Z"
+}

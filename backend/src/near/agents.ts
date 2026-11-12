@@ -1,6 +1,7 @@
 import type { JsonRpcProvider } from "near-api-js";
 import { rpc, config } from "./config.js";
 import { validateInput } from "./core.js";
+import { codeIdentity } from "./code-identity.js";
 
 export const agentKinds = [
   "near-wallet-watch-v1",
@@ -19,6 +20,7 @@ const account = (v: unknown): string => {
     v.length > 64 ||
     !/^(([a-z0-9]+[-_])*[a-z0-9]+\.)*([a-z0-9]+[-_])*[a-z0-9]+$/.test(v) ||
     (!v.endsWith(".testnet") &&
+      !/^0x[a-f0-9]{40}$/.test(v) &&
       !/^[a-f0-9]{64}$/.test(v) &&
       !(config.network === "sandbox" && v.endsWith(".sandbox")))
   )
@@ -287,7 +289,7 @@ export async function runChainAgent(
         accountId: String(input["account_id"]),
         blockQuery: { blockId: block.header.hash },
       });
-      if (state.global_contract_hash || state.global_contract_account_id) {
+      if (state.global_contract_account_id) {
         status = "attention";
         summary =
           "This account uses a global-contract reference; an account-local code hash is not a complete baseline check.";
@@ -304,12 +306,8 @@ export async function runChainAgent(
         );
         break;
       }
-      if (
-        typeof state.code_hash !== "string" ||
-        !/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(state.code_hash)
-      )
-        throw Error("RPC code hash unavailable");
-      const actual = state.code_hash;
+      const identity = codeIdentity(state);
+      const actual = identity.hash;
       status = actual === input["expected_code_hash"] ? "ok" : "changed";
       summary =
         status === "changed"
@@ -318,6 +316,7 @@ export async function runChainAgent(
       metric("Contract", input["account_id"]);
       metric("Expected code hash", input["expected_code_hash"]);
       metric("Observed code hash", actual);
+      if (identity.source === "global-hash") metric("Code source", "Immutable global-contract hash (NEP-591)");
       metric("Storage · bytes", state.storage_usage);
       findings.push(
         "This compares code identity, not behavior or audit quality. State changes and future upgrades are outside this snapshot.",
