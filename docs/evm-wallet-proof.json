@@ -1,0 +1,55 @@
+{
+  "network": "testnet",
+  "origin": "https://accord-near-ten.vercel.app",
+  "account": "0xdd707d0bf7b2510dd939dafdd25cf7306e859e15",
+  "scope": "EIP-1193 test signer + upstream EthereumNearWallet engine + real relayer and NEAR; standard NearConnector injected fixture. MetaMask extension/popup UI not certified.",
+  "full_payment_journey": true,
+  "subscription_id": "20",
+  "workspace_id": "d335216c-bb5a-4be8-a3a6-206adaf136b4",
+  "transactions": [
+    {
+      "method": "authenticate",
+      "hash": "BJ8u36SenkkB2jLqVWkV86vxucDbJ2YCaV3ijjBFdKUH"
+    },
+    {
+      "method": "subscribe",
+      "hash": "XJSncJw8PFg7oqqH4iib69a9H3Xsdgyp6vCsfgNNcpi"
+    },
+    {
+      "method": "AddKey",
+      "hash": "DkffaWJyZ4pXxeAVrzcyVxniM1rzgarvqattHGG692mK"
+    },
+    {
+      "method": "cancel",
+      "hash": "2ukjLrivRbMmoSAe8fQaEDyEyRX1kQnRya28eu9kHwcj"
+    },
+    {
+      "method": "DeleteKey",
+      "hash": "9mdkBJw2szTk92Mr2Vn2NpSkpr294v9fqDcHKFSbTk8P"
+    },
+    {
+      "method": "withdraw",
+      "hash": "9ChCFtwvVVaFqHaGFS5VJS2628SLkasde8miwMJkbUpv"
+    }
+  ],
+  "ethereum_hashes": [
+    "0xb1962a33b18124515b5e643aae2b90128b5d4e30c054807944cdab324283bb31",
+    "0x3ee232c8bc49cb02570b488cfeb25d8843be9dda496302395d74e62459233938",
+    "0x70f9fd845b3bfb520bb09a78c0431b9a4fa039bd17e4e3b18ceee8922246b5cb",
+    "0x93c0c39aef5703c48072f6dc6aa4a9f6114513c23009c668213633c12718cef8",
+    "0xd10b4b18ebb04ce4aec2fc3eacb1200d33494bbf9762e4759273a282e7af3129",
+    "0x41d8aaedab1c4ec56e57448e0770e71a9a337ceb0d5645377b9826f3be37051f"
+  ],
+  "completed_at": "2026-11-12T12:45:38.357Z",
+  "verified_at": "2026-11-12T12:47:02.196Z",
+  "agreement_canceled": true,
+  "charge_key_removed": true,
+  "delivered_cycles": 1,
+  "report_hashes": [
+    "e4f226d58b56800a27072f83b21ba21c23093beb5d41e40013bd8c6cc6900f4c"
+  ],
+  "global_code_baseline": "3PpYvRxBfC5BkZxTw8ZFG3D52w1ZRhvDDWirKoxphMDn",
+  "workspace_is_demo": true,
+  "monitoring_paused": true,
+  "groq_requests_unchanged": 4
+}

@@ -4,7 +4,7 @@ Recurring purchases for agent services, with spending limits enforced on NEAR.
 
 A customer approves a finite agreement, funds its budget, and installs a charge-only function-call key. An independent provider prepares a report. The worker purchases the exact prepared artifact when it is due. NEAR fixes the recipient, price, minimum interval, maximum cycles and expiry, even if the worker misbehaves. The customer can cancel future billing and withdraw the unspent remainder; providers withdraw earned funds separately.
 
-**Status:** testnet prototype. Five agents now read live NEAR testnet data: Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector and Network Pulse. They use deterministic rules and need no AI credits. The supplied-portfolio snapshot service remains available separately. NEAR AI Cloud integration is implemented and paused: TEE preflight authenticated successfully, but inference returned HTTP 402 because credits/spending limits were not configured. Live AI output is not claimed.
+**Status:** testnet prototype. Five agents now read live NEAR testnet data: Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector and Network Pulse. They use deterministic rules and need no AI credits. The supplied-portfolio snapshot service remains available separately. NEAR AI Cloud integration is implemented and paused: TEE preflight authenticated successfully, but inference returned HTTP 402 because credits/spending limits were not configured. Live NEAR AI Cloud output is not claimed.
 
 [Recorded testnet demo](docs/demo/accord-testnet-demo.webm) · [Verification and CI](VERIFICATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Loops review](docs/evaluations/LOOPS_REVIEW.md)
 
@@ -14,10 +14,14 @@ See [the five agents and their working demonstrations](docs/AGENT_SERVICES.md), 
 
 Open [Accord on NEAR testnet](https://accord-near-ten.vercel.app). Use a dedicated testnet wallet. The frontend, API and persistent workers run on Vercel; durable records are stored in Neon PostgreSQL. Testnet only; no production uptime or security-audit claim. See [hosting, verification and submission steps](docs/HOSTING_AND_SUBMISSION.md) and [MiroFish research setup](docs/pilot/MIROFISH_BRIEF.md).
 
+## Ethereum wallets
+
+MetaMask and WalletConnect can operate the same native NEAR testnet agreements through [Ethereum Wallets for NEAR](https://evm-on-near.dev/how-it-works/). Select **Ethereum Wallets** in the sign-in chooser. Ethereum wallets prove ownership with a separate zero-deposit onchain login plus testnet gas; NEAR wallets retain NEP-413 signatures. Fund the displayed `0x` account with testnet NEAR first. This does not bridge Ethereum assets. See [architecture, setup, checks and limitations](docs/ETHEREUM_WALLETS.md).
+
 ## What to try
 
 1. Start the API, provider and frontend with the instructions below. Open `http://localhost:3000`.
-2. Sign in with a NEAR **testnet** wallet. The API verifies a one-use NEP-413 signature against a full-access public key on that account. Connecting a wallet alone does not authenticate it.
+2. Sign in with a NEAR **testnet** wallet or the Ethereum-wallet adapter. Native login verifies a one-use NEP-413 signature; Ethereum login verifies a browser-bound finalized receipt from the separate pinned authentication contract. Connecting a wallet alone does not authenticate it.
 3. Choose a live NEAR agent or the portfolio report, inspect its fixed terms, and approve a finite prepaid agreement. Then separately enable the limited key. Its 0.05 test NEAR allowance covers gas only; the contract separately enforces the service budget.
 4. See a verified provider credit and matching delivered report. Payment and delivery have distinct states. Subsequent purchases wait for the onchain interval.
 5. Cancel future purchases, remove the limited key, and withdraw the available remainder. The provider signs into its own account to withdraw earnings.

@@ -1,0 +1,13 @@
+{
+  "origin": "https://accord-near-ten.vercel.app",
+  "network": "testnet",
+  "account": "buyer.accord-dev-261110.testnet",
+  "scheme": "NEP-413",
+  "real_signature_count": 1,
+  "ethereum_wallet_visible": true,
+  "session_survives_reload": true,
+  "secure_http_only_cookie": true,
+  "transactions_sent": 0,
+  "completed_at": "2026-11-12T12:49:29.391Z",
+  "scope": "Real native signature through a dedicated injected fixture; external Ethereum wallet manifest loaded normally."
+}

@@ -50,3 +50,9 @@ Deploy from the repository root with Vercel CLI 65.14.0 or later. The tracked `f
 7. Prepare the exact JSON for human review; submit once only after confirmation. Do not publish social posts or submit automatically as part of hosting.
 
 **Deadline:** November 14, 2026 at 23:59 UTC = **November 15 at 05:29 IST**. Official requirements, including local-demo eligibility and the suggested hosting lifetime: [live HACKATHON.md](https://nearhackathon.com/HACKATHON.md). Recheck it at submission time.
+
+## Ethereum wallet update
+
+The hosted deployment now also exposes a pinned, separately deployed `login.accord-dev-261110.testnet` authentication contract. Native NEP-413 login is preserved. See [Ethereum wallets](ETHEREUM_WALLETS.md), `evm-auth-deployment.json`, `evm-wallet-proof.json` (complete hosted agreement 20) and `evm-native-login-proof.json` (native compatibility). The escrow hash remains unchanged. The Ethereum fixture workspace is explicitly synthetic and paused; no additional inference requests were used.
+
+Before presenting this as a device-ready MetaMask/WalletConnect demo, complete a real browser-extension/mobile approval check: connect, inspect NEAR testnet/398, approve zero-deposit login, reload, buy a finite deterministic report, then cancel/remove its charge key/withdraw. The automated EIP-1193 fixture proves actual signed relayer execution, not third-party wallet UI certification.

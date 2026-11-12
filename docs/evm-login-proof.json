@@ -1,0 +1,17 @@
+{
+  "network": "testnet",
+  "origin": "http://localhost:3100",
+  "account": "0xdd707d0bf7b2510dd939dafdd25cf7306e859e15",
+  "scope": "EIP-1193 test signer + upstream EthereumNearWallet engine + real relayer and NEAR; standard NearConnector injected fixture. MetaMask extension/popup UI not certified.",
+  "full_payment_journey": false,
+  "transactions": [
+    {
+      "method": "authenticate",
+      "hash": "DnRhTsZcWxKWrxddwQzgZTbunnowsfGDzBeUBqEEupoE"
+    }
+  ],
+  "ethereum_hashes": [
+    "0x2f34cfee4eca21b43beafa0ae0495b5d9c3d8645eb9df103b0b7393dba6e8a89"
+  ],
+  "completed_at": "2026-11-12T07:59:32.637Z"
+}
