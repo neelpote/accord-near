@@ -172,6 +172,7 @@ test("application onboarding requires review before baseline approval",async({pa
  if(path==="/config")json={network:"testnet",contract:"accord.testnet",rpc:"http://unused.invalid",recipient:"localhost:3100"};
  if(path==="/me")json={accountId:"owner.testnet"};
  if(path==="/balances")json={available:"0",earned:"0",pending:"0"};
+ if(path==="/security")json={decisions:[],reports:[],reviewer:false};
  if(path==="/pilot")json={records:[],summary:{demand_validated:false}};
  if(path==="/workspaces"){
   if(r.request().method()==="POST")workspace={id:"fixture",...r.request().postDataJSON(),baseline:null,pending_baseline:null,baseline_version:0,monitoring:false};
@@ -214,7 +215,7 @@ test("financial refresh failure preserves the signed-in workspace",async({page})
  await page.route("**/api/near/**",async route=>{
  const path=new URL(route.request().url()).pathname.replace("/api/near","");
  if(path==="/subscriptions")return route.fulfill({status:503,json:{error:"Synthetic history outage"}});
- const json=path==="/config"?{network:"testnet",contract:"accord.testnet",rpc:"http://unused.invalid",recipient:"localhost:3100"}:path==="/me"?{accountId:"owner.testnet"}:path==="/balances"?{available:"0",earned:"0",pending:"0"}:path==="/pilot"?{records:[]}:path==="/pilot/metrics"?{}:[];
+ const json=path==="/config"?{network:"testnet",contract:"accord.testnet",rpc:"http://unused.invalid",recipient:"localhost:3100"}:path==="/me"?{accountId:"owner.testnet"}:path==="/balances"?{available:"0",earned:"0",pending:"0"}:path==="/pilot"?{records:[]}:path==="/security"?{decisions:[],reports:[],reviewer:false}:path==="/pilot/metrics"?{}:[];
  await route.fulfill({json});
  });
  await page.goto("http://localhost:3100");

@@ -11,6 +11,7 @@ import {
   sendWalletTransaction,
 } from "@/lib/near";
 import AgentExperience,{SiteMotion} from "@/components/AgentExperience";
+import CounterpartySecurity from "@/components/CounterpartySecurity";
 import OperationsWorkspace from "@/components/OperationsWorkspace";
 import PilotFeedback from "@/components/PilotFeedback";
 import ReportView, { type ServiceReport } from "@/components/ReportView";
@@ -339,7 +340,7 @@ export default function Home() {
     savePending();
     setSelected(undefined);
     setNotice(
-      "Automatic purchases enabled. The first report will appear after verified payment.",
+      "Automatic purchases enabled. Check Payment security: warnings require your approval before a charge.",
     );
   }
   async function cancel(s: Sub) {
@@ -615,6 +616,7 @@ export default function Home() {
             </button>
           </section>
         )}
+        <CounterpartySecurity key={"security-"+account} account={account}/>
         <OperationsWorkspace key={account||"anonymous"} account={account} evmEnabled={!!config?.evm_auth}/>
         <section id="market" data-reveal>
           <div className="section-heading">
@@ -776,7 +778,7 @@ export default function Home() {
               </div>
             </div>
             <p>
-              First report can be purchased immediately; later reports follow
+              Security warnings pause payment until you approve the exact charge. The first report can be purchased immediately; later reports follow
               the minimum interval. Funds are held by the Accord contract.
               Reports are not refundable automatically.
             </p>

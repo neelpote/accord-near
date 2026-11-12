@@ -174,3 +174,9 @@ Working evidence: [controlled testnet change](docs/operations-demo-proof.json), 
 The current frontend uses a credited artist-made Robot Expressive model and a native-scroll Observe → Inspect → Limit sequence. Camera angle, evidence paths and the bounded-authority illustration follow scroll position. Reduced-motion users can select chapters without camera motion; devices without WebGL receive a static fallback. Paid terms and evidence remain explicit in a service directory. The earlier procedural robot gallery was superseded after user feedback.
 
 [Desktop preview](docs/demo/editorial-desktop.png) · [Mobile preview](docs/demo/editorial-mobile.png) · [Scroll walkthrough](docs/demo/editorial-scroll.webm) · [Asset research and design decisions](docs/design/MODEL_AND_SCROLL_REVISION.md) · [Verification](docs/editorial-proof.json)
+
+### Counterparty security before signing
+
+Automated charges now pass a mandatory counterparty decision service: **allow**, **warn** (owner approval for one exact payment), or **block** (no signature). Both the escrow contract and the economic provider are checked using finalized code identity, indexed account age/recent activity, prior Accord receipts and shared evidence reports. Open **Payment security** to review paused payments or submit evidence. Curator-reviewed blocklist entries cannot be overridden by payment approval.
+
+The agent's existing finite function-call key remains `charge`-only on one contract; it is never a full-access key. The allowance pays gas, while the contract enforces the payment budget and recipient. The reputation gate runs in the backend and is not a contract-enforced guarantee against a compromised dispatcher. Full data-source coverage, access-key limits, API, threat boundaries and reproducible attack instructions: [Counterparty security](docs/COUNTERPARTY_SECURITY.md). [Captured attack log](docs/counterparty-attack-proof.json).

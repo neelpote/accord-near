@@ -1,0 +1,55 @@
+{
+  "network": "testnet",
+  "contract": "contract.accord-dev-261110.testnet",
+  "scope": "Real NEP-413 owner-fixture session, funded testnet agreement and production payment worker",
+  "started_at": "2026-11-12T14:40:45.717Z",
+  "checks": [
+    "Funded agreement stayed unpaid while exact-payment approval was pending",
+    "Approval consumed once; charge-only key paid exact provider once; report matches receipt; repeated tick did not double-charge"
+  ],
+  "subscription_id": "21",
+  "warning": {
+    "id": "79befe6b-02c4-44db-b277-b740c92f2397",
+    "reasons": [
+      {
+        "code": "UNREVIEWED_CODE",
+        "account": "contract.accord-dev-261110.testnet",
+        "message": "First observation of this contract identity"
+      },
+      {
+        "code": "NEW_ACCOUNT",
+        "account": "contract.accord-dev-261110.testnet",
+        "message": "Account is less than seven days old"
+      },
+      {
+        "code": "NEW_ACCOUNT",
+        "account": "provider.accord-dev-261110.testnet",
+        "message": "Account is less than seven days old"
+      }
+    ],
+    "intent_hash": "2e0aabbae1031d3f2af863531da322c8dda0339aa181e1543e03411176746665",
+    "evidence_hash": "33310aab2f6134decaf5ec057c9d162cc8fb9200ca91f1dd7ffa3360b720cd58"
+  },
+  "artifact_hash": "cc7dcd8fb2c3864be085de2cb60a3c9114913321e6e1032d6c27b93751f1db2a",
+  "receipt": {
+    "subscription_id": "21",
+    "cycle": 0,
+    "provider": "provider.accord-dev-261110.testnet",
+    "amount": "1000000000000000000000",
+    "artifact_hash": "cc7dcd8fb2c3864be085de2cb60a3c9114913321e6e1032d6c27b93751f1db2a",
+    "paid_at_ns": "1794494497412593013"
+  },
+  "delegate_permission": {
+    "FunctionCall": {
+      "allowance": "49732146483400900000000",
+      "method_names": [
+        "charge"
+      ],
+      "receiver_id": "contract.accord-dev-261110.testnet"
+    }
+  },
+  "passed": true,
+  "canceled": true,
+  "delegate_removed": true,
+  "completed_at": "2026-11-12T14:41:46.213Z"
+}
