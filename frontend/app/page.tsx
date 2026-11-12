@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { authenticateWallet } from "@/lib/wallet-auth";
 import {
   api,
   view,
@@ -30,6 +31,7 @@ type Config = {
   rpc: string;
   recipient: string;
   provider_url: string;
+  evm_auth?: { contract: string; code_hash: string } | null;
 };
 type Service = {
   provider: string;
@@ -247,23 +249,10 @@ export default function Home() {
     return result;
   }
   async function signIn() {
-    const challenge = await api("/auth/challenge", {});
-    const c = await connector();
-    await c.connect();
-    const w = await c.wallet();
-    const signed = await w.signMessage({
-      network: "testnet",
-      message: challenge.message,
-      recipient: challenge.recipient,
-      nonce: Uint8Array.from(atob(challenge.nonce), (c) => c.charCodeAt(0)),
-    });
-    await api("/auth/verify", {
-      challenge_id: challenge.challenge_id,
-      ...signed,
-    });
+    const accountId = await authenticateWallet();
     setSubs([]);
     setBalance({ available: "0", earned: "0", pending: "0" });
-    setAccount(signed.accountId);
+    setAccount(accountId);
     setNotice("Wallet ownership verified. No spending authority granted.");
   }
   async function approve() {
@@ -626,7 +615,7 @@ export default function Home() {
             </button>
           </section>
         )}
-        <OperationsWorkspace key={account||"anonymous"} account={account}/>
+        <OperationsWorkspace key={account||"anonymous"} account={account} evmEnabled={!!config?.evm_auth}/>
         <section id="market" data-reveal>
           <div className="section-heading">
             <div><p className="eyebrow">SERVICE DIRECTORY</p><h2>Choose the work.<br/><span>Read the terms.</span></h2></div>

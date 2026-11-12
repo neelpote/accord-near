@@ -1,15 +1,36 @@
 import type { NearConnector } from "@hot-labs/near-connect";
 let connection: NearConnector | undefined;
+let connecting: Promise<NearConnector> | undefined;
 export async function connector() {
-  if (!connection) {
+  if (connection) return connection;
+  if (!connecting) connecting = (async () => {
     const { NearConnector } = await import("@hot-labs/near-connect");
-    connection = new NearConnector({
+    const c = new NearConnector({
       network: "testnet",
       features: { signMessage: true },
+      excludedWallets: ["ethereum-wallets"],
       autoConnect: false,
     });
-  }
-  return connection;
+    await c.whenManifestLoaded;
+    const config = await api("/config");
+    if (config.evm_auth) {
+      try {
+        const r = await fetch("https://evm-on-near.dev/manifest.json", { signal: AbortSignal.timeout(8000) });
+        if (!r.ok) throw Error("Ethereum wallet manifest unavailable");
+        const manifest = await r.json();
+        const ethereum = manifest.wallets?.find((w: any) => w.id === "ethereum-wallets");
+        if (!ethereum || ethereum.type !== "sandbox" || ethereum.executor !== "https://evm-on-near.dev/executor.js" || ethereum.metadata?.signPageURL !== "https://evm-on-near.dev/" || !ethereum.features?.testnet || !ethereum.features?.signAndSendTransaction) throw Error("Unexpected Ethereum wallet manifest");
+        c.wallets = c.wallets.filter(w => w.manifest.features?.signMessage || w.manifest.id === "ethereum-wallets");
+        await c.registerWallet(ethereum);
+        c.features = {};
+      } catch {
+        console.warn("Ethereum wallet adapter unavailable; NEAR wallets remain available.");
+      }
+    }
+    connection = c;
+    return c;
+  })().catch(error => { connecting = undefined; throw error; });
+  return connecting;
 }
 export async function wallet() {
   const c = await connector();
