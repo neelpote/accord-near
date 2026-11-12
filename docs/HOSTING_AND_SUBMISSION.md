@@ -1,6 +1,6 @@
 # Hosting and submission handoff
 
-Checked 2026-11-12. Public URL: **https://accord-near-ten.vercel.app**. The hosted testnet wallet journey passed, including report delivery, cancellation, limited-key removal and withdrawal (agreement #19; `hosted-wallet-proof.json`). Vercel authentication is restored, project `accord-near` is created, and the Neon `free_v3` database `accord-near-db` is provisioned in `iad1`. The public browser/API checks are recorded in `hosting-proof.json`; initial deployment tests ran against an uncommitted working tree, explicitly recorded as such.
+Checked 2026-11-12. Public URL: **https://accord-near-ten.vercel.app**. The hosted testnet wallet journey passed, including report delivery, cancellation, limited-key removal and withdrawal (agreement #19; `hosted-wallet-proof.json`). Vercel authentication is restored, project `accord-near` is created, and the Neon `free_v3` database `accord-near-db` is provisioned in `iad1`. The public browser/API checks are recorded in `hosting-proof.json`; initial deployment tests ran against an uncommitted working tree, explicitly recorded as such. The clean committed release, successful CI, persistent worker and post-restart report/counter checks are recorded in `hosting-release-proof.json`. GitHub is connected to the Vercel project for subsequent deployments.
 
 ## Deployment layout
 

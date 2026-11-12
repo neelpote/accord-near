@@ -1,0 +1,36 @@
+{
+  "checked_at": "2026-11-12T06:33:34.695Z",
+  "origin": "https://accord-near-ten.vercel.app",
+  "source_commit": "29226ab4b4dfede4c98be696569c86f85dff66d8",
+  "source_tree_clean_at_deploy": true,
+  "deployment_id": "dpl_RwntFk7trZofUtRwr8By42PJr215",
+  "ci": {
+    "run": 43168444389,
+    "conclusion": "success"
+  },
+  "readiness": {
+    "database": "ready",
+    "operations_worker": "recent completion",
+    "network": "testnet"
+  },
+  "worker_instance": "dmni_01m77761ffn152kt5ng9q4ach4",
+  "worker_image": "vcr.vercel.com/neelpote96-9476s-projects/accord-near/daemon.dispatch@sha256:d8ab468a9b17b4db386e6ff2eb8b79f7942a6949b0a3cfb14f8929ce05c39cd2",
+  "worker_ready": "ready",
+  "worker_last_completed": "2026-11-12T06:33:31.181Z",
+  "agreement": {
+    "id": "19",
+    "active": false,
+    "cycles": 1,
+    "delegate_removed": true,
+    "delivery": "DELIVERED",
+    "artifact_hash": "0788532e1ac8937beadb5287230c6bace23346ff8c4d06cd224aa48ba2cff490"
+  },
+  "groq_requests": 4,
+  "paid_plans_purchased": false,
+  "limitations": [
+    "Wallet acceptance uses a dedicated injected test wallet, not certification of third-party wallet UIs",
+    "Full monitoring incident proof predates hosting; no fresh contract-change transaction was induced for deployment",
+    "No real customer interviews or MiroFish simulation have run",
+    "Free-plan quotas and beta hosting are not an uptime SLA"
+  ]
+}
