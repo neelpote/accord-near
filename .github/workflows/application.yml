@@ -32,6 +32,7 @@ jobs:
           npm run near:test
           npm run near:test:operations
           npm run near:test:evm-auth
+          npm run near:test:security
           npm run db:migrate
           npm run db:migrate
           npm audit --audit-level=moderate

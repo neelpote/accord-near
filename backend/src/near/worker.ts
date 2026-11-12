@@ -1,3 +1,4 @@
+import { secureCharge } from "./counterparty.js";
 import { verifyGroqExplanation } from "./groq.js";
 import { Account, KeyPair } from "near-api-js";
 import { db } from "./db.js";
@@ -136,49 +137,67 @@ export async function tick() {
           );
           continue;
         }
-        const privateKey = unseal(local.delegate_cipher, encryptionKey());
-        if (
-          KeyPair.fromString(privateKey as `ed25519:${string}`)
-            .getPublicKey()
-            .toString() !== sub.delegate_key
-        )
-          throw new Error("Delegate differs from agreement");
-        const access = await rpc.viewAccessKey({
-          accountId: local.owner,
-          publicKey: sub.delegate_key,
-          finalityQuery: { finality: "final" },
-        });
-        const permission = access.permission;
-        if (
-          typeof permission !== "object" ||
-          !("FunctionCall" in permission) ||
-          permission.FunctionCall.receiver_id !== config.contract ||
-          permission.FunctionCall.method_names.length !== 1 ||
-          permission.FunctionCall.method_names[0] !== "charge" ||
-          permission.FunctionCall.allowance === null
-        )
-          throw new Error(
-            "Delegate must be a finite charge-only function-call key",
-          );
-        await db.query(
-          "UPDATE accord_cycles SET state='SUBMITTING' WHERE subscription_id=$1 AND cycle=$2 AND state<>'DELIVERED'",
-          [local.id, cycle],
-        );
-        try {
-          await new Account(
-            local.owner,
-            rpc,
-            privateKey as `ed25519:${string}`,
-          ).callFunction({
-            contractId: config.contract,
-            methodName: "charge",
+        await secureCharge(
+          {
+            network: config.network as "testnet" | "sandbox",
+            agent: local.owner,
+            contract: config.contract,
+            receiver: service.provider,
+            method: "charge",
+            amount: service.price,
             args: { ...args, artifact_hash: row.artifact_hash },
-            gas: 30000000000000n,
-            deposit: 0n,
-          });
-        } catch {
-          // A timeout may still have paid. Reconcile the same contract cycle; never invent a replacement purchase.
-        }
+          },
+          {
+            contract: config.contract,
+            receiver: service.provider,
+            amount: service.price,
+          },
+          async (intent) => {
+            const privateKey = unseal(local.delegate_cipher, encryptionKey());
+            if (
+              KeyPair.fromString(privateKey as `ed25519:${string}`)
+                .getPublicKey()
+                .toString() !== sub.delegate_key
+            )
+              throw new Error("Delegate differs from agreement");
+            const access = await rpc.viewAccessKey({
+              accountId: local.owner,
+              publicKey: sub.delegate_key,
+              finalityQuery: { finality: "final" },
+            });
+            const permission = access.permission;
+            if (
+              typeof permission !== "object" ||
+              !("FunctionCall" in permission) ||
+              permission.FunctionCall.receiver_id !== config.contract ||
+              permission.FunctionCall.method_names.length !== 1 ||
+              permission.FunctionCall.method_names[0] !== "charge" ||
+              permission.FunctionCall.allowance === null
+            )
+              throw new Error(
+                "Delegate must be a finite charge-only function-call key",
+              );
+            await db.query(
+              "UPDATE accord_cycles SET state='SUBMITTING' WHERE subscription_id=$1 AND cycle=$2 AND state<>'DELIVERED'",
+              [local.id, cycle],
+            );
+            try {
+              await new Account(
+                local.owner,
+                rpc,
+                privateKey as `ed25519:${string}`,
+              ).callFunction({
+                contractId: config.contract,
+                methodName: "charge",
+                args: intent.args,
+                gas: 30000000000000n,
+                deposit: 0n,
+              });
+            } catch {
+              // A timeout may still have paid. Reconcile the same contract cycle; never invent a replacement purchase.
+            }
+          },
+        );
         receipt = await view<Receipt | null>("get_receipt", args);
         if (!receipt) {
           await db.query(
@@ -196,6 +215,15 @@ export async function tick() {
         receipt.artifact_hash !== row.artifact_hash
       )
         throw new Error("Final receipt disagrees with frozen purchase");
+      // Final receipts also resolve any approval request opened during a finality delay.
+      await db.query(
+        `UPDATE accord_security_decisions SET state='consumed',
+          body=body || jsonb_build_object('resolution','receipt_confirmed'),acted_at=COALESCE(acted_at,now())
+         WHERE owner=$1 AND body->'intent'->'args'->>'subscription_id'=$2
+          AND body->'intent'->'args'->>'cycle'=$3 AND body->'intent'->'args'->>'artifact_hash'=$4
+          AND state<>'consumed'`,
+        [local.owner, local.id, String(cycle), row.artifact_hash],
+      );
       await db.query(
         "UPDATE accord_cycles SET state='SETTLED',receipt=$3,error=NULL WHERE subscription_id=$1 AND cycle=$2 AND state<>'DELIVERED'",
         [local.id, cycle, receipt],
@@ -207,7 +235,8 @@ export async function tick() {
       if (isAgentKind(metadata.kind))
         verifyChainReport(delivered.report, metadata.kind);
       else verifyReport(delivered.report);
-      if (metadata.analysis_mode === "groq") verifyGroqExplanation(delivered.report.explanation);
+      if (metadata.analysis_mode === "groq")
+        verifyGroqExplanation(delivered.report.explanation);
       if (digest(delivered.report) !== receipt.artifact_hash)
         throw new Error("Delivered artifact hash mismatch");
       await db.query(

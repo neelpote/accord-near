@@ -1,3 +1,4 @@
+import { mountCounterparty } from "./counterparty-api.js";
 import { runOperations } from "./operations-worker.js";
 import { mountEvmAuth, evmAuthConfig } from "./evm-auth.js";
 import { sessionResponse } from "./auth-session.js";
@@ -64,6 +65,7 @@ async function owner(req: express.Request): Promise<string> {
   return row.account_id;
 }
 mountOperations(app, owner);
+mountCounterparty(app, owner);
 const limits = new Map<string, { at: number; count: number }>();
 app.get("/health", (_req, res) =>
   res.json({ ok: true, network: config.network, contract: config.contract }),

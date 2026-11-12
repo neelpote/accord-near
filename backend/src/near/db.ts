@@ -2,6 +2,13 @@ import pg from "pg";
 import { config } from "./config.js";
 export const db = new pg.Pool({ connectionString: config.database, max: 10 });
 export async function migrate() {
+  await db.query(`CREATE TABLE IF NOT EXISTS accord_security_observations(account text PRIMARY KEY,code text NOT NULL,block_height bigint NOT NULL,body jsonb NOT NULL,changed_at timestamptz,observed_at timestamptz NOT NULL DEFAULT now());
+  CREATE TABLE IF NOT EXISTS accord_security_codes(owner text NOT NULL,account text NOT NULL,code text NOT NULL,approved_at timestamptz NOT NULL DEFAULT now(),PRIMARY KEY(owner,account));
+  CREATE TABLE IF NOT EXISTS accord_security_reports(id uuid PRIMARY KEY,reporter text NOT NULL,account text NOT NULL,reason text NOT NULL,evidence jsonb NOT NULL,evidence_hash text NOT NULL,status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','block','dismissed')),created_at timestamptz NOT NULL DEFAULT now(),UNIQUE(reporter,account,evidence_hash));
+  CREATE TABLE IF NOT EXISTS accord_security_reviews(id bigserial PRIMARY KEY,report_id uuid NOT NULL REFERENCES accord_security_reports(id),reviewer text NOT NULL,status text NOT NULL,reason text NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
+  CREATE TABLE IF NOT EXISTS accord_security_decisions(id uuid PRIMARY KEY,owner text NOT NULL,intent_hash text NOT NULL,evidence_hash text NOT NULL,body jsonb NOT NULL,state text NOT NULL CHECK(state IN ('allow','pending','block','approved','declined','consumed')),created_at timestamptz NOT NULL DEFAULT now(),expires_at timestamptz NOT NULL DEFAULT now()+interval '5 minutes',acted_at timestamptz);
+  CREATE INDEX IF NOT EXISTS accord_security_decision_lookup ON accord_security_decisions(owner,intent_hash,evidence_hash,expires_at);
+  CREATE INDEX IF NOT EXISTS accord_security_report_lookup ON accord_security_reports(account,status);`);
   await db.query(`CREATE TABLE IF NOT EXISTS accord_evm_challenges(id uuid PRIMARY KEY,account_id text NOT NULL,challenge text NOT NULL,audience text NOT NULL,browser_hash text NOT NULL,expires_at timestamptz NOT NULL);
     ALTER TABLE accord_evm_challenges ADD COLUMN IF NOT EXISTS attempts integer NOT NULL DEFAULT 0;`);
   await db.query(`CREATE TABLE IF NOT EXISTS accord_pilot_feedback(id uuid PRIMARY KEY,owner text NOT NULL,body jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now());

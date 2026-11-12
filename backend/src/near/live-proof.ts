@@ -96,6 +96,26 @@ async function login(account: Account) {
   assert.equal(replay.r.status, 400);
   return cookie;
 }
+// Explicit human-owner fixture approval, scoped to this run's agreement only.
+async function approveFixtureWarnings(subscriptionId: string, cookie: string) {
+  const { value: queue } = await request("/security", undefined, cookie);
+  for (const d of queue.decisions.filter(
+    (x: any) =>
+      x.state === "pending" &&
+      x.body.intent.args.subscription_id === subscriptionId,
+  )) {
+    const reviewed = await request(
+      `/security/decisions/${d.id}`,
+      {
+        approve: true,
+        intent_hash: d.body.intent_hash,
+        evidence_hash: d.body.evidence_hash,
+      },
+      cookie,
+    );
+    assert.equal(reviewed.r.status, 200, JSON.stringify(reviewed.value));
+  }
+}
 // Revoke any unfinished agreements from previous interrupted runs using only this fixture's owner.
 const totals = await view<[string, string]>("counters", {});
 for (let n = 0n; n < BigInt(totals[1]); n++) {
@@ -244,6 +264,7 @@ let rows = (
   ])
 ).rows;
 for (let i = 0; i < 8 && rows[0]?.state !== "DELIVERED"; i++) {
+  await approveFixtureWarnings(subId, buyerCookie);
   await tick();
   rows = (
     await db.query("SELECT * FROM accord_cycles WHERE subscription_id=$1", [
@@ -342,6 +363,7 @@ for (
   i < 8 && rows.find((r) => r.cycle === 1)?.state !== "DELIVERED";
   i++
 ) {
+  await approveFixtureWarnings(subId, buyerCookie);
   await tick();
   rows = (
     await db.query(

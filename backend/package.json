@@ -30,7 +30,10 @@
     "near:demo:agents": "tsx src/near/agents-demo.ts",
     "near:test:operations": "tsx src/near/operations-check.ts",
     "near:test:evm-auth": "tsx src/near/evm-auth-check.ts",
-    "near:demo:operations": "tsx src/near/operations-demo.ts"
+    "near:demo:operations": "tsx src/near/operations-demo.ts",
+    "near:test:security": "tsx src/near/counterparty-check.ts",
+    "near:demo:attack": "tsx src/near/counterparty-attack.ts",
+    "near:proof:security": "tsx src/near/counterparty-live.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",
