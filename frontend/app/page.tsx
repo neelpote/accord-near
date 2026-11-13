@@ -53,6 +53,7 @@ type AgentDefinition = {
 };
 type Listing = {
   id: string;
+  execution_enabled?:boolean;
   metadata: {
     kind?: string;
     name?: string;
@@ -672,7 +673,7 @@ export default function Home() {
                   </div>
                 </dl>
                 <button
-                  disabled={busy || !account}
+                  disabled={busy || !account||s.execution_enabled===false}
                   onClick={() => {
                     setSelectedSpecHash(undefined);
                     setSelected(s);
@@ -685,7 +686,7 @@ export default function Home() {
                     );
                   }}
                 >
-                  Choose terms →
+                  {s.execution_enabled===false?"Provider paused this offer":"Choose terms →"}
                 </button></div>
                 {examples
                   .filter(

@@ -204,6 +204,12 @@ const input = riskMode?metadata.input_example!:{
   ],
   totalValueUsd: 100,
 };
+if(riskMode){
+ assert.equal((await request(`/services/${serviceId}/execution`,{enabled:false},providerCookie)).r.status,200);
+ assert.equal((await request('/inputs/validate',{service_id:serviceId,input},buyerCookie)).r.status,400);
+ assert.equal((await request(`/services/${serviceId}/execution`,{enabled:true},providerCookie)).r.status,200);
+ check('Disabled provider offer cannot pass funding preflight; only its provider can re-enable it');
+}
 const { value: d } = await request("/delegates", {}, buyerCookie);
 const subId = await buyer.callFunction<string>({
   contractId: config.contract,

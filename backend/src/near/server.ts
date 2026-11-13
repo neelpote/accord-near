@@ -178,7 +178,7 @@ app.get("/services", async (_req, res) =>
   res.json(
     (
       await db.query(
-        "SELECT id,metadata FROM accord_services WHERE listed ORDER BY id",
+        "SELECT id,metadata,execution_enabled FROM accord_services WHERE listed ORDER BY id",
       )
     ).rows,
   ),
@@ -278,11 +278,12 @@ app.post("/inputs/validate", async (req, res) => {
   let kind = "portfolio-concentration-v1";
   if (req.body.service_id !== undefined) {
     const row = (
-      await db.query("SELECT metadata FROM accord_services WHERE id=$1", [
+      await db.query("SELECT metadata,execution_enabled FROM accord_services WHERE id=$1", [
         id(req.body.service_id),
       ])
     ).rows[0];
     if (!row) throw new Error("Unknown service");
+    if(!row.execution_enabled)throw Error("Provider disabled this offer; no agreement should be funded");
     kind = row.metadata.kind;
   }
   if(kind===RISK_KIND&&!(await riskAvailability()).local_risk_available)throw Error("Local AI is unavailable or its request budget is exhausted; no agreement should be funded");

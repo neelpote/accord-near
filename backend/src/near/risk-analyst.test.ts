@@ -43,3 +43,8 @@ test('historical paid reports retain their frozen model identity after a later m
 test('new full-access authority receives high review priority without claiming compromise',()=>{
  for(const id of ['key-added','full-access-escalation']){const c=cases.find(c=>c.id===id);assert.equal(investigate(c.input,c.current,c.previous,at).findings[0]!.severity,'HIGH');}
 });
+
+test('first-observation hash mismatch is an expectation mismatch, never fabricated historical change',()=>{
+ const c=cases.find(c=>c.id==='unexpected-code'),first=investigate(c.input,c.current,undefined,at);
+ assert.equal(first.baseline,null);assert.equal(first.findings[0]!.type,'expected_code_mismatch');assert.equal(first.findings[0]!.before_source,'customer_expected_hash');assert(first.limitations.some(l=>l.includes('not proof of historical')));
+});

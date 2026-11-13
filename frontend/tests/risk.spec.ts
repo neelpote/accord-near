@@ -11,3 +11,12 @@ test('AI risk output exposes evidence and uncertainty without claiming factual v
  await page.goto('http://localhost:3100');const view=page.getByRole('region',{name:'Smart Contract Risk Analyst report'});
  await expect(view.getByText(/Rule-based change severity: HIGH/)).toBeVisible();await expect(view.getByText(/Factual correctness is unverified/)).toBeVisible();await view.getByText('Inspect baseline, finalized observations and evidence').click();await expect(view.locator('pre')).toContainText('previous');await expect(view.getByText(/Evidence: block:controlled/)).toBeVisible();
 });
+
+test('a provider-paused offer cannot open a funding form',async({page})=>{
+ await page.route('**/api/near/**',async r=>{const p=new URL(r.request().url()).pathname.split('/api/near')[1];let json:any=[];
+ if(p==='/config')json={network:'testnet',contract:'escrow.testnet',rpc:'http://unused.invalid',recipient:'localhost:3100'};
+ if(p==='/me')json={accountId:'buyer.testnet'};if(p==='/services')json=[{id:'9',execution_enabled:false,metadata:{kind:'near-contract-risk-analyst-v1',description:'Local development AI risk monitoring',analysis_mode:'local-llm'}}];
+ if(p==='/balances')json={available:'0',earned:'0',pending:'0'};if(p==='/security')json={decisions:[],reports:[],reviewer:false};if(p==='/pilot')json={records:[],summary:{demand_validated:false}};await r.fulfill({json});});
+ await page.route('http://unused.invalid/',r=>r.fulfill({json:{result:{result:Array.from(new TextEncoder().encode(JSON.stringify({name:'Smart Contract Risk Analyst',provider:'provider.testnet',price:'100',interval_ns:'60000000000',metadata_hash:'a'.repeat(64)})))}}}));
+ await page.goto('http://localhost:3100');await expect(page.getByRole('button',{name:'Provider paused this offer'})).toBeDisabled();await expect(page.getByRole('button',{name:'Approve and fund agreement'})).not.toBeVisible();
+});
