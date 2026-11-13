@@ -14,6 +14,9 @@ const codeFiles = [
   "risk-analyst.ts",
   "operations.ts",
   "incidents.ts",
+  "../../risk-model.json",
+  "../../local-risk-requirements.txt",
+  "../../scripts/local-risk-model.py",
 ];
 export function agentIdentity(id: string, service: Service, metadata: any) {
   const build = digest(

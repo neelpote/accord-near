@@ -4,5 +4,7 @@
   "license": "apache-2.0",
   "runtime": "mlx-lm==0.32.2",
   "max_tokens": 768,
-  "max_local_requests": 64
+  "max_local_requests": 64,
+  "weights_sha256": "2a73c6c248601ab904e035548abd8e6abb65ea27dcb5f342fb0a8910eb44173f",
+  "weights_bytes": 2263022417
 }

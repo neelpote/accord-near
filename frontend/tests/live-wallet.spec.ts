@@ -14,6 +14,8 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
     process.env.ACCORD_LIVE_BROWSER !== "1",
     "Explicitly opt into free testnet transactions with ACCORD_LIVE_BROWSER=1",
   );
+  const riskMode=process.env.ACCORD_RISK_WALLET==='1';
+  let cleanupId='',cleanupKey='';
   const started = Date.now(),
     videoEvents: { event: string; elapsed_ms: number }[] = [];
   const mark = (event: string) =>
@@ -159,7 +161,8 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
     page.getByRole("button", { name: buyer.accountId, exact: true }),
   ).toBeVisible({ timeout: 90000 });
   mark("signed_in");
-  if (process.env.ACCORD_AGENT_UI === "1")
+  if(riskMode)await page.locator("article.service").filter({has:page.getByRole("heading",{name:"Smart Contract Risk Analyst",exact:true})}).getByRole("button",{name:"Choose terms →"}).click();
+  else if (process.env.ACCORD_AGENT_UI === "1")
     await page
       .locator("article.service")
       .filter({
@@ -178,6 +181,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
           minimum_available_yocto: "50000000000000000000000",
         }),
       );
+  try{
   mark("fund_agreement");
   await page
     .getByRole("button", { name: "Approve and fund agreement" })
@@ -189,6 +193,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   const pending = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("accord_pending")!),
   );
+  cleanupId=pending.subscription_id;cleanupKey=pending.public_key;
   await page
     .getByRole("button", { name: "Enable automatic purchases" })
     .click();
@@ -198,6 +203,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
       exact: true,
     }),
   });
+  if(riskMode)await agreement.getByRole("button",{name:"Approve this execution identity"}).click();
   // A warning needs one owner-fixture review; an already-allowed payment can deliver directly.
   const approval = page
     .locator("#security article")
@@ -227,7 +233,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
     agreement.getByText("Paid · delivered", { exact: true }),
   ).toBeVisible({ timeout: 160000 });
   await expect(
-    process.env.ACCORD_AGENT_UI === "1"
+    riskMode?agreement.getByRole("heading",{name:"Smart Contract Risk Analyst",exact:true}):process.env.ACCORD_AGENT_UI === "1"
       ? agreement.getByRole("heading", { name: "Wallet Watch", exact: true })
       : agreement.getByText("high concentration risk", { exact: true }),
   ).toBeVisible();
@@ -236,7 +242,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   await page.screenshot({
     path: resolve(
       root,
-      process.env.ACCORD_SECURITY_DEMO === "1"
+      riskMode?"docs/demo/reliability-risk-wallet.png":process.env.ACCORD_SECURITY_DEMO === "1"
         ? "docs/demo/security-native-wallet.png"
         : process.env.ACCORD_HOSTED === "1"
           ? "docs/demo/hosted-wallet-watch.png"
@@ -288,7 +294,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   await writeFile(
     resolve(
       root,
-      process.env.ACCORD_SECURITY_DEMO === "1"
+      riskMode?"docs/reliability/phase3-wallet.json":process.env.ACCORD_SECURITY_DEMO === "1"
         ? "docs/security-native-wallet-proof.json"
         : process.env.ACCORD_HOSTED === "1"
           ? "docs/hosted-wallet-proof.json"
@@ -317,6 +323,11 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
       2,
     ) + "\n",
   );
+  }finally{if(riskMode&&cleanupId){
+    const sub:any=await rpc.callFunction({contractId:config.contract,method:'get_subscription',args:{subscription_id:cleanupId}});
+    if(sub?.active)await buyer.callFunction({contractId:config.contract,methodName:'cancel',args:{subscription_id:cleanupId},deposit:1n,gas:30000000000000n});
+    if(cleanupKey&&(await rpc.viewAccessKeyList({accountId:buyer.accountId,finalityQuery:{finality:'final'}})).keys.some(k=>k.public_key===cleanupKey))await buyer.deleteKey(cleanupKey);
+  }}
 });
 
 // Record the real acceptance journey when explicitly requested; never publish traces/cookies.

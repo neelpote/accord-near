@@ -150,7 +150,7 @@ try {
     "Onchain cycle count and reserved funds unchanged throughout fault injection",
   );
   await writeFile(
-    resolve(root, process.env.ACCORD_DELIVERY_LIVE==="1"?"docs/reliability/phase2-recovery.json":"docs/recovery-proof.json"),
+    resolve(root, process.env.ACCORD_RECOVERY_PROOF?.includes("phase3")?"docs/reliability/phase3-recovery.json":process.env.ACCORD_DELIVERY_LIVE==="1"?"docs/reliability/phase2-recovery.json":"docs/recovery-proof.json"),
     JSON.stringify(
       {
         kind: "Local fault injection with a pre-existing real testnet receipt; no monetary transactions submitted",

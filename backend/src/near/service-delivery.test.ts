@@ -182,3 +182,13 @@ test("source RPC outage never becomes evidence-valid", async () => {
     }),
   );
 });
+
+test('risk report uses independent finalized code and key evidence before payment',async()=>{
+ const {riskCases}=await import('./risk-cases.js'),{investigate,riskReport,LOCAL_MODEL,LOCAL_MODEL_REVISION}=await import('./risk-analyst.js');
+ const sample=riskCases()[2],facts=investigate(sample.input,sample.current,sample.previous),report=riskReport('1:0',sample.input,facts,{summary:'Code changed; implications need review.',explanations:facts.findings.map(f=>({change_id:f.id,why_it_matters:'Different code may change contract behavior.',manual_check:'Compare the approved release.'})),provider:'local-mlx',model:LOCAL_MODEL,model_revision:LOCAL_MODEL_REVISION,completion_id:'controlled',elapsed_ms:1,usage:null,tee_attestation:false});
+ const f=await fixture();f.c.metadata={kind:report.kind,analysis_mode:'local-llm'};f.c.input=sample.input;f.c.sub.input_hash=digest(sample.input);f.c.service.metadata_hash=digest(f.c.metadata);f.c.spec=deliverySpecification('2',f.c.service,f.c.metadata);
+ Object.assign(f.envelope,{input_hash:f.c.sub.input_hash,report,artifact_hash:digest(report),spec_hash:digest(f.c.spec)});
+ const client:any={viewBlock:async({blockId}:any)=>{const s=blockId===sample.current.block_hash?sample.current:sample.previous;return {header:{hash:s.block_hash,height:s.block_height,timestamp_nanosec:String(BigInt(Date.now())*1000000n)}};},viewAccount:async({blockQuery}:any)=>({code_hash:(blockQuery.blockId===sample.current.block_hash?sample.current:sample.previous).accounts[0].code_hash}),sendJsonRpc:async(_method:any,p:any)=>({keys:(p.block_id===sample.current.block_hash?sample.current:sample.previous).accounts[0].keys.map((k:any)=>({public_key:k.public_key,access_key:{permission:k.permission}}))})};
+ const result=await validateDeliveryEvidence(f.envelope,f.c,client);assert.equal(result.status,'EVIDENCE_VALID');assert.equal(result.factual_correctness,'UNVERIFIED');assert.equal(result.evidence.length,2);
+ client.viewAccount=async()=>({code_hash:'11111111111111111111111111111111'});await assert.rejects(()=>validateDeliveryEvidence(f.envelope,f.c,client),/contract evidence mismatch/);
+});

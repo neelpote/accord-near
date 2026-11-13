@@ -1,4 +1,4 @@
-import {RISK_KIND,localRiskConfig} from "./risk-analyst.js";
+import {RISK_KIND,localRiskConfig,riskAvailability} from "./risk-analyst.js";
 import {deliverySpecification} from "./service-delivery.js";
 import {mountDelivery} from "./delivery-api.js";
 import {mountExecution} from "./execution-api.js";
@@ -41,7 +41,7 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.get('/inference/status',async(_req,res)=>{let local_risk_available=false,remaining_requests=0;try{const {limit}=localRiskConfig();const budget=(await db.query('SELECT requests FROM accord_local_ai_budget WHERE id=1')).rows[0];remaining_requests=Math.max(0,limit-Number(budget?.requests??limit));local_risk_available=remaining_requests>0;}catch{}res.json({groq_configured:groqConfigured(),local_risk_available,remaining_requests});});
+app.get('/inference/status',async(_req,res)=>res.json({groq_configured:groqConfigured(),...await riskAvailability()}));
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
 const id = (s: unknown) => {
   if (
@@ -285,6 +285,7 @@ app.post("/inputs/validate", async (req, res) => {
     if (!row) throw new Error("Unknown service");
     kind = row.metadata.kind;
   }
+  if(kind===RISK_KIND&&!(await riskAvailability()).local_risk_available)throw Error("Local AI is unavailable or its request budget is exhausted; no agreement should be funded");
   const input = validateServiceInput(kind, req.body.input);
   res.json({ input, input_hash: digest(input) });
 });

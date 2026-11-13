@@ -75,3 +75,11 @@ export function verifyRiskBaseline(report:any,cycle:number,previous:any,receipt:
  verifyRiskReport(previous,`${id}:${cycle-1}`,input,Number(BigInt(receipt.paid_at_ns)/1000000n));
  if(digest(report.investigation?.baseline)!==digest(previous.investigation.current))throw Error('Risk baseline differs from preceding paid report');
 }
+
+/** Reachability is not inference success, quality, or attestation; no completion request is made. */
+export async function riskAvailability(request:typeof fetch=fetch){
+ let remaining_requests=0;
+ try{const {url,limit}=localRiskConfig(),{db}=await import('./db.js');remaining_requests=Math.max(0,limit-Number((await db.query('SELECT requests FROM accord_local_ai_budget WHERE id=1')).rows[0]?.requests??limit));if(!remaining_requests)return {local_risk_available:false,remaining_requests};
+ const response=await request(new URL('/v1/models',url),{redirect:'error',signal:AbortSignal.timeout(2000)});const data=response.ok?await boundedJson(response):null;return {local_risk_available:!!data&&Array.isArray(data.data)&&data.data.length>0,remaining_requests};
+ }catch{return {local_risk_available:false,remaining_requests};}
+}

@@ -148,7 +148,8 @@ const invalidOrigin = await fetch(apiBase + "/auth/challenge", {
 });
 assert.equal(invalidOrigin.status, 403);
 check("Cross-origin mutation rejected");
-const metadata = {
+const riskMode=process.env.ACCORD_RISK_LIVE==='1';
+const metadata = riskMode?{kind:"near-contract-risk-analyst-v1",analysis_mode:"local-llm",description:"Read-only code and permission change monitoring with pinned local AI explanations; conclusions unverified.",provider_url:config.provider,input_example:{account_id:config.contract,expected_code_hash:"DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"}}:{
   kind: "portfolio-concentration-v1",
   description:
     "Portfolio concentration analysis for a supplied snapshot. Deterministic portfolio analysis; no live prices or AI inference.",
@@ -165,7 +166,7 @@ else {
     contractId: config.contract,
     methodName: "register_service",
     args: {
-      name: "Portfolio concentration report",
+      name: riskMode?"Smart Contract Risk Analyst":"Portfolio concentration report",
       metadata_hash: digest(metadata),
       price: "10000000000000000000000",
       interval_ns: "60000000000",
@@ -195,7 +196,7 @@ assert.equal(
 check(
   "Provider registration bound to real wallet/metadata; wrong owner rejected",
 );
-const input = {
+const input = riskMode?metadata.input_example!:{
   walletAddress: "example.testnet",
   holdings: [
     { symbol: "NEAR", balance: "10", value_usd: 80 },
@@ -289,7 +290,7 @@ assert.equal(
   "DELIVERED",
   JSON.stringify(rows.map((r) => ({ state: r.state, error: r.error }))),
 );
-assert.equal(rows[0].report.risk_score, 80);
+if(riskMode){assert.equal(rows[0].report.kind,"near-contract-risk-analyst-v1");assert.equal(rows[0].report.analysis.provider,"local-mlx");assert.equal(rows[0].report.investigation.baseline,null);}else assert.equal(rows[0].report.risk_score, 80);
 assert.equal(digest(rows[0].report), rows[0].artifact_hash);
 check(
   "Concurrent workers produced one verified credit and matching delivered report",
@@ -385,6 +386,7 @@ for (
 }
 assert.equal(rows.length, 2);
 assert.equal(rows[1].state, "DELIVERED");
+if(riskMode)assert.equal(digest(rows[1].report.investigation.baseline),digest(rows[0].report.investigation.current));
 check("Second report purchased after a real 60-second testnet interval");
 const cancel = await buyer.callFunctionRaw({
   contractId: config.contract,
@@ -468,11 +470,12 @@ if(process.env.ACCORD_DELIVERY_LIVE==='1'){
  for(const row of verified){assert.equal(row.verification.status,'DELIVERY_VERIFIED');assert.equal(row.verification.factual_correctness,'UNVERIFIED');assert(row.delivered_at);assert(/^[1-9A-HJ-NP-Za-km-z]{32,50}$/.test(row.payment_tx));}
  evidence.delivery_verification=verified;check('Both paid deliveries have distinct structure/evidence stages, transaction references and completion timestamps; factual correctness stays unverified');
 }
+if(riskMode)evidence.reports=rows.map(r=>({cycle:r.cycle,artifact_hash:r.artifact_hash,report:r.report}));
 evidence.finished_at = new Date().toISOString();
 evidence.input_disclosure =
-  "Illustrative user-supplied portfolio snapshot; deterministic report, no live oracle or AI inference.";
+  riskMode?"Live finalized NEAR testnet observations; real local MLX inference, no TEE or factual correctness claim.":"Illustrative user-supplied portfolio snapshot; deterministic report, no live oracle or AI inference.";
 await writeFile(
-  resolve(root, process.env.ACCORD_EXECUTION_LIVE==="1"?(process.env.ACCORD_DELIVERY_LIVE==="1"?"docs/reliability/phase2-testnet.json":"docs/reliability/phase1-testnet.json"):"docs/testnet-proof.json"),
+  resolve(root, riskMode?"docs/reliability/phase3-testnet.json":process.env.ACCORD_EXECUTION_LIVE==="1"?(process.env.ACCORD_DELIVERY_LIVE==="1"?"docs/reliability/phase2-testnet.json":"docs/reliability/phase1-testnet.json"):"docs/testnet-proof.json"),
   JSON.stringify(evidence, null, 2) + "\n",
 );
 console.log("TESTNET ACCEPTANCE PASSED", subId);
