@@ -1,0 +1,66 @@
+[
+  {
+    "id": "bgm_001",
+    "type": "bgm",
+    "path": ".media/audio/bgm/bgm_001.wav",
+    "source": "search",
+    "description": "modern minimal building instrumental pulse, cinematic",
+    "duration": 30,
+    "provenance": {
+      "provider": "heygen.audio.sounds",
+      "prompt": "tense minimal electronic pulse 120 bpm cinematic technology instrumental building percussion",
+      "authMethod": "oauth",
+      "track_id": "c50be8dce74443d7ac5ffedf67eaa210",
+      "score": 0.8579051494598389,
+      "query": "tense minimal electronic pulse 120 bpm cinematic technology instrumental building percussion"
+    }
+  },
+  {
+    "id": "sfx_001",
+    "type": "sfx",
+    "path": ".media/audio/sfx/sfx_001.mp3",
+    "source": "search",
+    "description": "A short, gritty scrape builds into a massive, heavy burst, followed by a fading trail of crackling and crumbling textures.",
+    "duration": 5.4,
+    "provenance": {
+      "provider": "heygen.audio.sounds",
+      "prompt": "short cinematic impact",
+      "authMethod": "oauth",
+      "track_id": "06244e5719626722",
+      "score": 0.6718683838844299,
+      "query": "short cinematic impact"
+    }
+  },
+  {
+    "id": "sfx_002",
+    "type": "sfx",
+    "path": ".media/audio/sfx/sfx_002.mp3",
+    "source": "search",
+    "description": "Two sharp, high-frequency mechanical clicks in quick succession, resembling a computer mouse button press and release.",
+    "duration": 0.3,
+    "provenance": {
+      "provider": "heygen.audio.sounds",
+      "prompt": "soft computer mouse click",
+      "authMethod": "oauth",
+      "track_id": "c47bc2fb4b355d71",
+      "score": 0.6654233336448669,
+      "query": "soft computer mouse click"
+    }
+  },
+  {
+    "id": "sfx_003",
+    "type": "sfx",
+    "path": ".media/audio/sfx/sfx_003.mp3",
+    "source": "search",
+    "description": "A quick, airy synthesized whoosh rapidly sweeps past.",
+    "duration": 1.4,
+    "provenance": {
+      "provider": "heygen.audio.sounds",
+      "prompt": "short fast airy whoosh transition",
+      "authMethod": "oauth",
+      "track_id": "a4855a82116cd4cc",
+      "score": 0.7522592544555664,
+      "query": "short fast airy whoosh transition"
+    }
+  }
+]

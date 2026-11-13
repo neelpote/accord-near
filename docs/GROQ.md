@@ -29,3 +29,7 @@ ACCORD_GROQ_DEMO=1 npm run near:demo:agents
 ```
 
 The live inference check consumes one capped request; the paid demo consumes two more. Live inference evidence is docs/groq-live-proof.json; the separate paid-flow evidence is docs/groq-paid-proof.json. Neither constitutes an independent audit or an inference attestation. JSON mode is locally schema-validated; it does not itself guarantee factual accuracy. See https://console.groq.com/docs/structured-outputs.
+
+## 13 November causal-demo budget checkpoint
+
+The earlier five-request ceiling above is historical configuration. The owner explicitly approved **six total** to capture a clean and poisoned reference-agent comparison. Both captures succeeded and all six requests are consumed. Local and hosted counters are six; the hosted runtime retains its stricter ceiling and blocks further inference. No additional call is authorized. Replay `near:demo:causal` instead; it reads the saved completions and makes no new inference request. See [SECURITY_WALKTHROUGH.md](SECURITY_WALKTHROUGH.md).

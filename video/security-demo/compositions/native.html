@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+  <body>
+    <template
+      ><style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          background: #efeee9;
+          color: #20221f;
+          font-family: Inter, sans-serif;
+        }
+        * {
+          box-sizing: border-box;
+        }
+        h1,
+        h2,
+        p {
+          margin: 0;
+        }
+        .eyebrow {
+          font-size: 28px;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+        .head {
+          position: absolute;
+          left: 192px;
+          top: 145px;
+          font-size: 100px;
+          line-height: 1.02;
+          letter-spacing: -0.06em;
+          font-weight: 900;
+        }
+        .sub {
+          font-size: 34px;
+          line-height: 1.4;
+        }
+        .foot {
+          position: absolute;
+          left: 192px;
+          bottom: 110px;
+          font-size: 28px;
+          line-height: 1.35;
+        }
+        .orange {
+          color: #bd481e;
+        }
+        .red {
+          color: #e04832;
+        }
+        .rule {
+          position: absolute;
+          left: 192px;
+          right: 192px;
+          top: 105px;
+          height: 2px;
+          background: currentColor;
+          opacity: 0.25;
+        }
+        .mono {
+          font-family: "JetBrains Mono", monospace;
+        }
+        .stage {
+          position: absolute;
+          left: 192px;
+          top: 330px;
+          width: 1536px;
+          height: 540px;
+          overflow: hidden;
+        }
+        .shot {
+          position: absolute;
+          inset: 0;
+          width: 1536px;
+          height: 864px;
+          object-fit: cover;
+        }
+        .tag {
+          position: absolute;
+          left: 192px;
+          top: 270px;
+          font-size: 31px;
+          font-weight: 700;
+        }
+        .dark {
+          background: #171916;
+          color: #efeee9;
+        }
+        .code {
+          font-size: 36px;
+          line-height: 1.7;
+        }
+        .metric {
+          font-size: 250px;
+          font-weight: 900;
+          line-height: 1;
+          letter-spacing: -0.07em;
+        }
+      </style>
+      <div
+        id="root"
+        data-composition-id="native"
+        data-width="1920"
+        data-height="1080"
+        data-duration="16"
+        data-layout-allow-overlap
+      >
+        <div class="rule"></div>
+        <h1 class="head" style="font-size: 88px; top: 145px">
+          First, a payment that works.
+        </h1>
+        <div class="tag">Native NEAR · owner approval · 0.001 test NEAR</div>
+        <div class="stage">
+          <video
+            id="native-fund"
+            class="clip shot"
+            src="assets/native.webm"
+            muted
+            playsinline
+            data-start="0"
+            data-duration="6"
+            data-media-start="11"
+            data-track-index="0"
+            style="top: -680px; width: 2304px; height: 1296px; left: -365px"
+          ></video
+          ><video
+            id="native-warning"
+            class="clip shot"
+            src="assets/native.webm"
+            muted
+            playsinline
+            data-start="6"
+            data-duration="4"
+            data-media-start="29"
+            data-track-index="0"
+            style="top: -870px; height: 1728px; width: 3072px; left: -540px"
+          ></video
+          ><video
+            id="native-paid"
+            class="clip shot"
+            src="assets/native.webm"
+            muted
+            playsinline
+            data-start="10"
+            data-duration="6"
+            data-media-start="107"
+            data-track-index="0"
+            style="top: -440px; width: 2688px; height: 1512px; left: -475px"
+          ></video>
+        </div>
+        <p class="foot">
+          Real browser capture / agreement #23 / network waits shortened<br />NEP-413
+          + NEAR Connect fixture; third-party wallet UI not certified.
+        </p>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo(
+            ".stage",
+            { x: 60, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" },
+            0,
+          );
+          window.__timelines = window.__timelines || {};
+          window.__timelines["native"] = tl;
+        })();
+      </script></template
+    >
+  </body>
+</html>

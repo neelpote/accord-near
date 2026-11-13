@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "verified_at": "2026-11-13T13:38:11.778244+00:00",
+  "file": "accord-security-demo.mp4",
+  "sha256": "782072e8986bdca93782802ffd823eac7dc826fa63ca9af0f0418a8f218cf27c",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "nb_frames": "2400"
+      },
+      {
+        "codec_name": "aac",
+        "r_frame_rate": "0/0",
+        "nb_frames": "3751"
+      }
+    ],
+    "format": {
+      "duration": "80.000000",
+      "size": "8627329"
+    }
+  },
+  "audio_measured_not_heard": true,
+  "integrated_lufs": -15.08,
+  "true_peak_dbtp": -1.51,
+  "loudness_range_lu": 3.9,
+  "full_decode_errors": 0,
+  "detected_black_intervals": [],
+  "hyperframes_full_check_passed": true,
+  "visual_review": "All scenes, phone sheets, cut strips, refined decisive crops and decoded export contact sheet inspected. Fresh-eye P1 feedback applied.",
+  "fixture_code_commit": "97c193bef1ed96ffc93fb7d83fa20a513e7850e5",
+  "fixture_ci": "https://github.com/neelpote/accord-near/actions/runs/43434845723",
+  "limits": [
+    "Native raw browser video is 800x450; final export is 1920x1080.",
+    "Wallet signers are developer fixtures, not third-party extension/device UI certification.",
+    "Evidence typography is a presentation of captured JSON/readback, not a recording of a live terminal.",
+    "No human listening pass by the agent; soundtrack measured only."
+  ]
+}

@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+  <body>
+    <template
+      ><style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          background: #efeee9;
+          color: #20221f;
+          font-family: Inter, sans-serif;
+        }
+        * {
+          box-sizing: border-box;
+        }
+        h1,
+        h2,
+        p {
+          margin: 0;
+        }
+        .eyebrow {
+          font-size: 28px;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+        .head {
+          position: absolute;
+          left: 192px;
+          top: 145px;
+          font-size: 100px;
+          line-height: 1.02;
+          letter-spacing: -0.06em;
+          font-weight: 900;
+        }
+        .sub {
+          font-size: 34px;
+          line-height: 1.4;
+        }
+        .foot {
+          position: absolute;
+          left: 192px;
+          bottom: 110px;
+          font-size: 28px;
+          line-height: 1.35;
+        }
+        .orange {
+          color: #bd481e;
+        }
+        .red {
+          color: #e04832;
+        }
+        .rule {
+          position: absolute;
+          left: 192px;
+          right: 192px;
+          top: 105px;
+          height: 2px;
+          background: currentColor;
+          opacity: 0.25;
+        }
+        .mono {
+          font-family: "JetBrains Mono", monospace;
+        }
+        .stage {
+          position: absolute;
+          left: 192px;
+          top: 330px;
+          width: 1536px;
+          height: 540px;
+          overflow: hidden;
+        }
+        .shot {
+          position: absolute;
+          inset: 0;
+          width: 1536px;
+          height: 864px;
+          object-fit: cover;
+        }
+        .tag {
+          position: absolute;
+          left: 192px;
+          top: 270px;
+          font-size: 31px;
+          font-weight: 700;
+        }
+        .dark {
+          background: #171916;
+          color: #efeee9;
+        }
+        .code {
+          font-size: 36px;
+          line-height: 1.7;
+        }
+        .metric {
+          font-size: 250px;
+          font-weight: 900;
+          line-height: 1;
+          letter-spacing: -0.07em;
+        }
+        #root {
+          background: #171916;
+          color: #efeee9;
+        }
+      </style>
+      <div
+        id="root"
+        data-composition-id="gate"
+        data-width="1920"
+        data-height="1080"
+        data-duration="10"
+        data-layout-allow-overlap
+      >
+        <div class="rule"></div>
+        <p class="eyebrow" style="position: absolute; left: 192px; top: 150px">
+          Actual signing-gate evidence / agreement #32
+        </p>
+        <h1 class="head" style="top: 245px; font-size: 104px">
+          The gate refused.
+        </h1>
+        <p
+          class="sub"
+          style="
+            position: absolute;
+            left: 192px;
+            top: 385px;
+            font-size: 39px;
+            font-weight: 700;
+          "
+        >
+          Separate gate test · valid payment terms
+        </p>
+        <div
+          style="
+            position: absolute;
+            left: 192px;
+            top: 500px;
+            width: 1536px;
+            border-top: 2px solid #73756c;
+            padding-top: 28px;
+          "
+        >
+          <p style="font-size: 45px">
+            Control #31
+            <span style="color: #b3d3ad; margin-left: 70px">PAID</span
+            ><span style="float: right">1 signer call</span>
+          </p>
+          <div class="zero" style="margin-top: 45px">
+            <p style="font-size: 62px; font-weight: 900">
+              Attack #32
+              <span style="color: #ff9b80; margin-left: 60px">BLOCK</span
+              ><span style="float: right">0 signer calls</span>
+            </p>
+            <p class="sub" style="margin-top: 28px">
+              VERIFIED_BLOCKLIST / funded, due, correct provider and amount.
+            </p>
+          </div>
+        </div>
+        <p class="foot">
+          Own demo fixtures, denied in an isolated policy registry.<br />No
+          real-world scam allegation. No attack payment receipt.
+        </p>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo(
+            ".zero",
+            { scale: 1.12, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.18, ease: "power4.out" },
+            3,
+          );
+          window.__timelines = window.__timelines || {};
+          window.__timelines["gate"] = tl;
+        })();
+      </script></template
+    >
+  </body>
+</html>

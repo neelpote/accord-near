@@ -66,3 +66,7 @@ Hosted counterparty acceptance is recorded in [counterparty-hosted-proof.json](c
 ## Fresh audit status — 12 November 2026
 
 The [consolidated handoff](PROJECT_HANDOFF.md) is the current source of truth. Official rules still allow testnet-only projects and a fitting native NEAR contract; the example prompt is not a mandatory event integration list. The core app is implemented and previously demonstrated on the public host, but a current security-focused demo, the stricter causal prompt-injected-agent/control demonstration, final human fields/consent and the human-approved submission remain outstanding. Updated opt-in wallet harnesses now explicitly approve security warnings; they must be rerun before claiming a new complete native/EVM acceptance. Fresh health/readiness checks returned 200 after one initial readiness timeout, so no continuous-uptime claim is justified.
+
+## Current security acceptance — 13 November 2026
+
+The causal-demo and current-wallet-rerun gaps in earlier dated notes are now closed. Actual live clean/poisoned model completions, funded agreement 31, blocked agreement 32, native agreement 23 and Ethereum agreement 28 are documented in [SECURITY_WALKTHROUGH.md](SECURITY_WALKTHROUGH.md), with raw footage and independent finalized readbacks. The security film uses those actual captures; no stronger third-party wallet UI or production-security certification is claimed. Human social posting and final submission remain outside this engineering delivery.

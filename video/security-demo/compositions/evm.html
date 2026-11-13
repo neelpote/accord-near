@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+  <body>
+    <template
+      ><style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          background: #efeee9;
+          color: #20221f;
+          font-family: Inter, sans-serif;
+        }
+        * {
+          box-sizing: border-box;
+        }
+        h1,
+        h2,
+        p {
+          margin: 0;
+        }
+        .eyebrow {
+          font-size: 28px;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+        .head {
+          position: absolute;
+          left: 192px;
+          top: 145px;
+          font-size: 100px;
+          line-height: 1.02;
+          letter-spacing: -0.06em;
+          font-weight: 900;
+        }
+        .sub {
+          font-size: 34px;
+          line-height: 1.4;
+        }
+        .foot {
+          position: absolute;
+          left: 192px;
+          bottom: 110px;
+          font-size: 28px;
+          line-height: 1.35;
+        }
+        .orange {
+          color: #bd481e;
+        }
+        .red {
+          color: #e04832;
+        }
+        .rule {
+          position: absolute;
+          left: 192px;
+          right: 192px;
+          top: 105px;
+          height: 2px;
+          background: currentColor;
+          opacity: 0.25;
+        }
+        .mono {
+          font-family: "JetBrains Mono", monospace;
+        }
+        .stage {
+          position: absolute;
+          left: 192px;
+          top: 330px;
+          width: 1536px;
+          height: 540px;
+          overflow: hidden;
+        }
+        .shot {
+          position: absolute;
+          inset: 0;
+          width: 1536px;
+          height: 864px;
+          object-fit: cover;
+        }
+        .tag {
+          position: absolute;
+          left: 192px;
+          top: 270px;
+          font-size: 31px;
+          font-weight: 700;
+        }
+        .dark {
+          background: #171916;
+          color: #efeee9;
+        }
+        .code {
+          font-size: 36px;
+          line-height: 1.7;
+        }
+        .metric {
+          font-size: 250px;
+          font-weight: 900;
+          line-height: 1;
+          letter-spacing: -0.07em;
+        }
+      </style>
+      <div
+        id="root"
+        data-composition-id="evm"
+        data-width="1920"
+        data-height="1080"
+        data-duration="9"
+        data-layout-allow-overlap
+      >
+        <div class="rule"></div>
+        <h1 class="head" style="font-size: 88px; top: 145px">
+          Ethereum wallet. NEAR execution.
+        </h1>
+        <div class="tag">
+          Authenticate → fund → review → deliver / agreement #28
+        </div>
+        <div class="stage">
+          <video
+            id="evm-sign"
+            class="clip shot"
+            src="assets/evm.webm"
+            muted
+            playsinline
+            data-start="0"
+            data-duration="3"
+            data-media-start="27"
+            data-track-index="0"
+            style="top: -480px; width: 2112px; height: 1188px; left: -290px"
+          ></video
+          ><video
+            id="evm-warning"
+            class="clip shot"
+            src="assets/evm.webm"
+            muted
+            playsinline
+            data-start="3"
+            data-duration="3"
+            data-media-start="64"
+            data-track-index="0"
+            style="top: -360px; width: 2304px; height: 1296px; left: -400px"
+          ></video
+          ><video
+            id="evm-paid"
+            class="clip shot"
+            src="assets/evm.webm"
+            muted
+            playsinline
+            data-start="6"
+            data-duration="3"
+            data-media-start="133"
+            data-track-index="0"
+            style="top: -200px; width: 2304px; height: 1296px; left: -400px"
+          ></video>
+        </div>
+        <p class="foot">
+          EIP-1193 fixture + official adapter + real NEP-518 relayer.<br />MetaMask
+          extension/popup UI remains a separate manual check.
+        </p>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo(
+            ".stage",
+            { x: 60, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" },
+            0,
+          );
+          window.__timelines = window.__timelines || {};
+          window.__timelines["evm"] = tl;
+        })();
+      </script></template
+    >
+  </body>
+</html>

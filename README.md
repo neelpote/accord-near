@@ -1,16 +1,34 @@
 # Accord
 
-Recurring purchases for agent services, with spending limits enforced on NEAR.
+Counterparty checks before an agent signs, backed by finite payment agreements on NEAR.
 
 A customer approves a finite agreement, funds its budget, and installs a charge-only function-call key. An independent provider prepares a report. The worker purchases the exact prepared artifact when it is due. NEAR fixes the recipient, price, minimum interval, maximum cycles and expiry, even if the worker misbehaves. The customer can cancel future billing and withdraw the unspent remainder; providers withdraw earned funds separately.
 
 **Status:** testnet prototype. Five agents now read live NEAR testnet data: Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector and Network Pulse. They use deterministic rules and need no AI credits. The supplied-portfolio snapshot service remains available separately. NEAR AI Cloud integration is implemented and paused: TEE preflight authenticated successfully, but inference returned HTTP 402 because credits/spending limits were not configured. Live NEAR AI Cloud output is not claimed.
 
-[Recorded testnet demo](docs/demo/accord-testnet-demo.webm) · [Verification and CI](VERIFICATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Loops review](docs/evaluations/LOOPS_REVIEW.md)
+[Security walkthrough](docs/demo/accord-security-demo.mp4) · [Earlier testnet demo](docs/demo/accord-testnet-demo.webm) · [Verification and CI](VERIFICATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Loops review](docs/evaluations/LOOPS_REVIEW.md)
+
+[![Watch the 80-second security film](docs/demo/accord-security-poster.jpg)](docs/demo/accord-security-demo.mp4)
 
 See [the five agents and their working demonstrations](docs/AGENT_SERVICES.md), including actual purchased reports and source-block evidence.
 
 **Current project context and submission audit:** [PROJECT_HANDOFF.md](docs/PROJECT_HANDOFF.md). This is the authoritative map of active code, accepted decisions, evidence, historical documents and remaining submission work.
+
+
+## Security acceptance — 13 November 2026
+
+The two requested engineering tasks are complete: the causal attack/control demonstration and current native/Ethereum wallet journeys. The security walkthrough and its source evidence are linked below. Social posting and submission remain the owner's steps.
+
+| Check | Actual result | Evidence |
+| --- | --- | --- |
+| Live causal model comparison | Same system/task, clean versus poisoned tool document; actual Groq receiver changes | [Captured prompts and completions](docs/causal-agent-responses.json) |
+| Funded control | Agreement 31 paid 0.001 test NEAR through its charge-only key | [Control receipt and attack log](docs/causal-attack-proof.json) |
+| Blocked attacks | Agreement 32 remained otherwise valid; poisoned proposal and valid-terms reputation case each made zero signer calls | [Preflight, reasons and cleanup](docs/causal-attack-proof.json) |
+| Native wallet | Agreement 23: authenticate, fund, approve exact warning, receive report, cancel, remove key, withdraw | [Browser proof](docs/security-native-wallet-proof.json) · [raw footage](docs/demo/security-native-wallet-raw.webm) |
+| Ethereum wallet | Agreement 28: same journey through official adapter and real NEP-518 relayer | [Browser proof](docs/security-evm-wallet-proof.json) · [raw footage](docs/demo/security-evm-wallet-raw.webm) |
+| Independent readback | Both: exactly one paid cycle, matching report/receipt hash, consumed warning, inactive agreement, absent delegate, finalized successful exit receipts | [Finalized verification](docs/security-journeys-readback.json) |
+
+The wallet journeys use automated developer signers with real signatures and testnet execution. They **do not certify third-party wallet extension/pop-up/mobile UI**. The deliberately vulnerable reference planner is a demonstration, not the production worker. Its blocked accounts are our own test fixtures in an isolated demo registry; no real-world scam claim is made. The budget is exhausted at six Groq requests; replaying the captured model responses makes no new inference call.
 
 ## Hosted demo
 
@@ -181,4 +199,4 @@ The current frontend uses a credited artist-made Robot Expressive model and a na
 
 Automated charges now pass a mandatory counterparty decision service: **allow**, **warn** (owner approval for one exact payment), or **block** (no signature). Both the escrow contract and the economic provider are checked using finalized code identity, indexed account age/recent activity, prior Accord receipts and shared evidence reports. Open **Payment security** to review paused payments or submit evidence. Curator-reviewed blocklist entries cannot be overridden by payment approval.
 
-The agent's existing finite function-call key remains `charge`-only on one contract; it is never a full-access key. The allowance pays gas, while the contract enforces the payment budget and recipient. The reputation gate runs in the backend and is not a contract-enforced guarantee against a compromised dispatcher. Full data-source coverage, access-key limits, API, threat boundaries and reproducible attack instructions: [Counterparty security](docs/COUNTERPARTY_SECURITY.md). [Captured attack log](docs/counterparty-attack-proof.json). This is a malicious-intent signing-boundary fixture; a complete causal prompt-injection demonstration and current submission-demo packaging remain outstanding. See the [fresh submission audit](docs/PROJECT_HANDOFF.md#4-fresh-security-track-and-submission-audit).
+The agent's existing finite function-call key remains `charge`-only on one contract; it is never a full-access key. The allowance pays gas, while the contract enforces the payment budget and recipient. The reputation gate runs in the backend and is not a contract-enforced guarantee against a compromised dispatcher. Full data-source coverage, access-key limits, API, threat boundaries and reproducible attack instructions: [Counterparty security](docs/COUNTERPARTY_SECURITY.md). [Captured causal attack log](docs/causal-attack-proof.json). Two genuine live model calls changed only the vendor tool document; the poisoned document changed the proposed receiver. A funded control paid successfully, while the poisoned proposal and a separate valid-terms reputation case stopped before signing. See the [current walkthrough and reproduction notes](docs/SECURITY_WALKTHROUGH.md).

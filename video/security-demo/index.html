@@ -1,0 +1,240 @@
+<!doctype html>
+<html
+  lang="en"
+  data-composition-variables='[{"id":"brand","type":"color","label":"Accord orange","default":"#df5e2c"}]'
+>
+  <head>
+    <meta charset="utf-8" />
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #171916;
+      }
+      #root {
+        width: 1920px;
+        height: 1080px;
+        position: relative;
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="80"
+      data-width="1920"
+      data-height="1080"
+      data-layout-allow-overlap
+    >
+      <div
+        id="cold-host"
+        class="clip"
+        data-composition-id="cold"
+        data-composition-src="compositions/cold.html"
+        data-start="0"
+        data-duration="5"
+        data-width="1920"
+        data-height="1080"
+        data-track-index="0"
+        data-track-kind="graphics"
+        data-beat="cold"
+        data-layout-allow-overlap
+      ></div>
+      <div
+        id="product-host"
+        class="clip"
+        data-composition-id="product"
+        data-composition-src="compositions/product.html"
+        data-start="5"
+        data-duration="8"
+        data-width="1920"
+        data-height="1080"
+        data-track-index="0"
+        data-track-kind="graphics"
+        data-beat="product"
+        data-layout-allow-overlap
+      ></div>
+      <div
+        id="native-host"
+        class="clip"
+        data-composition-id="native"
+        data-composition-src="compositions/native.html"
+        data-start="13"
+        data-duration="16"
+        data-width="1920"
+        data-height="1080"
+        data-track-index="0"
+        data-track-kind="graphics"
+        data-beat="native"
+        data-layout-allow-overlap
+      ></div>
+      <div
+        id="poison-host"
+        class="clip"
+        data-composition-id="poison"
+        data-composition-src="compositions/poison.html"
+        data-start="29"
+        data-duration="13"
+        data-width="1920"
+        data-height="1080"
+        data-track-index="0"
+        data-track-kind="graphics"
+        data-beat="poison"
+        data-layout-allow-overlap
+      ></div>
+      <div
+        id="redirect-host"
+        class="clip"
+        data-composition-id="redirect"
+        data-composition-src="compositions/redirect.html"
+        data-start="42"
+        data-duration="7"
+        data-width="1920"
+        data-height="1080"
+        data-track-index="0"
+        data-track-kind="graphics"
+        data-beat="redirect"
+        data-layout-allow-overlap
+      ></div>
+      <div
+        id="gate-host"
+        class="clip"
+        data-composition-id="gate"
+        data-composition-src="compositions/gate.html"
+        data-start="49"
+        data-duration="10"
+        data-width="1920"
+        data-height="1080"
+        data-track-index="0"
+        data-track-kind="graphics"
+        data-beat="gate"
+        data-layout-allow-overlap
+      ></div>
+      <div
+        id="evm-host"
+        class="clip"
+        data-composition-id="evm"
+        data-composition-src="compositions/evm.html"
+        data-start="59"
+        data-duration="9"
+        data-width="1920"
+        data-height="1080"
+        data-track-index="0"
+        data-track-kind="graphics"
+        data-beat="evm"
+        data-layout-allow-overlap
+      ></div>
+      <div
+        id="exit-host"
+        class="clip"
+        data-composition-id="exit"
+        data-composition-src="compositions/exit.html"
+        data-start="68"
+        data-duration="7"
+        data-width="1920"
+        data-height="1080"
+        data-track-index="0"
+        data-track-kind="graphics"
+        data-beat="exit"
+        data-layout-allow-overlap
+      ></div>
+      <div
+        id="end-host"
+        class="clip"
+        data-composition-id="end"
+        data-composition-src="compositions/end.html"
+        data-start="75"
+        data-duration="5"
+        data-width="1920"
+        data-height="1080"
+        data-track-index="0"
+        data-track-kind="graphics"
+        data-beat="end"
+        data-layout-allow-overlap
+      ></div>
+      <audio
+        id="music-0"
+        src="assets/audio/bgm/bgm_001.wav"
+        data-start="0"
+        data-duration="30"
+        data-track-index="2"
+        data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0}, {"t": 0.5, "v": 0.55}, {"t": 29.3, "v": 0.55}, {"t": 30, "v": 0}]}]}'
+      ></audio
+      ><audio
+        id="music-1"
+        src="assets/audio/bgm/bgm_001.wav"
+        data-start="29.5"
+        data-duration="30"
+        data-track-index="2"
+        data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0}, {"t": 0.5, "v": 0.55}, {"t": 29.3, "v": 0.55}, {"t": 30, "v": 0}]}]}'
+      ></audio
+      ><audio
+        id="music-2"
+        src="assets/audio/bgm/bgm_001.wav"
+        data-start="59"
+        data-duration="21"
+        data-track-index="2"
+        data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0}, {"t": 0.5, "v": 0.55}, {"t": 20.3, "v": 0.55}, {"t": 21, "v": 0}]}]}'
+      ></audio
+      ><audio
+        id="sfx-0"
+        src="assets/audio/sfx/sfx_001.mp3"
+        data-start="0"
+        data-duration="5.4"
+        data-track-index="3"
+        data-volume="0.24"
+      ></audio
+      ><audio
+        id="sfx-1"
+        src="assets/audio/sfx/sfx_003.mp3"
+        data-start="32"
+        data-duration="1.4"
+        data-track-index="3"
+        data-volume="0.18"
+      ></audio
+      ><audio
+        id="sfx-2"
+        src="assets/audio/sfx/sfx_001.mp3"
+        data-start="49"
+        data-duration="5.4"
+        data-track-index="3"
+        data-volume="0.24"
+      ></audio
+      ><audio
+        id="sfx-3"
+        src="assets/audio/sfx/sfx_002.mp3"
+        data-start="19"
+        data-duration="0.3"
+        data-track-index="3"
+        data-volume="0.3"
+      ></audio
+      ><audio
+        id="sfx-4"
+        src="assets/audio/sfx/sfx_002.mp3"
+        data-start="65"
+        data-duration="0.3"
+        data-track-index="3"
+        data-volume="0.3"
+      ></audio>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines = window.__timelines || {};
+      window.__timelines.main = tl;
+    </script>
+  </body>
+</html>

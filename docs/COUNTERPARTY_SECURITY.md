@@ -112,3 +112,7 @@ Application CI passed for commit `5cf6aa4fa3746e29b6f78f83f6c7ccba41f3f9b3`: htt
 ## Audit clarification: adversarial fixture versus prompt injection
 
 The stricter source review in [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md) found that `counterparty-attack.ts` directly constructs the malicious intent. Its injected-looking document is logged but not consumed by a model/agent, and the example agreement context is not an otherwise executable valid payment. The recorded refusal and zero signing callbacks are genuine, but the script should be presented as a signing-boundary adversarial test. A causal prompt-injected-agent demonstration remains open; eligibility for the broader Security track is a separate question from satisfying every line of that chosen example.
+
+## Current security acceptance — 13 November 2026
+
+The causal-demo and current-wallet-rerun gaps in earlier dated notes are now closed. Actual live clean/poisoned model completions, funded agreement 31, blocked agreement 32, native agreement 23 and Ethereum agreement 28 are documented in [SECURITY_WALKTHROUGH.md](SECURITY_WALKTHROUGH.md), with raw footage and independent finalized readbacks. The security film uses those actual captures; no stronger third-party wallet UI or production-security certification is claimed. Human social posting and final submission remain outside this engineering delivery.

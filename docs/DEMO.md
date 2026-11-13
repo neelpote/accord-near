@@ -36,3 +36,7 @@ The older 63-second portfolio demo above is historical. A new recording should l
 6. Show cancellation and removed key; explain that full-access owner/admin authority is separate and the reputation gate is off chain.
 
 Before publishing, confirm the public demo is reachable and capture the current security UI. The human posts the final recording/screenshots to X with the required tags, supplies the link and approves the exact application payload. See [the current handoff and readiness audit](PROJECT_HANDOFF.md). No new demo post or application has been sent by this audit.
+
+## Current security acceptance — 13 November 2026
+
+The causal-demo and current-wallet-rerun gaps in earlier dated notes are now closed. Actual live clean/poisoned model completions, funded agreement 31, blocked agreement 32, native agreement 23 and Ethereum agreement 28 are documented in [SECURITY_WALKTHROUGH.md](SECURITY_WALKTHROUGH.md), with raw footage and independent finalized readbacks. The security film uses those actual captures; no stronger third-party wallet UI or production-security certification is claimed. Human social posting and final submission remain outside this engineering delivery.

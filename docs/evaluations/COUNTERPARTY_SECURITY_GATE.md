@@ -49,3 +49,23 @@ The backend and UI are deployed publicly. `counterparty-hosted-proof.json` recor
 ## Subsequent source-audit correction — 12 November 2026
 
 The broader track fit and wrapper/approval evidence remain valid. The chosen prompt's attack-demo row is **partial**, rather than literally complete: the script constructs malicious output directly and does not run an agent over the injected document. The logged agreement is not a valid otherwise-executable control. Do not conflate signer refusal with demonstrated prompt-injection causality. Current status, documentation supersession and remaining submission tasks are consolidated in [PROJECT_HANDOFF.md](../PROJECT_HANDOFF.md).
+
+## Fresh Loops-prompt review — 13 November 2026
+
+Fetched `loops evaluate --event near-hackathon --sponsor ai-security-defense --format json` again and applied its rubric locally to the current code/evidence. This is an agent-run alignment review using the Loops skill, **not external approval, an official score, or security certification**. No paid knowledge query or submission was made.
+
+**Alignment:** the counterparty service and mandatory signing wrapper are genuinely wired into the existing payment worker. The earlier causal-demo gap is now closed for a deliberately vulnerable reference planner: `causal-agent.ts` constructs identical message envelopes around two different tool documents, `causal-agent-responses.json` contains both actual Groq outputs, and `causal-attack.ts` replays them through the real gate against fresh funded agreements. `causal-attack-proof.json` records a successful paid control and a valid-terms reputation refusal with zero signer calls. Current native/Ethereum journeys and independent readback are complete; see `security-journeys-readback.json`.
+
+**NEAR Tech Usage (35%):** real single-contract charge-only keys, deployed native escrow, finalized RPC evidence, NEP-413 and NEP-518. The contract's price/provider, cadence, expiry, reserve and artifact checks are executable code, not a README-only rationale. Loops' sponsor prompt explicitly prefers Agent API for generic spending policies; Accord does not integrate it and should not claim maximum alignment with that preference. The owner's testnet-only constraint remains. No unsupported claim that every Agent API alternative is inferior is made; its current feature parity was not re-verified through the paid knowledge graph.
+
+**Real, Not Simulated (25%):** actual independently captured clean/poisoned model completions plus funded control, exact evidence warning approvals and chain/backend delivery reconciliation. The intentionally weak planner, curated own-account deny fixtures and automated browser signers remain disclosed. One successful injected example does not establish attack coverage or a jailbreak rate.
+
+**Track Fit (20%):** the expected allow/warn/block service, human warning decision, refusal before signing and shared evidence-backed reports exist. Data coverage remains bounded to the documented indexed history, observed code changes and local payment history. Missing finalized state is not approvable. The backend reputation policy is not hardware-isolated or enforced by the money contract against a compromised dispatcher.
+
+**Execution & Completeness (20%):** 25 backend unit tests passed; local database/HTTP security integration and native/Ethereum funded journeys passed. The failed schema-isolation path was corrected with a lazy import and a regression assertion before writes. The film uses actual captures, enlarged evidence and explicit scopes. Third-party wallet extension/device UI, customer validation and human-owned submission fields remain open.
+
+**Bounty fit:** the chosen counterparty example's engineering requirements are demonstrated with the stated data/authority boundaries. Placement in the track's three prizes remains the judges' decision; no numerical score or winning probability is assigned.
+
+**Feedback applied:** enlarge decisive UI crops; keep expected and model-selected receiver visible together; distinguish the injected redirect case from the separate valid-terms reputation case; separate cancellation, absent-key readback and actual withdrawal result in the film. These changes address review feedback without adding unrelated functionality.
+
+**Next three steps:** human external-wallet/device smoke check; owner review/post and exact final application approval; actual target-user interviews. The first two engineering tasks requested in this turn are complete. The review does not authorize posting or submission.

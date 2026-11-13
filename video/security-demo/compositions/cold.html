@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+  <body>
+    <template
+      ><style>
+        #root {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          background: #efeee9;
+          color: #20221f;
+          font-family: Inter, sans-serif;
+        }
+        * {
+          box-sizing: border-box;
+        }
+        h1,
+        h2,
+        p {
+          margin: 0;
+        }
+        .eyebrow {
+          font-size: 28px;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+        .head {
+          position: absolute;
+          left: 192px;
+          top: 145px;
+          font-size: 100px;
+          line-height: 1.02;
+          letter-spacing: -0.06em;
+          font-weight: 900;
+        }
+        .sub {
+          font-size: 34px;
+          line-height: 1.4;
+        }
+        .foot {
+          position: absolute;
+          left: 192px;
+          bottom: 110px;
+          font-size: 28px;
+          line-height: 1.35;
+        }
+        .orange {
+          color: #bd481e;
+        }
+        .red {
+          color: #e04832;
+        }
+        .rule {
+          position: absolute;
+          left: 192px;
+          right: 192px;
+          top: 105px;
+          height: 2px;
+          background: currentColor;
+          opacity: 0.25;
+        }
+        .mono {
+          font-family: "JetBrains Mono", monospace;
+        }
+        .stage {
+          position: absolute;
+          left: 192px;
+          top: 330px;
+          width: 1536px;
+          height: 540px;
+          overflow: hidden;
+        }
+        .shot {
+          position: absolute;
+          inset: 0;
+          width: 1536px;
+          height: 864px;
+          object-fit: cover;
+        }
+        .tag {
+          position: absolute;
+          left: 192px;
+          top: 270px;
+          font-size: 31px;
+          font-weight: 700;
+        }
+        .dark {
+          background: #171916;
+          color: #efeee9;
+        }
+        .code {
+          font-size: 36px;
+          line-height: 1.7;
+        }
+        .metric {
+          font-size: 250px;
+          font-weight: 900;
+          line-height: 1;
+          letter-spacing: -0.07em;
+        }
+        #root {
+          background: #171916;
+          color: #efeee9;
+        }
+      </style>
+      <div
+        id="root"
+        data-composition-id="cold"
+        data-width="1920"
+        data-height="1080"
+        data-duration="5"
+        data-layout-allow-overlap
+      >
+        <div class="rule"></div>
+        <p class="eyebrow" style="position: absolute; left: 192px; top: 150px">
+          Captured signing-gate result · NEAR testnet
+        </p>
+        <h1
+          class="cold-title"
+          style="
+            position: absolute;
+            left: 192px;
+            top: 250px;
+            font-size: 147px;
+            line-height: 1.02;
+            letter-spacing: -0.07em;
+          "
+        >
+          The signature<br />that never happened.
+        </h1>
+        <div
+          class="result"
+          style="
+            position: absolute;
+            left: 192px;
+            top: 650px;
+            display: flex;
+            align-items: baseline;
+            gap: 65px;
+          "
+        >
+          <span class="red" style="font-size: 130px; font-weight: 900"
+            >BLOCK</span
+          ><span style="font-size: 42px">0 signer calls. 0 broadcasts.</span>
+        </div>
+        <p class="foot">Accord / Counterparty defense for agents that pay.</p>
+      </div>
+      <script>
+        (function () {
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo(
+            ".result",
+            { x: 50, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.28, ease: "power4.out" },
+            0.12,
+          );
+          window.__timelines = window.__timelines || {};
+          window.__timelines["cold"] = tl;
+        })();
+      </script></template
+    >
+  </body>
+</html>
