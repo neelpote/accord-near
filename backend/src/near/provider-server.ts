@@ -1,4 +1,4 @@
-import {agentIdentity,verifyProviderRequest} from "./execution.js";
+import {agentIdentity,verifyProviderRequest,providerHeaders} from "./execution.js";
 import "express-async-errors";
 import express from "express";
 import { randomUUID } from "node:crypto";
@@ -19,7 +19,7 @@ import { analyze, digest } from "./core.js";
 export const app = express();
 app.disable("x-powered-by");
 app.use(express.json({ limit: "64kb" }));
-app.use((req,res,next)=>{if(req.method!=="POST")return next();try{verifyProviderRequest(req.path,req.body,req.headers['x-accord-time'],req.headers['x-accord-auth']);next();}catch{res.status(401).json({error:'Provider authentication required'});}});
+app.use((req,res,next)=>{if(req.method!=="POST")return next();try{verifyProviderRequest(req.path,req.body,req.headers['x-accord-time'],req.headers['x-accord-auth']);const json=res.json.bind(res);res.json=(payload:any)=>{const headers=providerHeaders(req.path+'/response',{request_hash:digest(req.body),response:payload});for(const [name,value] of Object.entries(headers))res.setHeader(name,value);return json(payload);};next();}catch{res.status(401).json({error:'Provider authentication required'});}});
 function cycleArgs(body: Record<string, unknown>) {
   const id = String(body["subscription_id"]);
   const cycle = body["cycle"];
@@ -56,9 +56,9 @@ app.post("/prepare", async (req, res) => {
     throw new Error("Provider metadata does not match immutable onchain offer");
   const identity=agentIdentity(sub.service_id,service,metadata);
   if(req.body.identity_hash!==identity.hash)throw Error('Provider execution identity mismatch');
-  const permission=(await db.query('SELECT owner,execution_paused,approved_identity FROM accord_subscriptions WHERE id=$1',[args.subscription_id])).rows[0];
+  const permission=(await db.query('SELECT owner,execution_paused,approved_identity,delivery_spec_hash FROM accord_subscriptions WHERE id=$1',[args.subscription_id])).rows[0];
   const enabled=(await db.query('SELECT execution_enabled FROM accord_services WHERE id=$1',[sub.service_id])).rows[0];
-  if(!permission||permission.owner!==sub.owner||permission.execution_paused||permission.approved_identity!==identity.hash||!enabled?.execution_enabled)throw Error('Provider execution not authorized');
+  if(!permission?.delivery_spec_hash||req.body.spec_hash!==permission.delivery_spec_hash||permission.owner!==sub.owner||permission.execution_paused||permission.approved_identity!==identity.hash||!enabled?.execution_enabled)throw Error('Provider execution not authorized');
   const input = validateServiceInput(metadata.kind, req.body.input);
   if (digest(input) !== sub.input_hash)
     throw new Error("Agreement/input mismatch");
@@ -72,6 +72,8 @@ app.post("/prepare", async (req, res) => {
     return {
       ...args,
       identity_hash: identity.hash,
+      spec_hash:permission.delivery_spec_hash,
+      schema_version:"accord-prepared-v1",job_id:`${args.subscription_id}:${args.cycle}`,owner:sub!.owner,service_id:sub!.service_id,prepared_at:new Date(item.prepared_at??Date.now()).toISOString(),report:item.report,
       prepare_id: item.prepare_id,
       artifact_hash: item.artifact_hash,
       provider: service.provider,
@@ -134,7 +136,7 @@ app.post("/prepare", async (req, res) => {
       "UPDATE accord_provider_artifacts SET artifact_hash=$3,report=$4,state='READY' WHERE subscription_id=$1 AND cycle=$2 AND prepare_id=$5",
       [args.subscription_id, args.cycle, artifact_hash, report, prepare_id],
     );
-    res.json(prepared({ prepare_id, artifact_hash }));
+    res.json(prepared((await db.query("SELECT * FROM accord_provider_artifacts WHERE subscription_id=$1 AND cycle=$2",[args.subscription_id,args.cycle])).rows[0]));
   } catch {
     // An opaque inference timeout may have consumed credits. Never automatically request it again.
     await db.query(

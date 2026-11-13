@@ -16,6 +16,8 @@ export const config = {
   port: Number(process.env["PORT"] ?? 4000),
   providerPort: Number(process.env["PROVIDER_PORT"] ?? 4001),
 };
+const providerEndpoint=new URL(config.provider);
+if(providerEndpoint.username||providerEndpoint.password||providerEndpoint.search||providerEndpoint.hash||!['http:','https:'].includes(providerEndpoint.protocol)||(providerEndpoint.protocol==='http:'&&!['127.0.0.1','localhost','[::1]'].includes(providerEndpoint.hostname)))throw Error('Provider must use credential-free HTTPS or private loopback HTTP');
 if (
   network === "testnet" &&
   (config.rpc.toLowerCase().includes("mainnet") ||

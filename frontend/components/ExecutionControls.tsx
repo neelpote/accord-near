@@ -59,7 +59,7 @@ export default function ExecutionControls({
       job?.approved_identity === data.identity.hash &&
       !job?.execution_paused;
   return (
-    <section aria-label={`Execution authority for agreement ${id}`}>
+    <section className="execution-controls" aria-label={`Execution authority for agreement ${id}`}>
       <h4>Execution authority</h4>
       <button
         disabled={busy}
@@ -88,18 +88,19 @@ export default function ExecutionControls({
               <br />
               Approval identity: {data.identity.hash}
             </p>
-            <p>{data.limitations}</p>
+            <p>{data.limitations}</p><p>Delivery specification: {data.spec_hash}. Approval freezes these criteria for this agreement.</p>
           </details>
           <p>
             {approved
               ? "Execution identity approved"
               : "New work paused until you approve this execution identity."}
           </p>
+          {data.specification&&<p>Required output: {data.specification.output_schema.required.join(", ")}. Freshness at purchase: {data.specification.freshness_seconds} seconds. {data.specification.failure_policy}. {data.specification.correctness}.</p>}
           <div className="actions">
             <button
               disabled={busy || !active || !data.enabled}
               onClick={() =>
-                void act({ approve: true, identity_hash: data.identity.hash })
+                void act({ approve: true, identity_hash: data.identity.hash,spec_hash:data.spec_hash })
               }
             >
               Approve this execution identity

@@ -628,3 +628,6 @@ footer p {
 .event-ledger>li {border-bottom:1px solid var(--line);padding:12px 0;}
 /* Source hashes in AI prose must wrap, including nested paid-report panels. */
 .report { min-width:0; overflow-wrap:anywhere; }
+
+.delivery-verification, .execution-controls { min-width:0; margin-block:20px; padding-top:16px; border-top:1px solid #d2d1c8; overflow-wrap:anywhere; }
+.delivery-verification pre, .execution-controls pre { max-width:100%; white-space:pre-wrap; overflow-wrap:anywhere; font-size:12px; }

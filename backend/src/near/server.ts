@@ -1,3 +1,5 @@
+import {deliverySpecification} from "./service-delivery.js";
+import {mountDelivery} from "./delivery-api.js";
 import {mountExecution} from "./execution-api.js";
 import { mountCounterparty } from "./counterparty-api.js";
 import { runOperations } from "./operations-worker.js";
@@ -65,6 +67,7 @@ async function owner(req: express.Request): Promise<string> {
   if (!row) throw new Error("Session expired; sign in again");
   return row.account_id;
 }
+mountDelivery(app, owner);
 mountExecution(app, owner);
 mountOperations(app, owner);
 mountCounterparty(app, owner);
@@ -391,9 +394,11 @@ app.post("/subscriptions", async (req, res) => {
     BigInt(p.FunctionCall.allowance ?? "0") > 50000000000000000000000n
   )
     throw new Error("Use a finite 0.05 NEAR allowance for charge only");
+  const specification=deliverySpecification(sub.service_id,service,metadata),specHash=digest(specification);
+  if(req.body.spec_hash!==specHash)throw Error('Delivery specification changed or was not approved');
   await db.query(
-    "INSERT INTO accord_subscriptions(id,owner,input,delegate_cipher) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING",
-    [subscriptionId, account, input, provision.delegate_cipher],
+    "INSERT INTO accord_subscriptions(id,owner,input,delegate_cipher,delivery_spec,delivery_spec_hash,spec_approved_at) VALUES($1,$2,$3,$4,$5,$6,now()) ON CONFLICT DO NOTHING",
+    [subscriptionId, account, input, provision.delegate_cipher,specification,specHash],
   );
   res.json({ subscription_id: subscriptionId, agreement: sub, service });
 });
@@ -409,7 +414,7 @@ app.get("/subscriptions", async (req, res) => {
   const [catalog, history] = await Promise.all([
     db.query("SELECT id,metadata FROM accord_services"),
     db.query(
-      "SELECT subscription_id,cycle,state,artifact_hash,receipt,report,error FROM accord_cycles WHERE subscription_id=ANY($1::text[]) ORDER BY cycle",
+      "SELECT subscription_id,cycle,state,artifact_hash,receipt,report,error,verification,delivered_at,acknowledged_at,payment_tx FROM accord_cycles WHERE subscription_id=ANY($1::text[]) ORDER BY cycle",
       [rows.map((row) => row.id)],
     ),
   ]);

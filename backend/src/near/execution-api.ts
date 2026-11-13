@@ -1,3 +1,5 @@
+import {digest} from "./core.js";
+import {deliverySpecification} from "./service-delivery.js";
 import type { Express, Request } from "express";
 import { db } from "./db.js";
 import { rpc, view, type Service, type Subscription } from "./config.js";
@@ -17,6 +19,7 @@ export function mountExecution(
     ).rows[0];
     if (!row || !service) throw Error("Unknown service");
     res.json({
+      specification:deliverySpecification(id,service,row.metadata),spec_hash:digest(deliverySpecification(id,service,row.metadata)),
       identity: agentIdentity(id, service, row.metadata),
       enabled: row.execution_enabled,
       limitations: "Advertised source build identity, not runtime attestation.",
@@ -26,7 +29,7 @@ export function mountExecution(
     const account = await owner(req);
     const jobs = (
       await db.query(
-        `SELECT s.id,s.state,s.execution_paused,s.approved_identity,s.identity_approved_at,c.cycle,c.state AS payment_state,c.artifact_hash,c.receipt,c.error FROM accord_subscriptions s LEFT JOIN accord_cycles c ON c.subscription_id=s.id WHERE s.owner=$1 ORDER BY s.id,c.cycle`,
+        `SELECT s.id,s.state,s.execution_paused,s.approved_identity,s.identity_approved_at,c.cycle,c.state AS payment_state,c.artifact_hash,c.receipt,c.error,c.provider_attempts FROM accord_subscriptions s LEFT JOIN accord_cycles c ON c.subscription_id=s.id WHERE s.owner=$1 ORDER BY s.id,c.cycle`,
         [account],
       )
     ).rows;
@@ -90,6 +93,10 @@ export function mountExecution(
       ).rows[0];
     if (!row?.execution_enabled) throw Error("Provider execution disabled");
     const identity = agentIdentity(sub.service_id, service, row.metadata);
+    const specification=deliverySpecification(sub.service_id,service,row.metadata),specHash=digest(specification);
+    if(req.body.spec_hash!==specHash)throw Error('Review and approve the delivery specification');
+    if(local.delivery_spec_hash&&local.delivery_spec_hash!==specHash)throw Error('Existing delivery criteria cannot change; create a new agreement');
+
     if (req.body.identity_hash !== identity.hash)
       throw Error("Execution identity changed; review again");
     await db.query(
@@ -97,9 +104,10 @@ export function mountExecution(
       [identity.hash, identity],
     );
     await db.query(
-      "UPDATE accord_subscriptions SET approved_identity=$2,identity_approved_at=now(),execution_paused=false WHERE id=$1 AND owner=$3",
-      [id, identity.hash, account],
+      "UPDATE accord_subscriptions SET approved_identity=$2,identity_approved_at=now(),execution_paused=false,delivery_spec=COALESCE(delivery_spec,$4),delivery_spec_hash=COALESCE(delivery_spec_hash,$5),spec_approved_at=COALESCE(spec_approved_at,now()) WHERE id=$1 AND owner=$3",
+      [id, identity.hash, account,specification,specHash],
     );
+    await db.query("UPDATE accord_cycles SET provider_attempts=0 WHERE subscription_id=$1 AND state<>'DELIVERED'",[id]);
     await securityEvent(account, id, "execution_identity_approved", {
       identity_hash: identity.hash,
     });

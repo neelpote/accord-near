@@ -1,4 +1,5 @@
 "use client";
+import DeliveryVerification, {ServiceSpecification} from "@/components/DeliveryVerification";
 import ExecutionControls from "@/components/ExecutionControls";
 import { useEffect, useRef, useState } from "react";
 import { authenticateWallet } from "@/lib/wallet-auth";
@@ -85,6 +86,9 @@ type Sub = {
     state: string;
     artifact_hash: string;
     report?: ServiceReport;
+    verification?: any;
+    payment_tx?: string;
+    delivered_at?: string;
     receipt?: { provider: string; amount: string };
   }[];
 };
@@ -94,6 +98,7 @@ type Pending = {
   input: unknown;
   subscription_id?: string;
   service_id: string;
+  spec_hash?: string;
 };
 const sample = JSON.stringify(
   {
@@ -108,6 +113,7 @@ const sample = JSON.stringify(
   2,
 );
 export default function Home() {
+  const [selectedSpecHash,setSelectedSpecHash]=useState<string>();
   const serviceCache = useRef(new Map<string, Service>());
   const [config, setConfig] = useState<Config>(),
     [account, setAccount] = useState(""),
@@ -259,7 +265,7 @@ export default function Home() {
     setNotice("Wallet ownership verified. No spending authority granted.");
   }
   async function approve() {
-    if (!selected || !config || !account)
+    if (!selected || !config || !account || !selectedSpecHash)
       throw new Error("Choose a service and sign in");
     if (pending)
       throw new Error("Finish or cancel the pending agreement first");
@@ -269,7 +275,7 @@ export default function Home() {
     });
     const parsed = checked.input;
     const d = await api("/delegates", {});
-    const p = { ...d, input: parsed, service_id: selected.id };
+    const p = { ...d, input: parsed, service_id: selected.id,spec_hash:selectedSpecHash };
     savePending(p);
     const storage = await view<string>(
       config.rpc,
@@ -338,6 +344,7 @@ export default function Home() {
       subscription_id: pending.subscription_id,
       provision_id: pending.provision_id,
       input: pending.input,
+      spec_hash:pending.spec_hash,
     });
     savePending();
     setSelected(undefined);
@@ -663,6 +670,7 @@ export default function Home() {
                 <button
                   disabled={busy || !account}
                   onClick={() => {
+                    setSelectedSpecHash(undefined);
                     setSelected(s);
                     setInput(
                       JSON.stringify(
@@ -741,6 +749,7 @@ export default function Home() {
                 ? "The provider reads live NEAR testnet data for this input. Every purchased report records its observation time and source block. No private key is needed."
                 : "Values are supplied by you. The sample is illustrative. No live holdings or price feed is fetched."}
             </p>
+            <ServiceSpecification serviceId={selected.id} onReady={setSelectedSpecHash}/>
             <label>
               Maximum reports
               <input
@@ -785,7 +794,7 @@ export default function Home() {
               Reports are not refundable automatically.
             </p>
             <button
-              disabled={busy || !account}
+              disabled={busy || !account || !selectedSpecHash}
               onClick={() => void run(approve)}
             >
               Approve and fund agreement
@@ -898,6 +907,7 @@ export default function Home() {
                       </span>
                     </summary>
                     {c.report && <ReportView report={c.report} />}
+                    <DeliveryVerification serviceName={s.service_name??"Agent service"} paymentTx={c.payment_tx} id={s.id} cycle={c.cycle} verification={c.verification} receipt={c.receipt} artifactHash={c.artifact_hash} deliveredAt={c.delivered_at} paymentState={c.state}/>
                     <p className="caption">
                       Artifact SHA-256: {c.artifact_hash}
                     </p>

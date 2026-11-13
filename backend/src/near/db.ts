@@ -54,7 +54,19 @@ export async function migrateExecution(){
  ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS approved_identity text;
  ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS identity_approved_at timestamptz;
  ALTER TABLE accord_services ADD COLUMN IF NOT EXISTS execution_enabled boolean NOT NULL DEFAULT true;
- CREATE TABLE IF NOT EXISTS accord_agent_identities(hash text PRIMARY KEY,body jsonb NOT NULL,registered_at timestamptz NOT NULL DEFAULT now());`);
+ CREATE TABLE IF NOT EXISTS accord_agent_identities(hash text PRIMARY KEY,body jsonb NOT NULL,registered_at timestamptz NOT NULL DEFAULT now());
+ ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS delivery_spec jsonb;
+ ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS delivery_spec_hash text;
+ ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS spec_approved_at timestamptz;
+ ALTER TABLE accord_cycles ADD COLUMN IF NOT EXISTS verification jsonb;
+ ALTER TABLE accord_cycles ADD COLUMN IF NOT EXISTS prepared jsonb;
+ ALTER TABLE accord_cycles ADD COLUMN IF NOT EXISTS payment_tx text;
+ ALTER TABLE accord_cycles ADD COLUMN IF NOT EXISTS provider_attempts integer NOT NULL DEFAULT 0;
+ ALTER TABLE accord_cycles ADD COLUMN IF NOT EXISTS delivered_at timestamptz;
+ ALTER TABLE accord_cycles ADD COLUMN IF NOT EXISTS acknowledged_at timestamptz;
+ ALTER TABLE accord_provider_artifacts ADD COLUMN IF NOT EXISTS prepared_at timestamptz NOT NULL DEFAULT now();
+ CREATE TABLE IF NOT EXISTS accord_delivery_events(id bigserial PRIMARY KEY,owner text NOT NULL,subscription_id text NOT NULL,cycle integer NOT NULL,status text NOT NULL,body jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
+ CREATE TABLE IF NOT EXISTS accord_delivery_disputes(id bigserial PRIMARY KEY,subscription_id text NOT NULL,cycle integer NOT NULL,actor text NOT NULL,role text NOT NULL,reason text NOT NULL,created_at timestamptz NOT NULL DEFAULT now());`);
 }
 export async function migrateProvisioning() {
   await db.query(

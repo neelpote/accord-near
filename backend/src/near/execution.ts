@@ -8,6 +8,7 @@ const codeFiles = [
   "ai.ts",
   "agents.ts",
   "provider-server.ts",
+  "service-delivery.ts",
   "groq.ts",
   "risk-analyst.ts",
 ];

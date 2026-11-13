@@ -1,5 +1,7 @@
+import {validatePrepared,validateDeliveryEvidence,matchDeliveryReceipt} from "./service-delivery.js";
+import {recordVerification} from "./delivery-store.js";
 import {authorizeExecution,assertLimitedKey} from "./execution-policy.js";
-import {agentIdentity,providerHeaders,securityEvent} from "./execution.js";
+import {agentIdentity,providerHeaders,securityEvent,verifyProviderRequest} from "./execution.js";
 import { secureCharge } from "./counterparty.js";
 import { verifyGroqExplanation } from "./groq.js";
 import { Account, KeyPair } from "near-api-js";
@@ -20,7 +22,8 @@ export function encryptionKey(): Buffer {
     throw new Error("Set DELEGATE_ENCRYPTION_KEY to 32 random bytes in hex");
   return Buffer.from(raw, "hex");
 }
-async function providerCall(path: string, body: unknown): Promise<any> {
+async function providerCall(path: string, body: unknown,id:string,cycle:number): Promise<any> {
+  if(!(await db.query('UPDATE accord_cycles SET provider_attempts=provider_attempts+1 WHERE subscription_id=$1 AND cycle=$2 AND provider_attempts<5 RETURNING cycle',[id,cycle])).rowCount)throw Error('Delivery retry limit reached; owner review required');
   const response = await fetch(config.provider + path, {
     method: "POST",
     headers: { "content-type": "application/json",...providerHeaders(path,body) },
@@ -30,7 +33,9 @@ async function providerCall(path: string, body: unknown): Promise<any> {
   });
   if (!response.ok)
     throw new Error(`Provider ${path}: HTTP ${response.status}`);
-  return boundedJson(response);
+  const payload=await boundedJson(response);
+  verifyProviderRequest(path+'/response',{request_hash:digest(body),response:payload},response.headers.get('x-accord-time'),response.headers.get('x-accord-auth'));
+  return payload;
 }
 export async function tick() {
   const subscriptions = (
@@ -111,12 +116,15 @@ export async function tick() {
       authorizeExecution({id:local.id,owner:local.owner,input:local.input,paused:freshLocal.execution_paused,approved_identity:freshLocal.approved_identity,identity:identity.hash,enabled,sub,service,metadata,cycle,receipt:priorReceipt});
       await securityEvent(local.owner,local.id,'job_authorized',{cycle,identity_hash:identity.hash,recovery:!!priorReceipt});
       if (unresolved)await securityEvent(local.owner,local.id,'job_retry',{cycle,state:row.state});
+      if(!priorReceipt&&(!freshLocal.delivery_spec||digest(freshLocal.delivery_spec)!==freshLocal.delivery_spec_hash))throw Error('Delivery specification approval required');
+      const deliveryContext={id:local.id,cycle,owner:local.owner,input:local.input,sub,service,metadata,spec:freshLocal.delivery_spec};
       if (!row.artifact_hash) {
         const prepared = await providerCall("/prepare", {
           ...args,
           input: local.input,
           identity_hash:identity.hash,
-        });
+          spec_hash:freshLocal.delivery_spec_hash,
+        },local.id,cycle);
         if (
           prepared.identity_hash !== identity.hash ||
           prepared.subscription_id !== local.id ||
@@ -129,8 +137,8 @@ export async function tick() {
         )
           throw new Error("Prepared offer disagrees with signed terms");
         await db.query(
-          "UPDATE accord_cycles SET state='PREPARED',artifact_hash=$3,prepare_id=$4 WHERE subscription_id=$1 AND cycle=$2 AND artifact_hash IS NULL",
-          [local.id, cycle, prepared.artifact_hash, prepared.prepare_id],
+          "UPDATE accord_cycles SET state='PREPARED',artifact_hash=$3,prepare_id=$4,prepared=$5 WHERE subscription_id=$1 AND cycle=$2 AND artifact_hash IS NULL",
+          [local.id, cycle, prepared.artifact_hash, prepared.prepare_id,prepared],
         );
         row = (
           await db.query(
@@ -139,6 +147,12 @@ export async function tick() {
           )
         ).rows[0];
       }
+      if(row.prepared&&deliveryContext.spec){
+        const at=priorReceipt?Number(BigInt(priorReceipt.paid_at_ns)/1000000n):Date.now();
+        await recordVerification(local.owner,local.id,cycle,validatePrepared(row.prepared,deliveryContext,at));
+        row.verification=await validateDeliveryEvidence(row.prepared,deliveryContext,rpc,at);
+        await recordVerification(local.owner,local.id,cycle,row.verification);
+      }else if(!priorReceipt)throw Error('Prepared report must be validated before payment');
       let receipt = await view<Receipt | null>("get_receipt", args);
       if (!receipt) {
         if (!sub.active) {
@@ -164,6 +178,7 @@ export async function tick() {
             amount: service.price,
           },
           async (intent) => {
+            if(!row.verification?.valid_until||Date.now()>Date.parse(row.verification.valid_until))throw Error('Delivery evidence expired before signing');
             const current=await view<Subscription>('get_subscription',{subscription_id:local.id});
             const currentLocal=(await db.query('SELECT * FROM accord_subscriptions WHERE id=$1',[local.id])).rows[0];
             const currentEnabled=(await db.query('SELECT execution_enabled FROM accord_services WHERE id=$1',[sub.service_id])).rows[0]?.execution_enabled;
@@ -187,17 +202,18 @@ export async function tick() {
               [local.id, cycle],
             );
             try {
-              await new Account(
+              const transaction=await new Account(
                 local.owner,
                 rpc,
                 privateKey as `ed25519:${string}`,
-              ).callFunction({
+              ).callFunctionRaw({
                 contractId: config.contract,
                 methodName: "charge",
                 args: intent.args,
                 gas: 30000000000000n,
                 deposit: 0n,
               });
+              await db.query("UPDATE accord_cycles SET payment_tx=$3 WHERE subscription_id=$1 AND cycle=$2",[local.id,cycle,transaction.transaction.hash]);
             } catch {
               // A timeout may still have paid. Reconcile the same contract cycle; never invent a replacement purchase.
             }
@@ -236,16 +252,22 @@ export async function tick() {
       const delivered = await providerCall("/deliver", {
         ...args,
         prepare_id: row.prepare_id,
-      });
+      },local.id,cycle);
       if (isAgentKind(metadata.kind))
         verifyChainReport(delivered.report, metadata.kind);
       else verifyReport(delivered.report);
       if (metadata.analysis_mode === "groq")
         verifyGroqExplanation(delivered.report.explanation);
+      if(row.prepared&&deliveryContext.spec){
+        const envelope={...row.prepared,report:delivered.report,artifact_hash:delivered.artifact_hash};
+        matchDeliveryReceipt(receipt,envelope,deliveryContext);
+        const verified=await validateDeliveryEvidence(envelope,deliveryContext,rpc,Number(BigInt(receipt.paid_at_ns)/1000000n));
+        await recordVerification(local.owner,local.id,cycle,{...verified,status:'DELIVERY_VERIFIED',payment_confirmed:true,job_id:`${local.id}:${cycle}`,delivered_at:new Date().toISOString()});
+      }else await recordVerification(local.owner,local.id,cycle,{status:'PENDING',schema_valid:true,evidence_valid:false,factual_correctness:'UNVERIFIED',warnings:['Legacy paid artifact: no new delivery specification consent or independent evidence verification is claimed.']});
       if (digest(delivered.report) !== receipt.artifact_hash)
         throw new Error("Delivered artifact hash mismatch");
       await db.query(
-        "UPDATE accord_cycles SET state='DELIVERED',report=$3,error=NULL WHERE subscription_id=$1 AND cycle=$2 AND state<>'DELIVERED'",
+        "UPDATE accord_cycles SET state='DELIVERED',report=$3,delivered_at=COALESCE(delivered_at,now()),error=NULL WHERE subscription_id=$1 AND cycle=$2 AND state<>'DELIVERED'",
         [local.id, cycle, delivered.report],
       );
       await db.query(
@@ -253,10 +275,16 @@ export async function tick() {
         [local.id],
       );
     } catch (error) {
+      if(error instanceof Error&&/delivery|Prepared|Report|Evidence|Stale|specification|artifact|snapshot|Provider/i.test(error.message)){
+        const failed=(await db.query("SELECT cycle FROM accord_cycles WHERE subscription_id=$1 AND state<>'DELIVERED' ORDER BY cycle LIMIT 1",[local.id])).rows[0];
+        if(failed)await recordVerification(local.owner,local.id,failed.cycle,{status:'REJECTED',factual_correctness:'UNVERIFIED',warnings:[error.message.slice(0,200)],checked_at:new Date().toISOString()});
+      }
       // Store a bounded diagnostic without serializing SDK errors, request bodies, or keys.
       await securityEvent(local.owner,local.id,'execution_rejected',{category:"policy_or_execution_failure"}).catch(()=>{});
+      const failedCycle=(await db.query("SELECT cycle FROM accord_cycles WHERE subscription_id=$1 AND state<>'DELIVERED' ORDER BY cycle LIMIT 1",[local.id])).rows[0];
       const message =
         error instanceof Error ? error.message.slice(0, 200) : "Worker failure";
+      if(failedCycle)await db.query("UPDATE accord_cycles SET error=$3 WHERE subscription_id=$1 AND cycle=$2",[local.id,failedCycle.cycle,message]);
       await db.query(
         "UPDATE accord_subscriptions SET last_error=$2 WHERE id=$1",
         [local.id, message],
