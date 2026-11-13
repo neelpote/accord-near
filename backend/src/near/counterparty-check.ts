@@ -1,5 +1,6 @@
 /** Isolated PostgreSQL + HTTP + production signing-gate checks. No keys or chain transactions. */
 import "dotenv/config";
+import "./causal-agent.js"; // Regression: importing the planner must not initialize the original DB.
 import "express-async-errors";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
@@ -102,6 +103,10 @@ const checks: string[] = [];
 let signed = 0;
 const sign = async () => ++signed;
 try {
+  assert.equal(
+    (await db.query("SELECT current_schema() AS name")).rows[0].name,
+    schema,
+  );
   await migrate();
   await migrate();
   await assert.rejects(secureCharge(intent, expected, sign, collect), /WARN/);
