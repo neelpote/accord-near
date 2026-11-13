@@ -34,6 +34,79 @@ The wallet journeys use automated developer signers with real signatures and tes
 
 Open [Accord on NEAR testnet](https://accord-near-ten.vercel.app). Use a dedicated testnet wallet. The frontend, API and persistent workers run on Vercel; durable records are stored in Neon PostgreSQL. Testnet only; no production uptime or security-audit claim. See [hosting, verification and submission steps](docs/HOSTING_AND_SUBMISSION.md) and [MiroFish research setup](docs/pilot/MIROFISH_BRIEF.md).
 
+## Judge access and testing
+
+**Live app:** [accord-near-ten.vercel.app](https://accord-near-ten.vercel.app). Judges use **their own dedicated NEAR testnet wallet**. There is no shared demo account, username or password: sign-in verifies wallet ownership. No API key, local installation or AI credits are needed for the deterministic test below.
+
+| Access detail | What to use |
+| --- | --- |
+| Login credentials | Your own testnet wallet; choose **Sign in with NEAR** and sign the authentication message |
+| Network | **NEAR testnet** only |
+| Test funds | Start with about **0.2 test NEAR** for the report, retained storage and transaction gas; the app shows the exact costs before approval |
+| Free faucet | [NEAR testnet faucet](https://near-faucet.io/) — enter your own testnet account; availability/rate limits belong to the faucet |
+| Recommended offer | **Wallet Watch**, service 2, deterministic live chain checks, currently **0.001 test NEAR per report** |
+| Public account to inspect | `provider.accord-dev-261110.testnet` — an observation target, not a login account |
+| Escrow contract | `contract.accord-dev-261110.testnet` |
+| Inference credentials | None for this flow; optional Groq requests are exhausted and NEAR AI Cloud remains paused |
+
+### Test a fresh purchase
+
+1. Open the app with your testnet wallet funded. Click **Sign in with NEAR**, select your wallet and approve the one-use authentication message. Confirm the header shows **your** account. Connecting alone is not authentication.
+2. Go to **Services**, find **Wallet Watch**, and select **Choose terms →**. Its input can use the public fixture below, or replace `account_id` with an existing testnet account you want to inspect. Inspecting an account grants no access to its keys.
+
+   ```json
+   {
+     "account_id": "provider.accord-dev-261110.testnet",
+     "minimum_available_yocto": "50000000000000000000000"
+   }
+   ```
+
+3. Set **Maximum reports** to **1** for the smallest test. Read the report price, retained storage fee and expiry shown by the app. Click **Approve and fund agreement** and approve that testnet transaction in your wallet. The storage fee is separate from the 0.001 report price and is retained.
+4. Click **Enable automatic purchases** and approve the separate limited-key transaction. This key permits only `charge` on the escrow contract, with a finite **0.05 test NEAR gas allowance**; that allowance is not the service budget or a separate 0.05 deposit.
+5. Open **Payment security**. An approvable **WARN** pauses this exact payment. Inspect the receiver, amount and reasons, then click **Approve this exact payment once** if you accept them. A **BLOCK** has no override. Changed evidence may require another review; missing finalized chain state must recover before proceeding.
+6. Wait for your agreement to show **Paid · delivered**, then expand its report. Check the source network/block, measurements, artifact SHA-256 and verified provider credit. The status may be OK or a reserve warning depending on the inspected account's current balance; either is a valid measurement, not an inference failure. Network/provider processing can take a few minutes.
+7. Click **Cancel future purchases**, then **Remove limited key**, approving each wallet transaction. Under **Funds and earnings**, use **Withdraw remainder** if an available remainder exists. With one report already consumed, there may be no unspent report budget to withdraw; the retained storage fee is not refundable. To exercise a nonzero remainder, repeat with **Maximum reports = 3** and cancel after the first delivered report.
+
+**Expected result:** one receipt-bound purchased report, a visible one-payment security decision and an agreement you can cancel with its signing key removed. [Actual native/Ethereum acceptance evidence](docs/security-journeys-readback.json) and the [causal attack/control proof](docs/causal-attack-proof.json) are available separately. Never report a block as a successful payment.
+
+### Inspect before signing in
+
+The existing public catalog works without a wallet: open [Services](https://accord-near-ten.vercel.app/#market) and expand **View paid example** on Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector or Network Pulse. Each example shows a previously purchased report, source block, agreement/cycle and artifact hash. These are labeled recorded snapshots; opening one does not run a fresh check or spend tokens. This is the existing public preview, not an authenticated demo identity.
+
+### If a test pauses
+
+| Symptom | Next step |
+| --- | --- |
+| Choose terms is disabled | Complete wallet sign-in and the authentication signature; confirm your account appears in the header. |
+| Insufficient balance | Fund that same account on **testnet**, accounting for report budget, storage and gas; recheck the quoted total. |
+| A wallet reports the wrong network | Switch to NEAR testnet. Ethereum-adapter users must fund the displayed `0x` NEAR account with testnet NEAR; Ethereum Sepolia ETH does not fund it. |
+| Payment remains WARN/pending | Review **Payment security**; approval binds one exact intent/evidence pair. A changed pair needs fresh review. |
+| BLOCK or unavailable finalized chain evidence | Inspect the reasons and wait for the source to recover where applicable. Do not bypass the gate or install a broader key. |
+| Optional AI preparation fails | Use deterministic **Wallet Watch** service 2; no inference credentials or request quota are required. |
+| A transaction appears stuck | Check its wallet/explorer result before resubmitting. Use the agreement recovery controls for an interrupted setup. |
+
+Ethereum-wallet instructions and the external extension/device testing limitation are in [ETHEREUM_WALLETS.md](docs/ETHEREUM_WALLETS.md). The completed automated wallet journeys verify real signatures and testnet execution; they do not certify every vendor's popup/mobile UI.
+
+## Application screenshots
+
+Actual browser captures from 11–13 November 2026. Values, timestamps and agreement states reflect capture time; the paid example below was subsequently canceled and its key removed, as recorded in the acceptance proof.
+
+**Home and animated agent experience.** Scroll through Observe → Inspect → Limit, or use the reduced-motion controls.
+
+![Accord home with its animated agent model](docs/demo/editorial-desktop.png)
+
+**Service directory.** Compare fixed prices, intervals and providers; expand the recorded paid examples before making a new purchase.
+
+![Accord service directory with agent offerings](docs/demo/editorial-services.png)
+
+**Owner review before signing.** A captured pending warning exposes its reasons and one-payment approval/decline controls. This November 12 capture displays the amount in yoctoNEAR; the current UI formats it as test NEAR.
+
+![Payment security warning and exact-payment approval controls](docs/demo/counterparty-warning.png)
+
+**Paid report and exit controls.** Actual agreement 28 delivered Wallet Watch through the Ethereum-to-NEAR adapter. The report includes source data, artifact identity and provider credit; cancellation/key removal are separate owner actions.
+
+![Wallet Watch paid report and cancellation controls](docs/demo/security-evm-wallet.png)
+
 ## Ethereum wallets
 
 MetaMask and WalletConnect can operate the same native NEAR testnet agreements through [Ethereum Wallets for NEAR](https://evm-on-near.dev/how-it-works/). Select **Ethereum Wallets** in the sign-in chooser. Ethereum wallets prove ownership with a separate zero-deposit onchain login plus testnet gas; NEAR wallets retain NEP-413 signatures. Fund the displayed `0x` account with testnet NEAR first. This does not bridge Ethereum assets. See [architecture, setup, checks and limitations](docs/ETHEREUM_WALLETS.md).
