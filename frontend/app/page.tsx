@@ -1,4 +1,5 @@
 "use client";
+import ExecutionControls from "@/components/ExecutionControls";
 import { useEffect, useRef, useState } from "react";
 import { authenticateWallet } from "@/lib/wallet-auth";
 import {
@@ -70,6 +71,7 @@ type Sub = {
   service_name?: string;
   service_kind?: string;
   agreement: {
+    service_id: string;
     active: boolean;
     max_cycles: number;
     cycles: number;
@@ -872,6 +874,7 @@ export default function Home() {
                             },
                           ],
                         });
+                        await api(`/subscriptions/${s.id}/execution`,{revoked:true});
                         setNotice(
                           "Limited key removed from wallet. Cancel the agreement to release its reserve.",
                         );
@@ -881,6 +884,7 @@ export default function Home() {
                     Remove limited key
                   </button>
                 </div>
+                <ExecutionControls id={s.id} serviceId={s.agreement.service_id} active={s.agreement.active}/>
                 {s.cycles.map((c) => (
                   <details key={c.cycle} open={c.state === "DELIVERED"}>
                     <summary>

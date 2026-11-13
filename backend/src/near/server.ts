@@ -1,3 +1,4 @@
+import {mountExecution} from "./execution-api.js";
 import { mountCounterparty } from "./counterparty-api.js";
 import { runOperations } from "./operations-worker.js";
 import { mountEvmAuth, evmAuthConfig } from "./evm-auth.js";
@@ -64,6 +65,7 @@ async function owner(req: express.Request): Promise<string> {
   if (!row) throw new Error("Session expired; sign in again");
   return row.account_id;
 }
+mountExecution(app, owner);
 mountOperations(app, owner);
 mountCounterparty(app, owner);
 const limits = new Map<string, { at: number; count: number }>();

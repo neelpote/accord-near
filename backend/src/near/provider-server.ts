@@ -1,3 +1,4 @@
+import {agentIdentity,verifyProviderRequest} from "./execution.js";
 import "express-async-errors";
 import express from "express";
 import { randomUUID } from "node:crypto";
@@ -15,9 +16,10 @@ import { reserveGroqRequest } from "./groq-budget.js";
 import { explainWithGroq } from "./groq.js";
 import { inferVerified } from "./ai.js";
 import { analyze, digest } from "./core.js";
-const app = express();
+export const app = express();
 app.disable("x-powered-by");
 app.use(express.json({ limit: "64kb" }));
+app.use((req,res,next)=>{if(req.method!=="POST")return next();try{verifyProviderRequest(req.path,req.body,req.headers['x-accord-time'],req.headers['x-accord-auth']);next();}catch{res.status(401).json({error:'Provider authentication required'});}});
 function cycleArgs(body: Record<string, unknown>) {
   const id = String(body["subscription_id"]);
   const cycle = body["cycle"];
@@ -52,6 +54,11 @@ app.post("/prepare", async (req, res) => {
   ).rows[0]?.metadata;
   if (!metadata || digest(metadata) !== service.metadata_hash)
     throw new Error("Provider metadata does not match immutable onchain offer");
+  const identity=agentIdentity(sub.service_id,service,metadata);
+  if(req.body.identity_hash!==identity.hash)throw Error('Provider execution identity mismatch');
+  const permission=(await db.query('SELECT owner,execution_paused,approved_identity FROM accord_subscriptions WHERE id=$1',[args.subscription_id])).rows[0];
+  const enabled=(await db.query('SELECT execution_enabled FROM accord_services WHERE id=$1',[sub.service_id])).rows[0];
+  if(!permission||permission.owner!==sub.owner||permission.execution_paused||permission.approved_identity!==identity.hash||!enabled?.execution_enabled)throw Error('Provider execution not authorized');
   const input = validateServiceInput(metadata.kind, req.body.input);
   if (digest(input) !== sub.input_hash)
     throw new Error("Agreement/input mismatch");
@@ -64,6 +71,7 @@ app.post("/prepare", async (req, res) => {
   function prepared(item: any) {
     return {
       ...args,
+      identity_hash: identity.hash,
       prepare_id: item.prepare_id,
       artifact_hash: item.artifact_hash,
       provider: service.provider,
@@ -182,8 +190,11 @@ app.use(
     res.status(400).json({ error: error.message });
   },
 );
+if(process.env.ACCORD_PROVIDER_TEST!=="1"){
 await migrate();
 await networkCheck();
 app.listen(config.providerPort, process.env["BIND_HOST"] ?? "127.0.0.1", () =>
   console.log(`Accord provider :${config.providerPort}`),
 );
+
+}

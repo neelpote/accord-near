@@ -2,6 +2,9 @@ import pg from "pg";
 import { config } from "./config.js";
 export const db = new pg.Pool({ connectionString: config.database, max: 10 });
 export async function migrate() {
+  await db.query(`CREATE TABLE IF NOT EXISTS accord_execution_events(id bigserial PRIMARY KEY,owner text NOT NULL,subscription_id text,event text NOT NULL,body jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
+    CREATE INDEX IF NOT EXISTS accord_execution_event_owner ON accord_execution_events(owner,id);`);
+
   await db.query(`CREATE TABLE IF NOT EXISTS accord_security_observations(account text PRIMARY KEY,code text NOT NULL,block_height bigint NOT NULL,body jsonb NOT NULL,changed_at timestamptz,observed_at timestamptz NOT NULL DEFAULT now());
   CREATE TABLE IF NOT EXISTS accord_security_codes(owner text NOT NULL,account text NOT NULL,code text NOT NULL,approved_at timestamptz NOT NULL DEFAULT now(),PRIMARY KEY(owner,account));
   CREATE TABLE IF NOT EXISTS accord_security_reports(id uuid PRIMARY KEY,reporter text NOT NULL,account text NOT NULL,reason text NOT NULL,evidence jsonb NOT NULL,evidence_hash text NOT NULL,status text NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','block','dismissed')),created_at timestamptz NOT NULL DEFAULT now(),UNIQUE(reporter,account,evidence_hash));
@@ -44,6 +47,14 @@ export async function migrate() {
  CREATE TABLE IF NOT EXISTS accord_ai_budget(id integer PRIMARY KEY,requests integer NOT NULL);
  INSERT INTO accord_ai_budget VALUES(1,0) ON CONFLICT DO NOTHING;
  CREATE TABLE IF NOT EXISTS accord_agent_demos(kind text PRIMARY KEY,service_id text NOT NULL,subscription_id text NOT NULL,cycle integer NOT NULL,input jsonb NOT NULL,report jsonb NOT NULL,artifact_hash text NOT NULL,receipt jsonb NOT NULL,updated_at timestamptz NOT NULL DEFAULT now());`);
+  await migrateExecution();
+}
+export async function migrateExecution(){
+ await db.query(`ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS execution_paused boolean NOT NULL DEFAULT false;
+ ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS approved_identity text;
+ ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS identity_approved_at timestamptz;
+ ALTER TABLE accord_services ADD COLUMN IF NOT EXISTS execution_enabled boolean NOT NULL DEFAULT true;
+ CREATE TABLE IF NOT EXISTS accord_agent_identities(hash text PRIMARY KEY,body jsonb NOT NULL,registered_at timestamptz NOT NULL DEFAULT now());`);
 }
 export async function migrateProvisioning() {
   await db.query(

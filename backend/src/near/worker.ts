@@ -1,3 +1,5 @@
+import {authorizeExecution,assertLimitedKey} from "./execution-policy.js";
+import {agentIdentity,providerHeaders,securityEvent} from "./execution.js";
 import { secureCharge } from "./counterparty.js";
 import { verifyGroqExplanation } from "./groq.js";
 import { Account, KeyPair } from "near-api-js";
@@ -21,7 +23,7 @@ export function encryptionKey(): Buffer {
 async function providerCall(path: string, body: unknown): Promise<any> {
   const response = await fetch(config.provider + path, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json",...providerHeaders(path,body) },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(90000),
     redirect: "error",
@@ -102,12 +104,21 @@ export async function tick() {
       ).rows[0]?.metadata;
       if (!metadata || digest(metadata) !== service.metadata_hash)
         throw new Error("Service metadata differs from onchain agreement");
+      const identity=agentIdentity(sub.service_id,service,metadata);
+      const enabled=(await db.query('SELECT execution_enabled FROM accord_services WHERE id=$1',[sub.service_id])).rows[0]?.execution_enabled;
+      const priorReceipt=await view<Receipt|null>('get_receipt',args);
+      const freshLocal=(await db.query('SELECT * FROM accord_subscriptions WHERE id=$1',[local.id])).rows[0];
+      authorizeExecution({id:local.id,owner:local.owner,input:local.input,paused:freshLocal.execution_paused,approved_identity:freshLocal.approved_identity,identity:identity.hash,enabled,sub,service,metadata,cycle,receipt:priorReceipt});
+      await securityEvent(local.owner,local.id,'job_authorized',{cycle,identity_hash:identity.hash,recovery:!!priorReceipt});
+      if (unresolved)await securityEvent(local.owner,local.id,'job_retry',{cycle,state:row.state});
       if (!row.artifact_hash) {
         const prepared = await providerCall("/prepare", {
           ...args,
           input: local.input,
+          identity_hash:identity.hash,
         });
         if (
+          prepared.identity_hash !== identity.hash ||
           prepared.subscription_id !== local.id ||
           prepared.cycle !== cycle ||
           prepared.provider !== service.provider ||
@@ -153,6 +164,11 @@ export async function tick() {
             amount: service.price,
           },
           async (intent) => {
+            const current=await view<Subscription>('get_subscription',{subscription_id:local.id});
+            const currentLocal=(await db.query('SELECT * FROM accord_subscriptions WHERE id=$1',[local.id])).rows[0];
+            const currentEnabled=(await db.query('SELECT execution_enabled FROM accord_services WHERE id=$1',[sub.service_id])).rows[0]?.execution_enabled;
+            authorizeExecution({id:local.id,owner:local.owner,input:local.input,paused:currentLocal.execution_paused,approved_identity:currentLocal.approved_identity,identity:agentIdentity(sub.service_id,service,metadata).hash,enabled:currentEnabled,sub:current,service,metadata,cycle});
+            await securityEvent(local.owner,local.id,'payment_request',{cycle,artifact_hash:row.artifact_hash});
             const privateKey = unseal(local.delegate_cipher, encryptionKey());
             if (
               KeyPair.fromString(privateKey as `ed25519:${string}`)
@@ -165,18 +181,7 @@ export async function tick() {
               publicKey: sub.delegate_key,
               finalityQuery: { finality: "final" },
             });
-            const permission = access.permission;
-            if (
-              typeof permission !== "object" ||
-              !("FunctionCall" in permission) ||
-              permission.FunctionCall.receiver_id !== config.contract ||
-              permission.FunctionCall.method_names.length !== 1 ||
-              permission.FunctionCall.method_names[0] !== "charge" ||
-              permission.FunctionCall.allowance === null
-            )
-              throw new Error(
-                "Delegate must be a finite charge-only function-call key",
-              );
+            assertLimitedKey(access.permission,config.contract);
             await db.query(
               "UPDATE accord_cycles SET state='SUBMITTING' WHERE subscription_id=$1 AND cycle=$2 AND state<>'DELIVERED'",
               [local.id, cycle],
@@ -249,6 +254,7 @@ export async function tick() {
       );
     } catch (error) {
       // Store a bounded diagnostic without serializing SDK errors, request bodies, or keys.
+      await securityEvent(local.owner,local.id,'execution_rejected',{category:"policy_or_execution_failure"}).catch(()=>{});
       const message =
         error instanceof Error ? error.message.slice(0, 200) : "Worker failure";
       await db.query(

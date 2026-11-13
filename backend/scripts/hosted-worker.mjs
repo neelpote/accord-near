@@ -1,3 +1,4 @@
+import {executionEnv} from "./execution-env.mjs";
 import { spawn } from "node:child_process";
 
 // Session advisory locks require a direct connection, not a transaction pooler.
@@ -6,10 +7,10 @@ if (process.env.DATABASE_URL_UNPOOLED) process.env.DATABASE_URL = process.env.DA
 // One container preserves the immutable provider URL's private loopback topology.
 const children = [
   spawn(process.execPath, ["--import", "tsx", "src/near/provider-server.ts"], {
-    stdio: "inherit", env: { ...process.env, BIND_HOST: "127.0.0.1", PROVIDER_PORT: "4001" },
+    stdio: "inherit", env: { ...executionEnv(process.env,"provider"), BIND_HOST: "127.0.0.1", PROVIDER_PORT: "4001" },
   }),
   spawn(process.execPath, ["--import", "tsx", "src/near/server.ts"], {
-    stdio: "inherit", env: { ...process.env, HOSTED_API: "false", BIND_HOST: "0.0.0.0", PORT: "4000", RUN_WORKER: "true", RUN_OPERATIONS: "true" },
+    stdio: "inherit", env: { ...executionEnv(process.env,"worker"), HOSTED_API: "false", BIND_HOST: "0.0.0.0", PORT: "4000", RUN_WORKER: "true", RUN_OPERATIONS: "true" },
   }),
 ];
 let stopping = false;

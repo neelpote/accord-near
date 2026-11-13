@@ -1,4 +1,5 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+if(process.env.ACCORD_ENV_ISOLATED!=="true")dotenv.config();
 import { JsonRpcProvider } from "near-api-js";
 const network = process.env["NEAR_NETWORK"] ?? "testnet";
 if (!["testnet", "sandbox"].includes(network))
