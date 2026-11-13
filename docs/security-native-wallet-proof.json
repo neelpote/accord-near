@@ -1,0 +1,77 @@
+{
+  "network": "testnet",
+  "origin": "https://accord-near-ten.vercel.app",
+  "contract": "contract.accord-dev-261110.testnet",
+  "subscription_id": "23",
+  "exact_security_warning_approved": true,
+  "video_events": [
+    {
+      "event": "open_app",
+      "elapsed_ms": 1335
+    },
+    {
+      "event": "signed_in",
+      "elapsed_ms": 6461
+    },
+    {
+      "event": "fund_agreement",
+      "elapsed_ms": 9587
+    },
+    {
+      "event": "agreement_funded",
+      "elapsed_ms": 18029
+    },
+    {
+      "event": "warning_visible",
+      "elapsed_ms": 27013
+    },
+    {
+      "event": "warning_approved",
+      "elapsed_ms": 29266
+    },
+    {
+      "event": "report_delivered",
+      "elapsed_ms": 108803
+    },
+    {
+      "event": "cancel_clicked",
+      "elapsed_ms": 108898
+    },
+    {
+      "event": "canceled",
+      "elapsed_ms": 115754
+    },
+    {
+      "event": "key_removed",
+      "elapsed_ms": 148616
+    },
+    {
+      "event": "withdrawal_confirmed",
+      "elapsed_ms": 156240
+    }
+  ],
+  "transactions": [
+    {
+      "method": "subscribe",
+      "hash": "C5vzS6kuszu9AXR3Pi7QWbr5oATiyZUAfzcr9r4Lp5QA"
+    },
+    {
+      "method": "AddKey",
+      "hash": "EEX4PbVTUwZq5Z9LUezHgXUMz6uhv4FsXRChWfaXnLhE"
+    },
+    {
+      "method": "cancel",
+      "hash": "4mFFNX15FFyp8ogGFAFFmQZuLTep2spGoHUoaD4mohhN"
+    },
+    {
+      "method": "DeleteKey",
+      "hash": "GbbZYA1Nbwa7aoj97ptyZ2EPpRH42cxs8VRDfiYGxCMt"
+    },
+    {
+      "method": "withdraw",
+      "hash": "3CPzMSFZHJyE42QuCsUjPgs7yACKo29qsyHTkDhMffBa"
+    }
+  ],
+  "completed_at": "2026-11-13T12:55:50.282Z",
+  "wallet": "Test fixture through standard NEAR Connect injection API; real NEP-413 signatures and testnet transactions, no third-party wallet UI certification."
+}

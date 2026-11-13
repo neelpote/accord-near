@@ -8,8 +8,13 @@ export default defineConfig({
     baseURL: process.env.ACCORD_BASE_URL || "http://localhost:3000",
     // CI runners have no reliable GPU. Exercise the explicit static fallback there;
     // the real WebGL scene is checked locally and in the recorded browser evidence.
-    launchOptions: process.env.CI ? {args:["--disable-webgl"]} : {},
-    viewport: { width: 1440, height: 1100 },
+    launchOptions: process.env.CI ? { args: ["--disable-webgl"] } : {},
+    viewport:
+      process.env.ACCORD_SECURITY_DEMO === "1"
+        ? { width: 1920, height: 1080 }
+        : { width: 1440, height: 1100 },
+    reducedMotion:
+      process.env.ACCORD_SECURITY_DEMO === "1" ? "reduce" : "no-preference",
     screenshot: "only-on-failure",
     video: process.env.ACCORD_RECORD_DEMO === "1" ? "on" : "off",
     trace: "retain-on-failure",

@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "network": "testnet",
+  "verified_at": "2026-11-13T13:23:06.738Z",
+  "scope": "Independent finalized RPC + hosted database readback. Browser fixtures do not certify third-party extension/device UI.",
+  "journeys": [
+    {
+      "source": "security-native-wallet-proof.json",
+      "subscription_id": "23",
+      "owner": "buyer.accord-dev-261110.testnet",
+      "active": false,
+      "cycles": 1,
+      "reserved": "0",
+      "delegate_present": false,
+      "receipt": {
+        "subscription_id": "23",
+        "cycle": 0,
+        "provider": "provider.accord-dev-261110.testnet",
+        "amount": "1000000000000000000000",
+        "artifact_hash": "d38d2bd51b33127e1cb81bbe2d544e176cf03b466763796b6c59d7d2f6833852",
+        "paid_at_ns": "1794574486415132197"
+      },
+      "artifact_hash_matches": true,
+      "provider_report_delivered": true,
+      "exact_warning_consumed": true,
+      "transactions": [
+        {
+          "method": "subscribe",
+          "hash": "C5vzS6kuszu9AXR3Pi7QWbr5oATiyZUAfzcr9r4Lp5QA",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        },
+        {
+          "method": "AddKey",
+          "hash": "EEX4PbVTUwZq5Z9LUezHgXUMz6uhv4FsXRChWfaXnLhE",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        },
+        {
+          "method": "cancel",
+          "hash": "4mFFNX15FFyp8ogGFAFFmQZuLTep2spGoHUoaD4mohhN",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        },
+        {
+          "method": "DeleteKey",
+          "hash": "GbbZYA1Nbwa7aoj97ptyZ2EPpRH42cxs8VRDfiYGxCMt",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        },
+        {
+          "method": "withdraw",
+          "hash": "3CPzMSFZHJyE42QuCsUjPgs7yACKo29qsyHTkDhMffBa",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        }
+      ]
+    },
+    {
+      "source": "security-evm-wallet-proof.json",
+      "subscription_id": "28",
+      "owner": "0xdd707d0bf7b2510dd939dafdd25cf7306e859e15",
+      "active": false,
+      "cycles": 1,
+      "reserved": "0",
+      "delegate_present": false,
+      "receipt": {
+        "subscription_id": "28",
+        "cycle": 0,
+        "provider": "provider.accord-dev-261110.testnet",
+        "amount": "1000000000000000000000",
+        "artifact_hash": "f0a398b0d1fb93c634454117ec6720124fce1417b39d47cddfb8b92c07be05bb",
+        "paid_at_ns": "1794575092447368069"
+      },
+      "artifact_hash_matches": true,
+      "provider_report_delivered": true,
+      "exact_warning_consumed": true,
+      "transactions": [
+        {
+          "method": "authenticate",
+          "hash": "BqwCVDRJ6EwvcCpfzCCGtx3M8zG4hu5MUQSPSJC8EsBN",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        },
+        {
+          "method": "subscribe",
+          "hash": "Hoq7SL9pkwQ429KGKM8VjMJHukAoi5JWFYdqSRFX6EbD",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        },
+        {
+          "method": "AddKey",
+          "hash": "5MNmFJWnYwAKvw6vKWcfq6W7i9NQMPydUMSnUD1tBPhS",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        },
+        {
+          "method": "cancel",
+          "hash": "2udVhhW6fHVZzyW2LHCzJhxnbgLApUyuDHbecQMVpycW",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        },
+        {
+          "method": "DeleteKey",
+          "hash": "AmLJKY3TqpxiBkJyi4dwhqJNCEyPzpJ8xm9qt27ShiZk",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        },
+        {
+          "method": "withdraw",
+          "hash": "3Ptq3bgjvwMFEkTFPBqbsXKCoTyxdLXa82eSaBRNsN9Z",
+          "finalized": true,
+          "all_receipts_succeeded": true
+        }
+      ]
+    }
+  ]
+}

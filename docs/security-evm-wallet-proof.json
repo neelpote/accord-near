@@ -1,0 +1,90 @@
+{
+  "network": "testnet",
+  "origin": "https://accord-near-ten.vercel.app",
+  "account": "0xdd707d0bf7b2510dd939dafdd25cf7306e859e15",
+  "scope": "EIP-1193 test signer + upstream EthereumNearWallet engine + real relayer and NEAR; standard NearConnector injected fixture. MetaMask extension/popup UI not certified.",
+  "full_payment_journey": true,
+  "subscription_id": "28",
+  "workspace_id": "d335216c-bb5a-4be8-a3a6-206adaf136b4",
+  "video_events": [
+    {
+      "event": "open_app",
+      "elapsed_ms": 237
+    },
+    {
+      "event": "signed_in",
+      "elapsed_ms": 20951
+    },
+    {
+      "event": "fund_agreement",
+      "elapsed_ms": 23221
+    },
+    {
+      "event": "agreement_funded",
+      "elapsed_ms": 37777
+    },
+    {
+      "event": "warning_visible",
+      "elapsed_ms": 60984
+    },
+    {
+      "event": "warning_approved",
+      "elapsed_ms": 63267
+    },
+    {
+      "event": "report_delivered",
+      "elapsed_ms": 131375
+    },
+    {
+      "event": "cancel_clicked",
+      "elapsed_ms": 132271
+    },
+    {
+      "event": "canceled",
+      "elapsed_ms": 147836
+    },
+    {
+      "event": "key_removed",
+      "elapsed_ms": 161926
+    },
+    {
+      "event": "withdrawal_confirmed",
+      "elapsed_ms": 176134
+    }
+  ],
+  "transactions": [
+    {
+      "method": "authenticate",
+      "hash": "BqwCVDRJ6EwvcCpfzCCGtx3M8zG4hu5MUQSPSJC8EsBN"
+    },
+    {
+      "method": "subscribe",
+      "hash": "Hoq7SL9pkwQ429KGKM8VjMJHukAoi5JWFYdqSRFX6EbD"
+    },
+    {
+      "method": "AddKey",
+      "hash": "5MNmFJWnYwAKvw6vKWcfq6W7i9NQMPydUMSnUD1tBPhS"
+    },
+    {
+      "method": "cancel",
+      "hash": "2udVhhW6fHVZzyW2LHCzJhxnbgLApUyuDHbecQMVpycW"
+    },
+    {
+      "method": "DeleteKey",
+      "hash": "AmLJKY3TqpxiBkJyi4dwhqJNCEyPzpJ8xm9qt27ShiZk"
+    },
+    {
+      "method": "withdraw",
+      "hash": "3Ptq3bgjvwMFEkTFPBqbsXKCoTyxdLXa82eSaBRNsN9Z"
+    }
+  ],
+  "ethereum_hashes": [
+    "0xb8c86cd11ee7bd0f80aae3d65e39ad8e89b60e7b73023ec313c5b28d2ac29d7e",
+    "0x53fe8aec8ee519557a192d0d9ab614e937273aac5af5b02e3ed13e0db8903f6f",
+    "0x8cd29fd9311c4e9582b9e68f823f820f99f84456633eff334f3dede0db449976",
+    "0xdeb3c133f8a71d8787af70cc2a16ef636299bbac5ccab0148e7320911a0d1778",
+    "0xe89b233894d0f2e0a4d49cf6fbd5f531828e861b0fee88a83819977af7b2360e",
+    "0xc17afadb44ac8a5a8c34e7075566c2a03a7217609a0af91918a445a5b836b898"
+  ],
+  "completed_at": "2026-11-13T13:05:45.375Z"
+}

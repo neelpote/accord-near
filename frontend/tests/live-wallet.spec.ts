@@ -14,6 +14,10 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
     process.env.ACCORD_LIVE_BROWSER !== "1",
     "Explicitly opt into free testnet transactions with ACCORD_LIVE_BROWSER=1",
   );
+  const started = Date.now(),
+    videoEvents: { event: string; elapsed_ms: number }[] = [];
+  const mark = (event: string) =>
+    videoEvents.push({ event, elapsed_ms: Date.now() - started });
   const root = resolve(process.cwd(), "..");
   const key = JSON.parse(
     await readFile(resolve(root, ".near-credentials/buyer.json"), "utf8"),
@@ -27,7 +31,10 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   if ((await rpc.getNetworkId()) !== "testnet") throw Error("Testnet only");
   const buyer = new Account(key.account_id, rpc, key.private_key);
   const config = await (
-    await fetch((process.env.ACCORD_BASE_URL || "http://localhost:3000") + "/api/near/config")
+    await fetch(
+      (process.env.ACCORD_BASE_URL || "http://localhost:3000") +
+        "/api/near/config",
+    )
   ).json();
   const transactions: { method: string; hash: string }[] = [];
   await page.exposeFunction("__accordFixtureSign", async (params: any) => {
@@ -143,6 +150,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   );
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  mark("open_app");
   await page.goto("/");
   await page.getByRole("button", { name: "Sign in with NEAR" }).click();
   const fixture = page.getByText("Accord testnet fixture", { exact: true });
@@ -150,6 +158,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   await expect(
     page.getByRole("button", { name: buyer.accountId, exact: true }),
   ).toBeVisible({ timeout: 90000 });
+  mark("signed_in");
   if (process.env.ACCORD_AGENT_UI === "1")
     await page
       .locator("article.service")
@@ -160,12 +169,23 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
       .click();
   else
     await page.getByRole("button", { name: "Choose terms →" }).first().click();
+  if (process.env.ACCORD_SECURITY_DEMO === "1")
+    await page
+      .locator("#service-terms textarea")
+      .fill(
+        JSON.stringify({
+          account_id: buyer.accountId,
+          minimum_available_yocto: "50000000000000000000000",
+        }),
+      );
+  mark("fund_agreement");
   await page
     .getByRole("button", { name: "Approve and fund agreement" })
     .click();
   await expect(
     page.getByRole("button", { name: "Enable automatic purchases" }),
   ).toBeEnabled({ timeout: 120000 });
+  mark("agreement_funded");
   const pending = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("accord_pending")!),
   );
@@ -179,16 +199,28 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
     }),
   });
   // A warning needs one owner-fixture review; an already-allowed payment can deliver directly.
-  const approval = page.locator("#security article").filter({
-    hasText: `Agreement ${pending.subscription_id} · cycle 0`,
-  }).first().getByRole("button", { name: "Approve this exact payment once", exact: true });
+  const approval = page
+    .locator("#security article")
+    .filter({
+      hasText: `Agreement ${pending.subscription_id} · cycle 0`,
+    })
+    .first()
+    .getByRole("button", {
+      name: "Approve this exact payment once",
+      exact: true,
+    });
   let securityWarningApproved = false;
   await Promise.race([
     approval.waitFor({ state: "visible", timeout: 160000 }),
-    agreement.getByText("Paid · delivered", { exact: true }).waitFor({ timeout: 160000 }),
+    agreement
+      .getByText("Paid · delivered", { exact: true })
+      .waitFor({ timeout: 160000 }),
   ]);
   if (await approval.isVisible()) {
+    mark("warning_visible");
+    if (process.env.ACCORD_RECORD_DEMO === "1") await page.waitForTimeout(2200);
     await approval.click();
+    mark("warning_approved");
     securityWarningApproved = true;
   }
   await expect(
@@ -199,22 +231,33 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
       ? agreement.getByRole("heading", { name: "Wallet Watch", exact: true })
       : agreement.getByText("high concentration risk", { exact: true }),
   ).toBeVisible();
+  mark("report_delivered");
   await mkdir(resolve(root, "docs/demo"), { recursive: true });
   await page.screenshot({
     path: resolve(
       root,
-      process.env.ACCORD_HOSTED === "1" ? "docs/demo/hosted-wallet-watch.png" : process.env.ACCORD_AGENT_UI === "1"
-        ? (process.env.ACCORD_REDESIGN === "1" ? (process.env.ACCORD_EDITORIAL === "1" ? "docs/demo/editorial-wallet-watch.png" : "docs/demo/redesign-wallet-watch.png") : "docs/demo/wallet-watch-live.png")
-        : "docs/demo/marketplace-and-delivery.png",
+      process.env.ACCORD_SECURITY_DEMO === "1"
+        ? "docs/demo/security-native-wallet.png"
+        : process.env.ACCORD_HOSTED === "1"
+          ? "docs/demo/hosted-wallet-watch.png"
+          : process.env.ACCORD_AGENT_UI === "1"
+            ? process.env.ACCORD_REDESIGN === "1"
+              ? process.env.ACCORD_EDITORIAL === "1"
+                ? "docs/demo/editorial-wallet-watch.png"
+                : "docs/demo/redesign-wallet-watch.png"
+              : "docs/demo/wallet-watch-live.png"
+            : "docs/demo/marketplace-and-delivery.png",
     ),
-    fullPage: true,
+    fullPage: process.env.ACCORD_SECURITY_DEMO !== "1",
   });
+  mark("cancel_clicked");
   await agreement
     .getByRole("button", { name: "Cancel future purchases" })
     .click();
   await expect(agreement.getByText("Canceled", { exact: true })).toBeVisible({
     timeout: 90000,
   });
+  mark("canceled");
   await agreement.getByRole("button", { name: "Remove limited key" }).click();
   await expect(
     page.getByRole("status").filter({ hasText: "Limited key removed" }),
@@ -222,6 +265,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   await expect(
     page.getByRole("button", { name: "Withdraw remainder", exact: true }),
   ).toBeEnabled();
+  mark("key_removed");
   const beforeExit = (await buyer.getState()).balance.total;
   await page
     .getByRole("button", { name: "Withdraw remainder", exact: true })
@@ -239,13 +283,22 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   ).toBeDisabled();
   expect((await buyer.getState()).balance.total).toBeGreaterThan(beforeExit);
   expect(transactions.some((t) => t.method === "withdraw")).toBeTruthy();
+  mark("withdrawal_confirmed");
   expect(errors).toEqual([]);
   await writeFile(
     resolve(
       root,
-      process.env.ACCORD_HOSTED === "1" ? "docs/hosted-wallet-proof.json" : process.env.ACCORD_AGENT_UI === "1"
-        ? (process.env.ACCORD_REDESIGN === "1" ? (process.env.ACCORD_EDITORIAL === "1" ? "docs/editorial-wallet-proof.json" : "docs/redesign-wallet-proof.json") : "docs/browser-live-agent-proof.json")
-        : "docs/browser-testnet-proof.json",
+      process.env.ACCORD_SECURITY_DEMO === "1"
+        ? "docs/security-native-wallet-proof.json"
+        : process.env.ACCORD_HOSTED === "1"
+          ? "docs/hosted-wallet-proof.json"
+          : process.env.ACCORD_AGENT_UI === "1"
+            ? process.env.ACCORD_REDESIGN === "1"
+              ? process.env.ACCORD_EDITORIAL === "1"
+                ? "docs/editorial-wallet-proof.json"
+                : "docs/redesign-wallet-proof.json"
+              : "docs/browser-live-agent-proof.json"
+            : "docs/browser-testnet-proof.json",
     ),
     JSON.stringify(
       {
@@ -254,6 +307,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
         contract: config.contract,
         subscription_id: pending.subscription_id,
         exact_security_warning_approved: securityWarningApproved,
+        video_events: videoEvents,
         transactions,
         completed_at: new Date().toISOString(),
         wallet:
@@ -274,9 +328,15 @@ test.afterEach(async ({ page }, info) => {
       await video.saveAs(
         resolve(
           process.cwd(),
-          process.env.ACCORD_AGENT_UI === "1"
-            ? (process.env.ACCORD_REDESIGN === "1" ? (process.env.ACCORD_EDITORIAL === "1" ? "../docs/demo/editorial-wallet-demo.webm" : "../docs/demo/redesign-wallet-demo.webm") : "../docs/demo/live-agent-wallet-demo.webm")
-            : "../docs/demo/accord-testnet-demo.webm",
+          process.env.ACCORD_SECURITY_DEMO === "1"
+            ? "../docs/demo/security-native-wallet-raw.webm"
+            : process.env.ACCORD_AGENT_UI === "1"
+              ? process.env.ACCORD_REDESIGN === "1"
+                ? process.env.ACCORD_EDITORIAL === "1"
+                  ? "../docs/demo/editorial-wallet-demo.webm"
+                  : "../docs/demo/redesign-wallet-demo.webm"
+                : "../docs/demo/live-agent-wallet-demo.webm"
+              : "../docs/demo/accord-testnet-demo.webm",
         ),
       );
     }
