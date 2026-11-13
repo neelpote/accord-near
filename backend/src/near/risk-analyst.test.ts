@@ -33,3 +33,13 @@ test('local risk transport is bounded and makes one request without tools or sec
 });
 
 test('runtime manifest agrees with advertised model identity',async()=>{const {readFile}=await import('node:fs/promises');const manifest=JSON.parse(await readFile(new URL('../../risk-model.json',import.meta.url),'utf8'));assert.equal(manifest.id,LOCAL_MODEL);assert.equal(manifest.revision,LOCAL_MODEL_REVISION);});
+
+test('historical paid reports retain their frozen model identity after a later model upgrade',()=>{
+ const r=riskReport('1:0',cases[2].input,facts,analysis());r.analysis.model='previous-approved-model';r.analysis.model_revision='previous-approved-revision';
+ assert.throws(()=>verifyRiskReport(r,'1:0',cases[2].input,at+5000));
+ verifyRiskReport(r,'1:0',cases[2].input,at+5000,{model:r.analysis.model,model_revision:r.analysis.model_revision});
+});
+
+test('new full-access authority receives high review priority without claiming compromise',()=>{
+ for(const id of ['key-added','full-access-escalation']){const c=cases.find(c=>c.id===id);assert.equal(investigate(c.input,c.current,c.previous,at).findings[0]!.severity,'HIGH');}
+});

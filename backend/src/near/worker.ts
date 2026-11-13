@@ -152,7 +152,7 @@ export async function tick() {
         if(metadata.kind===RISK_KIND){
           const previous=cycle>0?(await db.query('SELECT report FROM accord_cycles WHERE subscription_id=$1 AND cycle=$2',[local.id,cycle-1])).rows[0]?.report:null;
           const paid=cycle>0?await view<Receipt|null>('get_receipt',{subscription_id:local.id,cycle:cycle-1}):null;
-          verifyRiskBaseline(row.prepared.report,cycle,previous,paid,local.id,service.provider,service.price,riskInput(local.input));
+          verifyRiskBaseline(row.prepared.report,cycle,previous,paid,local.id,service.provider,service.price,riskInput(local.input),deliveryContext.spec.inference_identity);
         }
         const at=priorReceipt?Number(BigInt(priorReceipt.paid_at_ns)/1000000n):Date.now();
         await recordVerification(local.owner,local.id,cycle,validatePrepared(row.prepared,deliveryContext,at));
@@ -259,7 +259,7 @@ export async function tick() {
         ...args,
         prepare_id: row.prepare_id,
       },local.id,cycle);
-      if(metadata.kind===RISK_KIND)verifyRiskReport(delivered.report,`${local.id}:${cycle}`,riskInput(local.input),Number(BigInt(receipt.paid_at_ns)/1000000n));
+      if(metadata.kind===RISK_KIND)verifyRiskReport(delivered.report,`${local.id}:${cycle}`,riskInput(local.input),Number(BigInt(receipt.paid_at_ns)/1000000n),deliveryContext.spec?.inference_identity);
       else if (isAgentKind(metadata.kind))
         verifyChainReport(delivered.report, metadata.kind);
       else verifyReport(delivered.report);

@@ -1,4 +1,4 @@
-import {RISK_KIND,riskInput,verifyRiskReport} from "./risk-analyst.js";
+import {RISK_KIND,riskInput,verifyRiskReport,LOCAL_MODEL,LOCAL_MODEL_REVISION} from "./risk-analyst.js";
 import {codeIdentity} from "./code-identity.js";
 import { digest, verifyReport, analyze } from "./core.js";
 import {
@@ -34,6 +34,7 @@ export function deliverySpecification(
     service_id: serviceId,
     provider_id: service.provider,
     kind: metadata.kind,
+    ...(risk?{inference_identity:{provider:"local-mlx",model:LOCAL_MODEL,model_revision:LOCAL_MODEL_REVISION}}:{}),
     description: metadata.description ?? service.name,
     metadata_hash: service.metadata_hash,
     input_schema: {
@@ -149,7 +150,7 @@ export function validatePrepared(
   )
     throw Error("Preparation deadline exceeded");
   validateServiceInput(c.metadata.kind, c.input);
-  if(c.metadata.kind===RISK_KIND)verifyRiskReport(envelope.report,`${c.id}:${c.cycle}`,riskInput(c.input),at);
+  if(c.metadata.kind===RISK_KIND)verifyRiskReport(envelope.report,`${c.id}:${c.cycle}`,riskInput(c.input),at,c.spec.inference_identity);
   else if (isAgentKind(c.metadata.kind))
     verifyChainReport(envelope.report, c.metadata.kind);
   else verifyReport(envelope.report);
