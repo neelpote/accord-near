@@ -68,3 +68,5 @@ For each priority: unit tests for pure policies/parsers, isolated PostgreSQL + H
 ## Execution log
 
 - Phase 0 / 1A: source inspection and plan recorded before feature edits. Pending implementation and acceptance checks.
+
+- Phase 1 accepted within the documented application/contract trust model: 28 backend unit checks, role environment check, isolated HTTP/database acceptance, existing counterparty acceptance, 15 Rust unit tests, actual WASM sandbox test, 9 existing + 1 new frontend browser checks, types/build/fmt/clippy passed. Dedicated testnet agreement 33 paid twice across the real interval, rejected unapproved/paused work, and completed owner/key/fund exit. Low SDK advisories and host/database compromise limits remain in [SECURITY.md](SECURITY.md). No production rollout. Next: complete delivery gap analysis before Phase 2 code.
