@@ -135,7 +135,7 @@ cp backend/.env.example backend/.env
 node -e 'console.log(require("crypto").randomBytes(32).toString("hex"))'
 ```
 
-Put the generated value in `DELEGATE_ENCRYPTION_KEY` in `backend/.env`. Keep this file local and preserve the encryption key across restarts. It encrypts limited delegate keys; customer full-access keys are never accepted by the API.
+Put the generated value in `DELEGATE_ENCRYPTION_KEY` in `backend/.env`. Generate a **separate** random value for `ACCORD_PROVIDER_SECRET` and set it in both the local API/worker and provider environments; the private request/response protocol requires it. Keep this file local and preserve the encryption key across restarts. It encrypts limited delegate keys; customer full-access keys are never accepted by the API.
 
 The example environment points to the public development contract and reference provider account. A fresh database starts with an empty catalog. For a complete independent reproduction, create your own dedicated fixture accounts and register the provider as described next. Existing public contract state does not automatically populate a new local database.
 
@@ -273,3 +273,7 @@ The current frontend uses a credited artist-made Robot Expressive model and a na
 Automated charges now pass a mandatory counterparty decision service: **allow**, **warn** (owner approval for one exact payment), or **block** (no signature). Both the escrow contract and the economic provider are checked using finalized code identity, indexed account age/recent activity, prior Accord receipts and shared evidence reports. Open **Payment security** to review paused payments or submit evidence. Curator-reviewed blocklist entries cannot be overridden by payment approval.
 
 The agent's existing finite function-call key remains `charge`-only on one contract; it is never a full-access key. The allowance pays gas, while the contract enforces the payment budget and recipient. The reputation gate runs in the backend and is not a contract-enforced guarantee against a compromised dispatcher. Full data-source coverage, access-key limits, API, threat boundaries and reproducible attack instructions: [Counterparty security](docs/COUNTERPARTY_SECURITY.md). [Captured causal attack log](docs/causal-attack-proof.json). Two genuine live model calls changed only the vendor tool document; the poisoned document changed the proposed receiver. A funded control paid successfully, while the poisoned proposal and a separate valid-terms reputation case stopped before signing. See the [current walkthrough and reproduction notes](docs/SECURITY_WALKTHROUGH.md).
+
+## Reliability development (local, pending rollout)
+
+The three-priority implementation is tracked in [the phase log](docs/reliability/IMPLEMENTATION.md), [security acceptance](docs/reliability/SECURITY.md) and [delivery verification](docs/reliability/DELIVERY.md). These local changes require coordinated deployment and explicit owner execution-identity/delivery-specification approval. The public hosted application remains the previously deployed version until a rollout is authorized.

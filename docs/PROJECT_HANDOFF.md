@@ -388,3 +388,7 @@ Real customer interviews are strongly recommended to validate usefulness and the
 - [Deployment](../vercel.json): active hosted topology; Docker/supervisor files define processes.
 - [Application CI](../.github/workflows/application.yml), [contract CI](../.github/workflows/contract.yml): automated checks, with the enforcement distinction recorded above.
 - [Security guide](COUNTERPARTY_SECURITY.md), [source review](SECURITY_REVIEW.md), [release evidence](counterparty-release-proof.json): supplementary checks and explicit limits.
+
+## Local reliability extension — pending deployment
+
+See [reliability/IMPLEMENTATION.md](reliability/IMPLEMENTATION.md) for the new phase audit, source changes and acceptance gates. Phase 1/2 local acceptance includes real testnet agreements 33/34 but does not mean the public API/provider has been rolled out. No production configuration or deployment changed. The new private protocol, additive schema and owner identity/specification consent require coordinated rollout.
