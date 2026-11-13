@@ -49,6 +49,7 @@ test("owner explicitly reviews execution identity and pauses jobs; receipt statu
     if (path === "/services/2/execution")
       json = {
         identity,
+        spec_hash:"spec-fixture",
         enabled: true,
         limitations: "Advertised build identity, not attestation.",
       };

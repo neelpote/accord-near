@@ -1,0 +1,108 @@
+{
+  "network": "testnet",
+  "contract": "contract.accord-dev-261110.testnet",
+  "started_at": "2026-11-13T18:17:12.245Z",
+  "working_tree_dirty": true,
+  "code_commit_at_start": "1f31bd64ab4bdb8f4731260a7af20a431ba1b155",
+  "checks": [
+    "NEP-413 full-access ownership verified; nonce replay rejected",
+    "Unauthenticated agreement access rejected",
+    "Cross-origin mutation rejected",
+    "Provider registration bound to real wallet/metadata; wrong owner rejected",
+    "Finite agreement funded and charge-only delegate installed; API verified both",
+    "Unapproved and owner-paused jobs cannot charge; exact owner identity approval resumes work",
+    "Unauthenticated provider request cannot unlock an unpaid report",
+    "Concurrent workers produced one verified credit and matching delivered report",
+    "Early cycle rejected on live testnet",
+    "Duplicate retry idempotent; delegate cancellation rejected on testnet",
+    "Second report purchased after a real 60-second testnet interval",
+    "Cancellation revoked contract authority; wallet function-call key removed",
+    "Actual customer exit and provider payout verified through callback state and wallet balances",
+    "Wrong session cannot cancel another owner agreement",
+    "Both paid deliveries have distinct structure/evidence stages, transaction references and completion timestamps; factual correctness stays unverified"
+  ],
+  "transactions": [
+    {
+      "step": "cancel",
+      "hash": "AVgQQGWSHpcr5mUccYfBxUbFgbbPHDtnK2kE2gKamCEW"
+    },
+    {
+      "step": "customer_exit",
+      "hash": "pn1vQSiEbXe7aM8S8kqtzjDam5H5RSQrV9NwWnpTU6C",
+      "amount": "10000000000000000000000"
+    },
+    {
+      "step": "provider_withdrawal",
+      "hash": "79ZVE1Vous34rmSR51bFv6FKcsyatD5qgHCpCcjAxhk5",
+      "amount": "20000000000000000000000"
+    }
+  ],
+  "subscription_id": "34",
+  "service_id": "8",
+  "receipts": [
+    {
+      "subscription_id": "34",
+      "cycle": 0,
+      "provider": "provider.accord-dev-261110.testnet",
+      "amount": "10000000000000000000000",
+      "artifact_hash": "0247760ce961996567a488175f810b76c9138871463c09e7d68aa6d73bdb1267",
+      "paid_at_ns": "1794593870702933170"
+    },
+    {
+      "subscription_id": "34",
+      "cycle": 1,
+      "provider": "provider.accord-dev-261110.testnet",
+      "amount": "10000000000000000000000",
+      "artifact_hash": "0247760ce961996567a488175f810b76c9138871463c09e7d68aa6d73bdb1267",
+      "paid_at_ns": "1794593946523422185"
+    }
+  ],
+  "delivery_verification": [
+    {
+      "cycle": 0,
+      "verification": {
+        "job_id": "34:0",
+        "status": "DELIVERY_VERIFIED",
+        "evidence": [],
+        "warnings": [
+          "Customer-supplied snapshot; holdings and market values are not independently verified.",
+          "Evidence and integrity checks do not establish factual correctness of every conclusion."
+        ],
+        "freshness": "Within agreed window at validation; retained reports are historical snapshots",
+        "checked_at": "2026-11-13T18:17:50.702Z",
+        "valid_until": "2026-11-13T18:27:39.239Z",
+        "delivered_at": "2026-11-13T18:17:54.616Z",
+        "schema_valid": true,
+        "evidence_valid": true,
+        "payment_confirmed": true,
+        "factual_correctness": "UNVERIFIED"
+      },
+      "delivered_at": "2026-11-13T18:17:54.620Z",
+      "payment_tx": "Dt7jn4iLXZBiKEDg8GFFPgFP6gRhdN73n8aoNmRa5XRy"
+    },
+    {
+      "cycle": 1,
+      "verification": {
+        "job_id": "34:1",
+        "status": "DELIVERY_VERIFIED",
+        "evidence": [],
+        "warnings": [
+          "Customer-supplied snapshot; holdings and market values are not independently verified.",
+          "Evidence and integrity checks do not establish factual correctness of every conclusion."
+        ],
+        "freshness": "Within agreed window at validation; retained reports are historical snapshots",
+        "checked_at": "2026-11-13T18:19:06.523Z",
+        "valid_until": "2026-11-13T18:28:55.110Z",
+        "delivered_at": "2026-11-13T18:19:10.447Z",
+        "schema_valid": true,
+        "evidence_valid": true,
+        "payment_confirmed": true,
+        "factual_correctness": "UNVERIFIED"
+      },
+      "delivered_at": "2026-11-13T18:19:10.452Z",
+      "payment_tx": "GXCHMFx51aLs4vnJwp32Frh4RjfkHky6tFYNLrGe7kNp"
+    }
+  ],
+  "finished_at": "2026-11-13T18:19:31.217Z",
+  "input_disclosure": "Illustrative user-supplied portfolio snapshot; deterministic report, no live oracle or AI inference."
+}

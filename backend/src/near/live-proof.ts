@@ -241,7 +241,7 @@ for (let i = 0; i < 20; i++) {
 try {
 const activation = await request(
   "/subscriptions",
-  { subscription_id: subId, provision_id: d.provision_id, input },
+  { subscription_id: subId, provision_id: d.provision_id, input,spec_hash:(await request(`/services/${serviceId}/execution`)).value.spec_hash },
   buyerCookie,
 );
 assert.equal(activation.r.status, 200, JSON.stringify(activation.value));
@@ -251,10 +251,10 @@ check(
 await tick();
 assert.equal(await view('get_receipt',{subscription_id:subId,cycle:0}),null);
 const execution=(await request(`/services/${serviceId}/execution`)).value;
-const approval=await request(`/subscriptions/${subId}/execution`,{approve:true,identity_hash:execution.identity.hash},buyerCookie);
+const approval=await request(`/subscriptions/${subId}/execution`,{approve:true,identity_hash:execution.identity.hash,spec_hash:execution.spec_hash},buyerCookie);
 assert.equal(approval.r.status,200,JSON.stringify(approval.value));
 await request(`/subscriptions/${subId}/execution`,{paused:true},buyerCookie);await tick();assert.equal(await view('get_receipt',{subscription_id:subId,cycle:0}),null);
-await request(`/subscriptions/${subId}/execution`,{approve:true,identity_hash:execution.identity.hash},buyerCookie);
+await request(`/subscriptions/${subId}/execution`,{approve:true,identity_hash:execution.identity.hash,spec_hash:execution.spec_hash},buyerCookie);
 check('Unapproved and owner-paused jobs cannot charge; exact owner identity approval resumes work');
 const falseProof = await fetch(config.provider + "/deliver", {
   method: "POST",
@@ -463,11 +463,16 @@ evidence.receipts = [
   first,
   await view("get_receipt", { subscription_id: subId, cycle: 1 }),
 ];
+if(process.env.ACCORD_DELIVERY_LIVE==='1'){
+ const verified=(await db.query('SELECT cycle,verification,delivered_at,payment_tx FROM accord_cycles WHERE subscription_id=$1 ORDER BY cycle',[subId])).rows;
+ for(const row of verified){assert.equal(row.verification.status,'DELIVERY_VERIFIED');assert.equal(row.verification.factual_correctness,'UNVERIFIED');assert(row.delivered_at);assert(/^[1-9A-HJ-NP-Za-km-z]{32,50}$/.test(row.payment_tx));}
+ evidence.delivery_verification=verified;check('Both paid deliveries have distinct structure/evidence stages, transaction references and completion timestamps; factual correctness stays unverified');
+}
 evidence.finished_at = new Date().toISOString();
 evidence.input_disclosure =
   "Illustrative user-supplied portfolio snapshot; deterministic report, no live oracle or AI inference.";
 await writeFile(
-  resolve(root, process.env.ACCORD_EXECUTION_LIVE==="1"?"docs/reliability/phase1-testnet.json":"docs/testnet-proof.json"),
+  resolve(root, process.env.ACCORD_EXECUTION_LIVE==="1"?(process.env.ACCORD_DELIVERY_LIVE==="1"?"docs/reliability/phase2-testnet.json":"docs/reliability/phase1-testnet.json"):"docs/testnet-proof.json"),
   JSON.stringify(evidence, null, 2) + "\n",
 );
 console.log("TESTNET ACCEPTANCE PASSED", subId);

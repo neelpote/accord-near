@@ -113,3 +113,8 @@ test("provider authentication binds operation, timestamp and body; build/provide
       .hash,
   );
 });
+test('provider response authentication binds its originating request and exact returned artifact',()=>{
+ process.env.ACCORD_PROVIDER_SECRET='test-only-authentication-secret-value';
+ const response={artifact_hash:'a'.repeat(64)},request_hash=digest({subscription_id:'1',cycle:0});const h=providerHeaders('/prepare/response',{request_hash,response});verifyProviderRequest('/prepare/response',{request_hash,response},h['x-accord-time'],h['x-accord-auth']);
+ assert.throws(()=>verifyProviderRequest('/prepare/response',{request_hash,response:{artifact_hash:'b'.repeat(64)}},h['x-accord-time'],h['x-accord-auth']));assert.throws(()=>verifyProviderRequest('/prepare/response',{request_hash:'other-job',response},h['x-accord-time'],h['x-accord-auth']));
+});

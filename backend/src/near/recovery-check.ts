@@ -11,8 +11,12 @@ const originalDatabase = process.env["DATABASE_URL"]!;
 if (!originalDatabase?.includes("127.0.0.1:55432/accord"))
   throw Error("Use the dedicated local development database");
 const original = new pg.Pool({ connectionString: originalDatabase });
+if(process.env.ACCORD_DELIVERY_LIVE==='1'){
+ process.env.ACCORD_PROVIDER_SECRET=(await readFile(resolve(root,'.tools/reliability-provider-secret'),'utf8')).trim();
+ if(!(await original.query("SELECT 1 FROM pg_database WHERE datname='accord_recovery'")).rowCount)await original.query('CREATE DATABASE accord_recovery');
+}
 const evidence = JSON.parse(
-  await readFile(resolve(root, "docs/testnet-proof.json"), "utf8"),
+  await readFile(resolve(root, process.env.ACCORD_RECOVERY_PROOF??"docs/testnet-proof.json"), "utf8"),
 );
 const id = evidence.subscription_id,
   cycle = 0;
@@ -44,8 +48,8 @@ for (const row of (
 await db.query("DELETE FROM accord_cycles");
 await db.query("DELETE FROM accord_subscriptions");
 await db.query(
-  "INSERT INTO accord_subscriptions(id,owner,input,delegate_cipher,state) VALUES($1,$2,$3,'no-signing-key-in-this-test','ACTIVE')",
-  [id, local.owner, local.input],
+  "INSERT INTO accord_subscriptions(id,owner,input,delegate_cipher,state,delivery_spec,delivery_spec_hash) VALUES($1,$2,$3,'no-signing-key-in-this-test','ACTIVE',$4,$5)",
+  [id, local.owner, local.input,local.delivery_spec??null,local.delivery_spec_hash??null],
 );
 let mode = "mismatch";
 const realProvider = config.provider;
@@ -66,7 +70,7 @@ const proxy = http.createServer(async (req, res) => {
   const result = await response.json();
   if (mode === "mismatch") result.report = { ...result.report, risk_score: 0 };
   if (mode === "schema") result.report = { risk_score: "invented" };
-  res.writeHead(response.status, { "content-type": "application/json" });
+  res.writeHead(response.status, { "content-type": "application/json", "x-accord-time":response.headers.get("x-accord-time")??"", "x-accord-auth":response.headers.get("x-accord-auth")??"" });
   res.end(JSON.stringify(result));
 });
 await new Promise<void>((r) => proxy.listen(4012, "127.0.0.1", r));
@@ -79,7 +83,7 @@ async function seed(state: string) {
     [id],
   );
   await db.query(
-    "INSERT INTO accord_cycles(subscription_id,cycle,state,artifact_hash,prepare_id,receipt) VALUES($1,$2,$3,$4,$5,$6)",
+    "INSERT INTO accord_cycles(subscription_id,cycle,state,artifact_hash,prepare_id,receipt,prepared) VALUES($1,$2,$3,$4,$5,$6,$7)",
     [
       id,
       cycle,
@@ -87,6 +91,7 @@ async function seed(state: string) {
       paid.artifact_hash,
       paid.prepare_id,
       state === "SETTLED" ? paid.receipt : null,
+      paid.prepared??null,
     ],
   );
 }
@@ -145,7 +150,7 @@ try {
     "Onchain cycle count and reserved funds unchanged throughout fault injection",
   );
   await writeFile(
-    resolve(root, "docs/recovery-proof.json"),
+    resolve(root, process.env.ACCORD_DELIVERY_LIVE==="1"?"docs/reliability/phase2-recovery.json":"docs/recovery-proof.json"),
     JSON.stringify(
       {
         kind: "Local fault injection with a pre-existing real testnet receipt; no monetary transactions submitted",

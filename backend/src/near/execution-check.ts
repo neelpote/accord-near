@@ -20,7 +20,7 @@ process.env.ACCORD_PROVIDER_SECRET =
 const { db, migrate } = await import("./db.js"),
   { rpc, config } = await import("./config.js"),
   { digest } = await import("./core.js"),
-  { agentIdentity, providerHeaders } = await import("./execution.js"),
+  { agentIdentity, providerHeaders,verifyProviderRequest } = await import("./execution.js"),
   { mountExecution } = await import("./execution-api.js");
 await migrate();
 await migrate();
@@ -52,12 +52,13 @@ const metadata = {
     next_due_ns: "0",
     expires_at_ns: ((BigInt(Date.now()) + 600000n) * 1000000n).toString(),
   };
+let chainReceipt:any=null;
 (rpc as any).callFunction = async ({ method }: any) =>
   method === "get_subscription"
     ? sub
     : method === "get_service"
       ? service
-      : null;
+      : method === "get_receipt" ? chainReceipt : null;
 (rpc as any).viewBlock = async () => ({
   header: {
     height: 123,
@@ -87,6 +88,7 @@ mountExecution(api, async (req) => {
   if (!req.headers["x-fixture-owner"]) throw Error("Sign in");
   return String(req.headers["x-fixture-owner"]);
 });
+const {mountDelivery}=await import('./delivery-api.js');mountDelivery(api,async req=>String(req.headers['x-fixture-owner']??''));
 api.use((e: any, _q: any, r: any, _n: any) =>
   r.status(400).json({ error: e.message }),
 );
@@ -108,11 +110,12 @@ async function call(path: string, body?: unknown, owner = "buyer.testnet") {
 const checks: string[] = [];
 try {
   const identity = agentIdentity("2", service, metadata);
+  const specHash=(await call("/services/2/execution")).body.spec_hash;
   assert.equal(
     (
       await call(
         "/subscriptions/1/execution",
-        { approve: true, identity_hash: identity.hash },
+        { approve: true, identity_hash: identity.hash,spec_hash:specHash },
         "attacker.testnet",
       )
     ).status,
@@ -122,7 +125,7 @@ try {
     (
       await call("/subscriptions/1/execution", {
         approve: true,
-        identity_hash: "old",
+        identity_hash: "old",spec_hash:specHash,
       })
     ).status,
     400,
@@ -131,7 +134,7 @@ try {
     (
       await call("/subscriptions/1/execution", {
         approve: true,
-        identity_hash: identity.hash,
+        identity_hash: identity.hash,spec_hash:specHash,
       })
     ).status,
     200,
@@ -143,7 +146,7 @@ try {
     subscription_id: "1",
     cycle: 0,
     input,
-    identity_hash: identity.hash,
+    identity_hash: identity.hash,spec_hash:specHash,
   };
   assert.equal(
     (
@@ -168,6 +171,7 @@ try {
   const first = await prepare();
   assert.equal(first.status, 200);
   const prepared = await first.json();
+  verifyProviderRequest("/prepare/response",{request_hash:digest(body),response:prepared},first.headers.get("x-accord-time"),first.headers.get("x-accord-auth"));
   assert.equal(prepared.identity_hash, identity.hash);
   assert.deepEqual(await (await prepare()).json(), prepared);
   assert.equal(
@@ -207,7 +211,7 @@ try {
     (
       await call("/subscriptions/1/execution", {
         approve: true,
-        identity_hash: identity.hash,
+        identity_hash: identity.hash,spec_hash:specHash,
       })
     ).status,
     400,
@@ -234,6 +238,23 @@ try {
   assert.equal(outsider.body.jobs.length, 0);
   assert.equal(outsider.body.events.length, 0);
   checks.push("Job and security-event data isolated by owner");
+
+  const receipt={subscription_id:'1',cycle:0,provider:'provider.testnet',amount:'100',artifact_hash:prepared.artifact_hash,paid_at_ns:'1'};
+  chainReceipt=receipt;
+  const deliveryBody={subscription_id:'1',cycle:0,prepare_id:prepared.prepare_id};const delivered=await fetch(providerUrl+'/deliver',{method:'POST',headers:{'content-type':'application/json',...providerHeaders('/deliver',deliveryBody)},body:JSON.stringify(deliveryBody)});assert.equal(delivered.status,200);const delivery=await delivered.json();verifyProviderRequest('/deliver/response',{request_hash:digest(deliveryBody),response:delivery},delivered.headers.get('x-accord-time'),delivered.headers.get('x-accord-auth'));
+  await db.query("INSERT INTO accord_cycles(subscription_id,cycle,state,artifact_hash,receipt,report) VALUES('1',0,'DELIVERED',$1,$2,$3)",[prepared.artifact_hash,receipt,prepared.report]);
+  const {recordVerification}=await import('./delivery-store.js');
+  for(const status of ['PENDING','STRUCTURE_VALID','EVIDENCE_VALID','DELIVERY_VERIFIED','DELIVERY_VERIFIED'])await recordVerification('buyer.testnet','1',0,{status,schema_valid:true,evidence_valid:status!=='PENDING',factual_correctness:'UNVERIFIED'});
+  assert.equal((await db.query("SELECT count(*) FROM accord_delivery_events WHERE subscription_id='1'")).rows[0].count,'4');
+  assert.equal((await call('/subscriptions/1/cycles/0/verification',undefined,'attacker.testnet')).status,400);
+  assert.equal((await call('/subscriptions/1/cycles/0/feedback',{action:'dispute',reason:'Wrong owner'},'attacker.testnet')).status,400);
+  assert.equal((await call('/subscriptions/1/cycles/0/feedback',{action:'respond',reason:'No dispute'},'provider.testnet')).status,400);
+  assert.equal((await call('/subscriptions/1/cycles/0/feedback',{action:'accept'})).status,200);
+  assert.equal((await call('/subscriptions/1/cycles/0/feedback',{action:'dispute',reason:'Conclusions need review'})).body.financial_change,false);
+  assert.equal((await call('/subscriptions/1/cycles/0/feedback',{action:'respond',reason:'Provider response'},'provider.testnet')).status,200);
+  assert.equal((await call('/subscriptions/1/cycles/0/feedback',{action:'accept'})).status,400);
+  const disputed=(await call('/subscriptions/1/cycles/0/verification')).body;assert.equal(disputed.verification.status,'DISPUTED');assert.equal(disputed.disputes.length,2);assert.deepEqual(disputed.receipt,receipt);
+  checks.push('Delivery stages are distinct and idempotent; owner dispute/provider response preserve payment and cannot self-resolve');
   console.log(
     JSON.stringify(
       { passed: true, checks, chain_transactions: 0, inference_requests: 0 },
