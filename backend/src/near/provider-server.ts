@@ -1,3 +1,4 @@
+import {RISK_KIND,runRiskAnalyst,verifyRiskReport,LOCAL_MODEL} from "./risk-analyst.js";
 import {agentIdentity,verifyProviderRequest,providerHeaders} from "./execution.js";
 import "express-async-errors";
 import express from "express";
@@ -107,7 +108,16 @@ app.post("/prepare", async (req, res) => {
     );
   try {
     let report: unknown;
-    if (metadata.analysis_mode === "near-ai-cloud") {
+    if(metadata.kind===RISK_KIND){
+      if(metadata.analysis_mode!=='local-llm')throw Error('Risk analyst requires its declared local AI mode');
+      let previous;
+      if(args.cycle>0){const prior=(await db.query('SELECT * FROM accord_provider_artifacts WHERE subscription_id=$1 AND cycle=$2',[args.subscription_id,args.cycle-1])).rows[0];const receipt=await view<Receipt|null>('get_receipt',{subscription_id:args.subscription_id,cycle:args.cycle-1});
+        if(!prior||!receipt||receipt.provider!==service.provider||receipt.amount!==service.price||receipt.artifact_hash!==digest(prior.report))throw Error('Previous paid risk baseline unavailable');
+        verifyRiskReport(prior.report,`${args.subscription_id}:${args.cycle-1}`,input as any,Number(BigInt(receipt.paid_at_ns)/1000000n));previous=prior.report.investigation.current;
+      }
+      const jobId=`${args.subscription_id}:${args.cycle}`,started=Date.now();const audit=(await db.query("INSERT INTO accord_inference_audit(job_id,provider,model,input_hash,status) VALUES($1,'local-mlx',$2,$3,'REQUESTED') RETURNING id",[jobId,LOCAL_MODEL,digest({input,baseline:previous??null})])).rows[0].id;
+      try{report=await runRiskAnalyst(jobId,input,previous);await db.query("UPDATE accord_inference_audit SET status='COMPLETED',output_hash=$2,duration_ms=$3 WHERE id=$1",[audit,digest(report),Date.now()-started]);}catch(e){await db.query("UPDATE accord_inference_audit SET status='FAILED',duration_ms=$2 WHERE id=$1",[audit,Date.now()-started]);throw e;}
+    }else if (metadata.analysis_mode === "near-ai-cloud") {
       if (process.env["NEAR_AI_ENABLED"] !== "true")
         throw new Error("AI inference is paused");
       const limit = Number(process.env["NEAR_AI_MAX_REQUESTS"] ?? "0");

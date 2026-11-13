@@ -1,3 +1,4 @@
+import {RISK_KIND,verifyRiskReport,riskInput,verifyRiskBaseline} from "./risk-analyst.js";
 import {validatePrepared,validateDeliveryEvidence,matchDeliveryReceipt} from "./service-delivery.js";
 import {recordVerification} from "./delivery-store.js";
 import {authorizeExecution,assertLimitedKey} from "./execution-policy.js";
@@ -148,6 +149,11 @@ export async function tick() {
         ).rows[0];
       }
       if(row.prepared&&deliveryContext.spec){
+        if(metadata.kind===RISK_KIND){
+          const previous=cycle>0?(await db.query('SELECT report FROM accord_cycles WHERE subscription_id=$1 AND cycle=$2',[local.id,cycle-1])).rows[0]?.report:null;
+          const paid=cycle>0?await view<Receipt|null>('get_receipt',{subscription_id:local.id,cycle:cycle-1}):null;
+          verifyRiskBaseline(row.prepared.report,cycle,previous,paid,local.id,service.provider,service.price,riskInput(local.input));
+        }
         const at=priorReceipt?Number(BigInt(priorReceipt.paid_at_ns)/1000000n):Date.now();
         await recordVerification(local.owner,local.id,cycle,validatePrepared(row.prepared,deliveryContext,at));
         row.verification=await validateDeliveryEvidence(row.prepared,deliveryContext,rpc,at);
@@ -253,7 +259,8 @@ export async function tick() {
         ...args,
         prepare_id: row.prepare_id,
       },local.id,cycle);
-      if (isAgentKind(metadata.kind))
+      if(metadata.kind===RISK_KIND)verifyRiskReport(delivered.report,`${local.id}:${cycle}`,riskInput(local.input),Number(BigInt(receipt.paid_at_ns)/1000000n));
+      else if (isAgentKind(metadata.kind))
         verifyChainReport(delivered.report, metadata.kind);
       else verifyReport(delivered.report);
       if (metadata.analysis_mode === "groq")

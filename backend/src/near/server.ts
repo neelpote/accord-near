@@ -1,3 +1,4 @@
+import {RISK_KIND,localRiskConfig} from "./risk-analyst.js";
 import {deliverySpecification} from "./service-delivery.js";
 import {mountDelivery} from "./delivery-api.js";
 import {mountExecution} from "./execution-api.js";
@@ -40,7 +41,7 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.get("/inference/status", (_req,res) => res.json({groq_configured: groqConfigured()}));
+app.get('/inference/status',async(_req,res)=>{let local_risk_available=false,remaining_requests=0;try{const {limit}=localRiskConfig();const budget=(await db.query('SELECT requests FROM accord_local_ai_budget WHERE id=1')).rows[0];remaining_requests=Math.max(0,limit-Number(budget?.requests??limit));local_risk_available=remaining_requests>0;}catch{}res.json({groq_configured:groqConfigured(),local_risk_available,remaining_requests});});
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
 const id = (s: unknown) => {
   if (
@@ -206,15 +207,17 @@ app.post("/services", async (req, res) => {
   if (
     !metadata ||
     (metadata.kind !== "portfolio-concentration-v1" &&
-      !isAgentKind(metadata.kind)) ||
+      !isAgentKind(metadata.kind)&&metadata.kind!==RISK_KIND) ||
     typeof metadata.description !== "string" ||
     metadata.description.length > 2000 ||
     metadata.provider_url !== config.provider ||
-    !["deterministic", "near-ai-cloud", "groq", undefined].includes(
+    !["deterministic", "near-ai-cloud", "groq", "local-llm", undefined].includes(
       metadata.analysis_mode,
     )
   )
     throw new Error("Use the approved risk-provider endpoint and schema");
+  if(metadata.kind===RISK_KIND){localRiskConfig();if(metadata.analysis_mode!=='local-llm')throw Error('Risk analyst requires local AI mode');validateServiceInput(metadata.kind,metadata.input_example);}
+  if(metadata.analysis_mode==='local-llm'&&metadata.kind!==RISK_KIND)throw Error('Local AI mode is restricted to the risk analyst');
   if (isAgentKind(metadata.kind)) {
     if (!["deterministic", "groq"].includes(metadata.analysis_mode))
       throw new Error("Live RPC agents use deterministic rules");

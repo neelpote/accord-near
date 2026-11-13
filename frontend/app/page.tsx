@@ -374,6 +374,8 @@ export default function Home() {
       const status = await api("/inference/status");
       if (!status.groq_configured) throw new Error("Groq provider is not configured; no offer transaction was requested");
     }
+    if(creatorKind==='near-contract-risk-analyst-v1'&&analysisMode!=='local-llm')throw Error('Choose the declared local AI risk analysis mode');
+    if(analysisMode==='local-llm'){const status=await api('/inference/status');if(!status.local_risk_available)throw Error('Local risk model is not configured or its request limit is exhausted; no offer transaction was requested');}
     const [whole, fraction = ""] = price.split(".");
     const amount =
       BigInt(whole) * 10n ** 24n + BigInt(fraction.padEnd(24, "0"));
@@ -544,7 +546,7 @@ export default function Home() {
                   onChange={(e) => {
                     const kind = e.target.value;
                     setCreatorKind(kind);
-                    setAnalysisMode("deterministic");
+                    setAnalysisMode(kind==="near-contract-risk-analyst-v1"?"local-llm":"deterministic");
                     const d = agentTypes.find((x) => x.kind === kind);
                     if (d) {
                       setName(d.name);
@@ -591,12 +593,13 @@ export default function Home() {
                   value={analysisMode}
                   onChange={(e) => setAnalysisMode(e.target.value)}
                 >
-                  <option value="deterministic">
+                  <option value="deterministic" disabled={creatorKind==="near-contract-risk-analyst-v1"}>
                     Rule-based report
                   </option>
-                  <option value="groq" disabled={!creatorKind.startsWith("near-")}>
+                  <option value="groq" disabled={!creatorKind.startsWith("near-")||creatorKind==="near-contract-risk-analyst-v1"}>
                     Live chain evidence + Groq explanation
                   </option>
+                  <option value="local-llm" disabled={creatorKind!=="near-contract-risk-analyst-v1"}>Contract evidence + local AI risk analyst</option>
                   <option value="near-ai-cloud" disabled>
                     NEAR AI Cloud · awaiting credits
                   </option>
@@ -643,6 +646,7 @@ export default function Home() {
                 </p>
                 <h3>{s.service.name}</h3></div>
                 <div className="service-description"><p>{s.metadata.description}</p>
+                {s.metadata.analysis_mode === "local-llm" && <p className="caption">Local AI explains exact code/key observations. No TEE, vulnerability verdict or automatic transactions.</p>}
                 {s.metadata.analysis_mode === "groq" && <p className="caption">Groq explains public chain evidence. No private inference or automatic remediation.</p>}
                 {s.metadata.analysis_mode === "near-ai-cloud" && (
                   <p>

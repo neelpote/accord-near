@@ -36,6 +36,7 @@ export function validateServiceInput(
   kind: string,
   value: unknown,
 ): Record<string, unknown> {
+  if(kind==="near-contract-risk-analyst-v1")return validateServiceInput("near-contract-sentinel-v1",value);
   if (kind === "portfolio-concentration-v1") return validateInput(value);
   if (!isAgentKind(kind)) throw Error("Unsupported agent type");
   if (!value || typeof value !== "object" || Array.isArray(value))
@@ -146,6 +147,7 @@ export function agentDefinitions() {
       input_label: "Maximum finalized-block age · JSON",
       input_example: { max_block_age_seconds: 60 },
     },
+    {kind:'near-contract-risk-analyst-v1',name:'Smart Contract Risk Analyst',category:'AI contract monitoring',description:'Compares finalized code and key authority against your baseline and prior paid snapshot; a local AI explains evidence-linked changes and uncertainty. No transactions or exploit-proof claim.',input_label:'Contract account and approved code hash · JSON',input_example:{account_id:contract,expected_code_hash:'DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX'}},
   ];
 }
 export type ChainReport = {

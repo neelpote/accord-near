@@ -1,3 +1,4 @@
+import {RISK_KIND,LOCAL_MODEL,LOCAL_MODEL_REVISION} from "./risk-analyst.js";
 import { readFileSync } from "node:fs";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { Service } from "./config.js";
@@ -11,6 +12,8 @@ const codeFiles = [
   "service-delivery.ts",
   "groq.ts",
   "risk-analyst.ts",
+  "operations.ts",
+  "incidents.ts",
 ];
 export function agentIdentity(id: string, service: Service, metadata: any) {
   const build = digest(
@@ -30,7 +33,7 @@ export function agentIdentity(id: string, service: Service, metadata: any) {
     service_id: id,
     version: metadata.agent_version ?? "1.0.0",
     model:
-      metadata.analysis_mode === "groq"
+      metadata.kind===RISK_KIND ? `${LOCAL_MODEL}@${LOCAL_MODEL_REVISION}` : metadata.analysis_mode === "groq"
         ? process.env.GROQ_MODEL || "openai/gpt-oss-20b"
         : null,
     capabilities: ["read_public_testnet", "produce_report"],

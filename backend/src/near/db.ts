@@ -54,6 +54,9 @@ export async function migrateExecution(){
  ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS approved_identity text;
  ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS identity_approved_at timestamptz;
  ALTER TABLE accord_services ADD COLUMN IF NOT EXISTS execution_enabled boolean NOT NULL DEFAULT true;
+ CREATE TABLE IF NOT EXISTS accord_local_ai_budget(id integer PRIMARY KEY,requests integer NOT NULL);
+ INSERT INTO accord_local_ai_budget VALUES(1,0) ON CONFLICT DO NOTHING;
+ CREATE TABLE IF NOT EXISTS accord_inference_audit(id bigserial PRIMARY KEY,job_id text NOT NULL,provider text NOT NULL,model text NOT NULL,input_hash text NOT NULL,output_hash text,status text NOT NULL,duration_ms integer,created_at timestamptz NOT NULL DEFAULT now());
  CREATE TABLE IF NOT EXISTS accord_agent_identities(hash text PRIMARY KEY,body jsonb NOT NULL,registered_at timestamptz NOT NULL DEFAULT now());
  ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS delivery_spec jsonb;
  ALTER TABLE accord_subscriptions ADD COLUMN IF NOT EXISTS delivery_spec_hash text;

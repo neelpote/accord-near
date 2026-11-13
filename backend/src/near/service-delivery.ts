@@ -1,3 +1,5 @@
+import {RISK_KIND,riskInput,verifyRiskReport} from "./risk-analyst.js";
+import {codeIdentity} from "./code-identity.js";
 import { digest, verifyReport, analyze } from "./core.js";
 import {
   agentDefinitions,
@@ -20,7 +22,7 @@ export function deliverySpecification(
   service: Service,
   metadata: any,
 ) {
-  const chain = isAgentKind(metadata.kind),
+  const risk=metadata.kind===RISK_KIND,chain = isAgentKind(metadata.kind),
     example = agentDefinitions().find((d) => d.kind === metadata.kind)
       ?.input_example ?? {
       walletAddress: "example.testnet",
@@ -44,7 +46,7 @@ export function deliverySpecification(
       ),
       additionalProperties: false,
     },
-    output_schema: {
+    output_schema: risk?{type:"object",required:["kind","schemaVersion","jobId","target","summary","riskLevel","findings","baselineComparison","limitations","confidence","generatedAt","input_hash","investigation","analysis"],properties:{schemaVersion:{const:"1.0"},confidence:{type:"null"},analysis:{type:"object",description:"Pinned local model explanation, not factual certification"}}}:{
       type: "object",
       properties: {
         summary:{type:'string',maxLength:2000},findings:{type:'array',maxItems:20,items:{type:'string',maxLength:2000}},recommendations:{type:'array',maxItems:20,items:{type:'string',maxLength:2000}},
@@ -72,7 +74,7 @@ export function deliverySpecification(
             "method",
           ],
     },
-    accepted_evidence: chain
+    accepted_evidence: (chain||risk)
       ? [
           "finalized_block",
           "account_state",
@@ -80,7 +82,7 @@ export function deliverySpecification(
           "finalized_transaction",
         ]
       : ["customer_supplied_snapshot"],
-    freshness_seconds: chain ? 120 : 600,
+    freshness_seconds: (chain||risk) ? 120 : 600,
     execution_window_seconds: 600,
     maximum_provider_attempts:5,
     maximum_inference_requests_per_job:1,
@@ -147,7 +149,8 @@ export function validatePrepared(
   )
     throw Error("Preparation deadline exceeded");
   validateServiceInput(c.metadata.kind, c.input);
-  if (isAgentKind(c.metadata.kind))
+  if(c.metadata.kind===RISK_KIND)verifyRiskReport(envelope.report,`${c.id}:${c.cycle}`,riskInput(c.input),at);
+  else if (isAgentKind(c.metadata.kind))
     verifyChainReport(envelope.report, c.metadata.kind);
   else verifyReport(envelope.report);
   if (c.metadata.analysis_mode === "groq")
@@ -158,14 +161,14 @@ export function validatePrepared(
     new Set(r.metrics.map((m: any) => m.label)).size !== r.metrics.length
   )
     throw Error("Duplicate report metric labels");
-  if (
+  if (c.metadata.kind!==RISK_KIND&&(
     r.summary.length > 2000 ||
     r.findings.length > 20 ||
     r.recommendations.length > 20 ||
     [...r.findings, ...r.recommendations].some(
       (x: unknown) => typeof x !== "string" || x.length > 2000,
     )
-  )
+  ))
     throw Error("Report structure exceeds declared bounds");
   return {
     status: "STRUCTURE_VALID" as VerificationStatus,
@@ -193,7 +196,17 @@ export async function validateDeliveryEvidence(
     r = envelope.report,
     input = c.input as any,
     refs: any[] = [];
-  if (isAgentKind(c.metadata.kind)) {
+  if(c.metadata.kind===RISK_KIND){
+    for(const [which,snapshot] of [['current',r.investigation.current],['baseline',r.investigation.baseline]] as const){
+      if(!snapshot)continue;
+      const block=await client.viewBlock({blockId:snapshot.block_hash});if(block.header.hash!==snapshot.block_hash||block.header.height!==snapshot.block_height)throw Error('Risk evidence block mismatch');
+      const time=Number(BigInt(block.header.timestamp_nanosec)/1000000n);if(which==='current'){if(at-time>c.spec.freshness_seconds*1000||time>at+5000)throw Error('Risk evidence stale');verification.valid_until=new Date(Math.min(Date.parse(verification.valid_until),time+c.spec.freshness_seconds*1000)).toISOString();}
+      const state=await client.viewAccount({accountId:input.account_id,blockQuery:{blockId:snapshot.block_hash}});if(codeIdentity(state).hash!==snapshot.accounts[0].code_hash)throw Error('Risk contract evidence mismatch');
+      const keys:any=await client.sendJsonRpc('query',{request_type:'view_access_key_list',account_id:input.account_id,block_id:snapshot.block_hash});if(!Array.isArray(keys.keys))throw Error('Risk permission evidence missing');
+      const clean=JSON.parse(JSON.stringify(keys.keys,(_k,v)=>typeof v==='bigint'?v.toString():v)).map((k:any)=>({public_key:k.public_key,permission:k.access_key.permission})).sort((a:any,b:any)=>a.public_key.localeCompare(b.public_key));
+      if(digest(clean)!==digest(snapshot.accounts[0].keys))throw Error('Risk permission evidence mismatch');refs.push({type:'risk_snapshot',reference:snapshot.block_hash,account:input.account_id,baseline:which==='baseline',height:snapshot.block_height});
+    }
+  }else if (isAgentKind(c.metadata.kind)) {
     const source = r.source;
     if (source.network !== config.network)
       throw Error("Evidence network mismatch");

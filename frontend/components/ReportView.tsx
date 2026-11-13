@@ -1,3 +1,4 @@
+import RiskReportView from "./RiskReportView";
 import { near } from "@/lib/near";
 export type ServiceReport = {
   explanation?: {provider: string; model: string; summary: string; next_steps: string[]; disclosure: string};
@@ -27,6 +28,7 @@ function readableNear(value: string) {
   return fraction.length > 6 ? `≈ ${whole}.${fraction.slice(0, 6)}` : full;
 }
 export default function ReportView({ report: r }: { report: ServiceReport }) {
+  if(r.kind==="near-contract-risk-analyst-v1")return <RiskReportView report={r}/>;
   return (
     <div className="report">
       {r.metrics ? (
