@@ -1,10 +1,11 @@
 /** Explicit local-model evaluation. No remote inference, signing keys or financial operations. */
 import 'dotenv/config';import {readFile,writeFile} from 'node:fs/promises';import {resolve} from 'node:path';import assert from 'node:assert/strict';
-import {riskCases} from './risk-cases.js';import {investigate,explainRisk,riskReport,verifyRiskReport,LOCAL_MODEL,LOCAL_MODEL_REVISION} from './risk-analyst.js';import {digest} from './core.js';import {db,migrate} from './db.js';
+import {riskCases} from './risk-cases.js';import {investigate,explainRisk,riskReport,verifyRiskReport,riskAvailability,LOCAL_MODEL,LOCAL_MODEL_REVISION} from './risk-analyst.js';import {digest} from './core.js';import {db,migrate} from './db.js';
 if(process.env.ACCORD_LOCAL_AI_EVALUATE!=='1')throw Error('Set ACCORD_LOCAL_AI_EVALUATE=1 for bounded loopback inference');
 const file=resolve(import.meta.dirname,'../../../docs/reliability/ai-evaluation.json');
 let result:any;try{result=JSON.parse(await readFile(file,'utf8'));assert.equal(result.model_revision,LOCAL_MODEL_REVISION);}catch(e:any){if(e.code!=='ENOENT')throw e;result={schema_version:1,model:LOCAL_MODEL,model_revision:LOCAL_MODEL_REVISION,labels:'Agent-authored controlled expectations; HUMAN REVIEW PENDING',production_readiness:false,source_digest:digest(await readFile(new URL('risk-analyst.ts',import.meta.url),'utf8')),cases:[],started_at:new Date().toISOString()};}
 await migrate();
+if(!(await riskAvailability()).local_risk_available){await db.end();throw Error("Local model must be reachable before starting the benchmark; no inference reserved");}
 try{for(const base of riskCases()){
  if(result.cases.some((c:any)=>c.id===base.id))continue;
  const c=riskCases().find(v=>v.id===base.id)!,started=Date.now();let raw:any;
