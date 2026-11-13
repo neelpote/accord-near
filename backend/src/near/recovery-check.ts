@@ -60,7 +60,7 @@ const proxy = http.createServer(async (req, res) => {
   }
   const response = await fetch(realProvider + req.url, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", "x-accord-time":String(req.headers["x-accord-time"]),"x-accord-auth":String(req.headers["x-accord-auth"]) },
     body,
   });
   const result = await response.json();

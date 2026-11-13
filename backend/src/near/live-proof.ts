@@ -1,3 +1,4 @@
+import {providerHeaders} from "./execution.js";
 /** Explicit testnet acceptance run. Uses ONLY dedicated developer fixtures, never customer keys. */
 import "dotenv/config";
 import assert from "node:assert/strict";
@@ -11,6 +12,7 @@ import { tick } from "./worker.js";
 import { db } from "./db.js";
 import { config, view, type Subscription, type Receipt } from "./config.js";
 const root = resolve(import.meta.dirname, "../../..");
+if(process.env.ACCORD_EXECUTION_LIVE==="1")process.env.ACCORD_PROVIDER_SECRET=(await readFile(resolve(root,".tools/reliability-provider-secret"),"utf8")).trim();
 if (
   config.network !== "testnet" ||
   (await new JsonRpcProvider({ url: config.rpc }).getNetworkId()) !== "testnet"
@@ -236,6 +238,7 @@ for (let i = 0; i < 20; i++) {
   } catch {}
   await new Promise((r) => setTimeout(r, 1000));
 }
+try {
 const activation = await request(
   "/subscriptions",
   { subscription_id: subId, provision_id: d.provision_id, input },
@@ -245,6 +248,14 @@ assert.equal(activation.r.status, 200, JSON.stringify(activation.value));
 check(
   "Finite agreement funded and charge-only delegate installed; API verified both",
 );
+await tick();
+assert.equal(await view('get_receipt',{subscription_id:subId,cycle:0}),null);
+const execution=(await request(`/services/${serviceId}/execution`)).value;
+const approval=await request(`/subscriptions/${subId}/execution`,{approve:true,identity_hash:execution.identity.hash},buyerCookie);
+assert.equal(approval.r.status,200,JSON.stringify(approval.value));
+await request(`/subscriptions/${subId}/execution`,{paused:true},buyerCookie);await tick();assert.equal(await view('get_receipt',{subscription_id:subId,cycle:0}),null);
+await request(`/subscriptions/${subId}/execution`,{approve:true,identity_hash:execution.identity.hash},buyerCookie);
+check('Unapproved and owner-paused jobs cannot charge; exact owner identity approval resumes work');
 const falseProof = await fetch(config.provider + "/deliver", {
   method: "POST",
   headers: { "content-type": "application/json" },
@@ -255,8 +266,8 @@ const falseProof = await fetch(config.provider + "/deliver", {
     receipt: { status: "SUCCESS" },
   }),
 });
-assert.equal(falseProof.status, 402);
-check("Browser-supplied success receipt cannot unlock an unpaid report");
+assert.equal(falseProof.status, 401);
+check("Unauthenticated provider request cannot unlock an unpaid report");
 await Promise.all([tick(), tick()]);
 let rows = (
   await db.query("SELECT * FROM accord_cycles WHERE subscription_id=$1", [
@@ -456,8 +467,14 @@ evidence.finished_at = new Date().toISOString();
 evidence.input_disclosure =
   "Illustrative user-supplied portfolio snapshot; deterministic report, no live oracle or AI inference.";
 await writeFile(
-  resolve(root, "docs/testnet-proof.json"),
+  resolve(root, process.env.ACCORD_EXECUTION_LIVE==="1"?"docs/reliability/phase1-testnet.json":"docs/testnet-proof.json"),
   JSON.stringify(evidence, null, 2) + "\n",
 );
 console.log("TESTNET ACCEPTANCE PASSED", subId);
-await db.end();
+}finally{
+  const current=await view<Subscription>('get_subscription',{subscription_id:subId});
+  if(current.active)await buyer.callFunction({contractId:config.contract,methodName:'cancel',args:{subscription_id:subId},deposit:1n,gas:30000000000000n});
+  const keys=await rpc.viewAccessKeyList({accountId:buyer.accountId,finalityQuery:{finality:'final'}});
+  if(keys.keys.some(k=>k.public_key===d.public_key))await buyer.deleteKey(d.public_key);
+  await db.end();
+}

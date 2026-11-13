@@ -528,4 +528,34 @@ mod tests {
         assert_eq!(c.get_balance(account("alice.testnet")).available.0, 200);
         assert_eq!(c.get_balance(account("alice.testnet")).pending.0, 0);
     }
+    #[test]
+    fn immutable_service_fixes_amount_and_provider() {
+        let mut c = setup();
+        context("alice.testnet", 0, SECOND);
+        let receipt = c.charge(U64(0), 0, "c".repeat(64));
+        assert_eq!(receipt.amount.0, 100);
+        assert_eq!(receipt.provider, account("provider.testnet"));
+        assert_eq!(c.get_balance(account("alice.testnet")).earned.0, 0);
+    }
+    #[test]
+    #[should_panic(expected = "1 yoctoNEAR")]
+    fn zero_deposit_delegate_cannot_cancel() {
+        let mut c = setup();
+        context("alice.testnet", 0, SECOND);
+        c.cancel(U64(0));
+    }
+    #[test]
+    #[should_panic(expected = "1 yoctoNEAR")]
+    fn zero_deposit_delegate_cannot_withdraw() {
+        let mut c = setup();
+        context("alice.testnet", 0, SECOND);
+        c.withdraw(U128(1), false).detach();
+    }
+    #[test]
+    #[should_panic(expected = "Not owner")]
+    fn another_customer_cannot_cancel() {
+        let mut c = setup();
+        context("attacker.testnet", 1, SECOND);
+        c.cancel(U64(0));
+    }
 }

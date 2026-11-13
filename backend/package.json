@@ -35,7 +35,8 @@
     "near:demo:attack": "tsx src/near/counterparty-attack.ts",
     "near:proof:security": "tsx src/near/counterparty-live.ts",
     "near:demo:causal": "tsx src/near/causal-attack.ts",
-    "near:capture:causal": "tsx src/near/capture-causal-agent.ts"
+    "near:capture:causal": "tsx src/near/capture-causal-agent.ts",
+    "near:test:execution": "tsx src/near/execution-check.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",
