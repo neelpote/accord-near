@@ -115,6 +115,8 @@ const sample = JSON.stringify(
 );
 export default function Home() {
   const [selectedSpecHash,setSelectedSpecHash]=useState<string>();
+  const [creatorProfile,setCreatorProfile]=useState<{approved:boolean;external:boolean;provider_url?:string;message?:string}>();
+  const [creatorVersion,setCreatorVersion]=useState('1.0.0'),[creatorBuild,setCreatorBuild]=useState(''),[creatorSchema,setCreatorSchema]=useState(JSON.stringify({type:'object',properties:{text:{type:'string'}},required:['text'],additionalProperties:false},null,2)),[creatorExample,setCreatorExample]=useState(JSON.stringify({text:'Review this release: TODO document the breaking API change.'},null,2));
   const serviceCache = useRef(new Map<string, Service>());
   const [config, setConfig] = useState<Config>(),
     [account, setAccount] = useState(""),
@@ -149,6 +151,11 @@ export default function Home() {
     const form=document.getElementById("service-terms");
     form?.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches||document.documentElement.dataset.motion==="paused"?"auto":"smooth",block:"start"});
   },[selected]);
+  useEffect(()=>{
+    let active=true;setCreatorProfile(undefined);if(!creator||!account)return;
+    api('/creators/me').then(p=>{if(!active)return;setCreatorProfile(p);if(p.approved&&p.external){setCreatorKind('creator-report-v1');setAnalysisMode('external');setName('My hosted agent');setDescription('A report prepared by my independently hosted agent. Output quality is not independently verified.');}}).catch(e=>{if(active)setError(e.message);});
+    return()=>{active=false;};
+  },[creator,account]);
   async function refresh(c = config) {
     if (!c) return;
     const [rows, examples] = await Promise.all([
@@ -369,6 +376,7 @@ export default function Home() {
   }
   async function publish() {
     if (!config) throw new Error("Configuration unavailable");
+    if(!creatorProfile?.approved)throw Error("Creator approval is required before any registration payment");
     if (!/^\d+(\.\d{1,24})?$/.test(price))
       throw new Error("Use a positive NEAR amount with at most 24 decimals");
     if (analysisMode === "groq") {
@@ -385,9 +393,12 @@ export default function Home() {
       ...(agentTypes.find((d) => d.kind === creatorKind) ?? {}),
       name,
       description,
-      provider_url: config.provider_url,
+      provider_url: creatorProfile.external?creatorProfile.provider_url:config.provider_url,
       analysis_mode: analysisMode,
+      ...(creatorKind==='creator-report-v1'?{agent_version:creatorVersion,build_digest:creatorBuild,input_schema:JSON.parse(creatorSchema),input_example:JSON.parse(creatorExample),input_label:'Creator-defined input · JSON',category:'Independent creator agent'}:{})
     };
+    const preflight=await api('/services/preflight',{metadata});
+    if(!preflight.approved||preflight.metadata_hash!==await digest(metadata))throw Error('Creator terms changed before registration');
     await call(
       "register_service",
       {
@@ -535,10 +546,9 @@ export default function Home() {
           <section className="panel">
             <h2>Register a service</h2>
             <p>
-              Sign with the account operated by the independent provider. This
-              provider supports five live NEAR agent types and the portfolio
-              snapshot service.
+              Approved creators can publish an agent running on their own server. The creator wallet, endpoint and report contract are checked before registration costs are requested.
             </p>
+            <p className="caption">{creatorProfile?(creatorProfile.approved?'Approved provider endpoint: '+creatorProfile.provider_url:creatorProfile.message):'Checking creator approval…'}</p>
             <div className="form-grid">
               <label>
                 Agent type
@@ -547,7 +557,7 @@ export default function Home() {
                   onChange={(e) => {
                     const kind = e.target.value;
                     setCreatorKind(kind);
-                    setAnalysisMode(kind==="near-contract-risk-analyst-v1"?"local-llm":"deterministic");
+                    setAnalysisMode(kind==="creator-report-v1"?"external":kind==="near-contract-risk-analyst-v1"?"local-llm":"deterministic");
                     const d = agentTypes.find((x) => x.kind === kind);
                     if (d) {
                       setName(d.name);
@@ -555,11 +565,12 @@ export default function Home() {
                     }
                   }}
                 >
-                  <option value="portfolio-concentration-v1">
+                  <option value="creator-report-v1" disabled={!creatorProfile?.external}>My independently hosted agent</option>
+                  <option value="portfolio-concentration-v1" disabled={creatorProfile?.external}>
                     Portfolio concentration
                   </option>
                   {agentTypes.map((d) => (
-                    <option value={d.kind} key={d.kind}>
+                    <option value={d.kind} key={d.kind} disabled={creatorProfile?.external}>
                       {d.name}
                     </option>
                   ))}
@@ -594,13 +605,14 @@ export default function Home() {
                   value={analysisMode}
                   onChange={(e) => setAnalysisMode(e.target.value)}
                 >
-                  <option value="deterministic" disabled={creatorKind==="near-contract-risk-analyst-v1"}>
+                  <option value="deterministic" disabled={creatorKind==="near-contract-risk-analyst-v1"||creatorKind==="creator-report-v1"}>
                     Rule-based report
                   </option>
                   <option value="groq" disabled={!creatorKind.startsWith("near-")||creatorKind==="near-contract-risk-analyst-v1"}>
                     Live chain evidence + Groq explanation
                   </option>
                   <option value="local-llm" disabled={creatorKind!=="near-contract-risk-analyst-v1"}>Contract evidence + local AI risk analyst</option>
+                  <option value="external" disabled={creatorKind!=="creator-report-v1"}>Creator-hosted execution</option>
                   <option value="near-ai-cloud" disabled>
                     NEAR AI Cloud · awaiting credits
                   </option>
@@ -617,12 +629,19 @@ export default function Home() {
                 />
               </label>
             </div>
+            {creatorKind==='creator-report-v1'&&<div className="form-grid">
+              <label>Agent version<input value={creatorVersion} onChange={e=>setCreatorVersion(e.target.value)}/></label>
+              <label>Declared build SHA-256<input value={creatorBuild} onChange={e=>setCreatorBuild(e.target.value)} placeholder="64 lowercase hexadecimal characters"/></label>
+              <label>Input schema · JSON<textarea value={creatorSchema} onChange={e=>setCreatorSchema(e.target.value)} rows={8}/></label>
+              <label>Example input · JSON<textarea value={creatorExample} onChange={e=>setCreatorExample(e.target.value)} rows={5}/></label>
+              <p className="caption">Hackathon protocol: 1–8 required string, integer or boolean fields. Your endpoint returns summary, findings and recommendations. The build digest is your declaration, not runtime attestation. Never include wallet keys.</p>
+            </div>}
             <p className="caption">
               Registration retains 0.02048 test NEAR for storage, plus wallet
               gas. Terms become immutable.
             </p>
             <button
-              disabled={busy || !account}
+              disabled={busy || !account||!creatorProfile?.approved}
               onClick={() => void run(publish)}
             >
               Approve service registration
@@ -647,6 +666,7 @@ export default function Home() {
                 </p>
                 <h3>{s.service.name}</h3></div>
                 <div className="service-description"><p>{s.metadata.description}</p>
+                {s.metadata.kind === "creator-report-v1" && <p className="caption">Independently hosted creator agent. Accord verifies provider, agreed input, output format and payment integrity; report quality remains unverified.</p>}
                 {s.metadata.analysis_mode === "local-llm" && <p className="caption">Local AI explains exact code/key observations. No TEE, vulnerability verdict or automatic transactions.</p>}
                 {s.metadata.analysis_mode === "groq" && <p className="caption">Groq explains public chain evidence. No private inference or automatic remediation.</p>}
                 {s.metadata.analysis_mode === "near-ai-cloud" && (

@@ -1,6 +1,7 @@
 import RiskReportView from "./RiskReportView";
 import { near } from "@/lib/near";
 export type ServiceReport = {
+  jobId?:string; generatedAt?:string;
   explanation?: {provider: string; model: string; summary: string; next_steps: string[]; disclosure: string};
   risk_score?: number;
   risk_level?: string;
@@ -28,6 +29,7 @@ function readableNear(value: string) {
   return fraction.length > 6 ? `≈ ${whole}.${fraction.slice(0, 6)}` : full;
 }
 export default function ReportView({ report: r }: { report: ServiceReport }) {
+  if(r.kind==='creator-report-v1')return <section className="report risk-report" aria-label="Creator agent report"><h4>Creator agent report</h4><p>{r.summary}</p><ul>{r.findings.map((f,i)=><li key={i}>{f}</li>)}</ul><h5>Suggested next steps</h5><ul>{r.recommendations.map((f,i)=><li key={i}>{f}</li>)}</ul><p>Job {r.jobId} · generated {r.generatedAt}</p><p>Prepared by an independent creator. Output structure and payment integrity do not establish factual correctness or service quality.</p></section>;
   if(r.kind==="near-contract-risk-analyst-v1")return <RiskReportView report={r}/>;
   return (
     <div className="report">
