@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { test } from "node:test";
@@ -30,4 +31,10 @@ test("Vercel services route API requests before Next without a loopback rewrite"
   const result = config({ VERCEL: "1", ACCORD_VERCEL_SERVICES: "true" });
   assert.equal(result.status, 0, result.stderr);
   assert.deepEqual(JSON.parse(result.stdout), []);
+});
+
+
+test("Git pushes cannot implicitly deploy the unreviewed runtime", () => {
+  const project=JSON.parse(readFileSync(new URL('../../vercel.json',import.meta.url),'utf8'));
+  assert.equal(project.git.deploymentEnabled,false);
 });

@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": { "deploymentEnabled": false },
   "services": {
     "web": { "root": "frontend/", "framework": "nextjs" },
     "api": { "root": "backend/", "runtime": "container", "entrypoint": "Dockerfile#hosted-api" }

@@ -96,3 +96,7 @@ Compared with `24ead06044a946087213190c8722879771f70565`. Inventory prepared at 
 ## Root documents
 
 - `README.md`
+
+## Publication safety follow-up
+
+The later publication adds or updates `backend/src/near/execution-check.ts`, `frontend/tests/deployment.test.mjs`, `vercel.json` and [PUBLISHING.md](PUBLISHING.md). The fixture is independent of local `.env`, the repository has an explicit Git deployment guard, and the publication log records the unintended deployment, Git disconnection and restoration of the prior production source.

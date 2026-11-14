@@ -1,6 +1,6 @@
 # Three-priority reliability report
 
-**Later publication:** the code was subsequently pushed at the owner’s request. See [PUBLISHING.md](PUBLISHING.md) for ordered pushes and the clean-runner fixture correction. The report below records the pre-publication engineering checkpoint; no deployment was performed.
+**Later publication:** the code was subsequently pushed at the owner’s request. See [PUBLISHING.md](PUBLISHING.md) for ordered pushes and the clean-runner fixture correction and the unintended automatic deployment/restoration. The report below records the earlier engineering checkpoint. The previous production source is restored; the new runtime is not currently deployed.
 
 Scope: local implementation on top of `24ead06044a946087213190c8722879771f70565`. No push or production deployment. This is an engineering evidence report, not independent certification.
 

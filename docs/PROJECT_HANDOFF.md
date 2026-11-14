@@ -1,6 +1,6 @@
 # Accord: project context, architecture and submission audit
 
-**14 November local extension:** [reliability/FINAL.md](reliability/FINAL.md) is the current report for the new security, delivery and experimental AI work. Those commits were subsequently pushed with automatic deployment disabled; see [publication status](reliability/PUBLISHING.md). They remain undeployed; the dated deployed-baseline audit below remains historical context. Full AI acceptance is still blocked by semantic quality and missing human review.
+**14 November local extension:** [reliability/FINAL.md](reliability/FINAL.md) is the current report for the new security, delivery and experimental AI work. Those commits were subsequently pushed; Vercel unexpectedly auto-deployed them, then the previous production release was restored and the Git trigger disconnected. See [publication status](reliability/PUBLISHING.md). The new runtime is not currently deployed; the dated deployed-baseline audit below remains historical context. Full AI acceptance is still blocked by semantic quality and missing human review.
 
 **Audit date:** 12 November 2026. **Application snapshot reviewed:** `519f83e7257b59849054e9bb460c39b48051ed53`, public `neelpote/accord-near`, branch `main`. This document is the current handoff and documentation index. Historical plans and dated evidence remain useful, but they do not override this description of the running application.
 
