@@ -18,8 +18,10 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
   let cleanupId='',cleanupKey='';
   const started = Date.now(),
     videoEvents: { event: string; elapsed_ms: number }[] = [];
-  const mark = (event: string) =>
+  const mark = (event: string) => {
     videoEvents.push({ event, elapsed_ms: Date.now() - started });
+    console.log("WALLET",event);
+  };
   const root = resolve(process.cwd(), "..");
   const key = JSON.parse(
     await readFile(resolve(root, ".near-credentials/buyer.json"), "utf8"),
@@ -184,7 +186,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
         }),
       );
   try{
-  if(riskMode){const spec=page.getByRole("region",{name:"Service delivery specification"});await spec.getByText("Inspect service delivery specification before approval",{exact:true}).click();await expect(spec.locator("pre")).toContainText("near-contract-risk-analyst-v1");await expect(spec.locator("pre")).toContainText("model_revision");mark("frozen_spec_reviewed");}
+  if(riskMode){await page.getByLabel("Maximum reports",{exact:true}).fill("2");const spec=page.getByRole("region",{name:"Service delivery specification"});await spec.getByText("Inspect service delivery specification before approval",{exact:true}).click();await expect(spec.locator("pre")).toContainText("near-contract-risk-analyst-v1");await expect(spec.locator("pre")).toContainText("model_revision");mark("frozen_spec_reviewed");}
   mark("fund_agreement");
   await page
     .getByRole("button", { name: "Approve and fund agreement" })
@@ -206,7 +208,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
       exact: true,
     }),
   });
-  if(riskMode){await expect(agreement.locator(".eyebrow").first()).toHaveText("Smart Contract Risk Analyst");await agreement.getByRole("button",{name:"Approve this execution identity"}).click();}
+  if(riskMode){await expect(agreement.getByRole("heading",{name:`Agreement #${pending.subscription_id}`,exact:true})).toBeVisible({timeout:90000});await expect(agreement.locator(".eyebrow").first()).toHaveText("Smart Contract Risk Analyst");await agreement.getByRole("button",{name:"Approve this execution identity"}).click();}
   // A warning needs one owner-fixture review; an already-allowed payment can deliver directly.
   const approval = page
     .locator("#security article")
@@ -316,6 +318,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
         origin: process.env.ACCORD_BASE_URL || "http://localhost:3000",
         contract: config.contract,
         subscription_id: pending.subscription_id,
+        approved_cycle_limit:riskMode?2:3,
         exact_security_warning_approved: securityWarningApproved,
         ...(riskMode?{delegate_key:pending.public_key,paid_cycles:await page.evaluate(async(id)=>{const rows=await (await fetch("/api/near/subscriptions")).json();return rows.find((s:any)=>s.id===id).cycles.map((c:any)=>({cycle:c.cycle,state:c.state,artifact_hash:c.artifact_hash,receipt:c.receipt,verification:c.verification,payment_tx:c.payment_tx,delivered_at:c.delivered_at}));},pending.subscription_id)}:{}),
         video_events: videoEvents,
