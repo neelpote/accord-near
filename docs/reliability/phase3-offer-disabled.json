@@ -1,0 +1,8 @@
+{
+  "network": "testnet",
+  "service_id": "9",
+  "provider": "provider.accord-dev-261110.testnet",
+  "enabled": false,
+  "reason": "Experimental AI semantic quality/human review gate remains unaccepted; stop new execution after fixture acceptance",
+  "completed_at": "2026-11-14T02:02:42.191Z"
+}

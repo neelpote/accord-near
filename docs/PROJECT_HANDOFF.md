@@ -1,5 +1,7 @@
 # Accord: project context, architecture and submission audit
 
+**14 November local extension:** [reliability/FINAL.md](reliability/FINAL.md) is the current report for the new security, delivery and experimental AI work. Those commits are unpushed and undeployed; the dated deployed-baseline audit below remains historical context. Full AI acceptance is still blocked by semantic quality and missing human review.
+
 **Audit date:** 12 November 2026. **Application snapshot reviewed:** `519f83e7257b59849054e9bb460c39b48051ed53`, public `neelpote/accord-near`, branch `main`. This document is the current handoff and documentation index. Historical plans and dated evidence remain useful, but they do not override this description of the running application.
 
 **12 November verdict (superseded by the checkpoint below):** the native NEAR architecture is appropriate for the owner's testnet-only requirement and the Security track. The core security/payment path has real implementation and testnet evidence. It is not an independently audited production system, and the final hackathon submission package is incomplete. The adversarial-output demo proves signer refusal; it does not prove that an agent consumed a malicious prompt and changed its behavior. Do not call that stricter demonstration complete.
@@ -350,7 +352,7 @@ Fresh hosted checks: `/health` and `/ready` both returned HTTP 200/testnet after
 
 ### Remaining work before an unqualified submission-ready claim
 
-1. **Completed 13 November: strengthen the causal attack demo.** Historical gap: or clearly present the existing one as an adversarial signing-boundary fixture. Do not claim a live prompt-injected agent was demonstrated. Prove the valid baseline can execute, so unrelated agreement mismatch/cancellation cannot be the sole reason an attack would fail.
+1. **Completed 13 November: causal attack/control demonstration.** Actual captures, funded control agreement 31 and blocked agreement 32 resolve the original 12 November gap. The deliberately vulnerable reference planner is separate from the production deterministic worker.
 2. **Security walkthrough:** see the current film and review in SECURITY_WALKTHROUGH.md. Historical brief: show a concrete payment proposal, evidence, warning approval, resulting receipt/report and denied attack. Existing videos of older portfolio/monitoring flows are historical assets, not the latest security demo. A concise storyline is stronger than adding another unrelated feature.
 3. **Completed 13 November: updated native/EVM opt-in harness reruns.** Historical requirement: This audit updates the test scripts to explicitly approve warnings. Typechecking those edits is not a funded rerun or real MetaMask-device certification.
 4. **Verify reproducibility from a genuinely fresh environment:** CI proves clean dependency installs and isolated tests. Full funded reproduction additionally needs dedicated testnet accounts, catalog/provider setup and ignored local fixtures. The hardcoded security acceptance script is a developer-fixture proof, not a turnkey arbitrary-wallet demo. Adapt fixture IDs explicitly before generalizing that claim.
@@ -366,7 +368,7 @@ Real customer interviews are strongly recommended to validate usefulness and the
 | Native testnet approach fits published track eligibility | High | Fresh official guide and track read |
 | Payment restrictions, wrapper and one-use warning flow exist | High | Source + isolated tests + prior real hosted receipts |
 | No possible financial/security bug | Unverified / not claimed | Tests and this source audit are not a proof of absence |
-| Prompt-injection demo literally complete | Partial | No model/agent reads the injected document |
+| Prompt-injection demo literally complete | Completed engineering checkpoint, 13 November | Actual model captures, funded control and blocked proposals are linked at the current checkpoint; not a general immunity claim |
 | General scam detection and full-chain reputation | Not implemented | Bounded indexer window and curated app registry |
 | Current third-party wallet UI behavior | Partial | Actual protocol engine proofs, incomplete device certification |
 | Continuous public uptime | Unverified | Fresh 200s plus one timeout; no SLA |
@@ -392,3 +394,7 @@ Real customer interviews are strongly recommended to validate usefulness and the
 ## Local reliability extension — pending deployment
 
 See [reliability/IMPLEMENTATION.md](reliability/IMPLEMENTATION.md) for the new phase audit, source changes and acceptance gates. Phase 1/2 local acceptance includes real testnet agreements 33/34 but does not mean the public API/provider has been rolled out. No production configuration or deployment changed. The new private protocol, additive schema and owner identity/specification consent require coordinated rollout.
+
+Phase 3 implements one Risk Analyst on that same payment path, with a pinned free local model, bounded read-only finalized snapshots, exact previous-paid-baseline binding, strict evidence/schema checks, digest-only inference audit and explicit unverified narrative quality. The small initial model was rejected after semantic inspection despite JSON success. See [AI audit/evaluation](reliability/AI.md), [human review worksheet](reliability/ai-human-review.json), [Loops-prompt review](reliability/LOOPS_REVIEW.md) and [operating/rollback guide](reliability/OPERATIONS.md). No Groq allowance was renewed, NEAR AI Cloud remains paused, and no claim of human-reviewed accuracy, validated customer value or an independent audit is made.
+
+Final local checkpoint (14 November): [FINAL.md](reliability/FINAL.md) is authoritative for this reliability extension. Agreement 35 completed recurring live local inference; agreement 38 completed the current native UI, including cancellation/key removal/exit. Actual failures and cleanup are retained rather than erased. The experimental offer, scheduler and model were disabled after testing. The 78 backend units, 13 browser regressions and all enumerated local checks passed, but human-reviewed AI correctness/usefulness, independent audit and production rollout remain unverified. The remote main branch remains at `24ead06044a946087213190c8722879771f70565`; these changes are local commits.

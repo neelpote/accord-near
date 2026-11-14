@@ -2,6 +2,8 @@
 
 Current implementation, updated 12 November 2026. Full repository/deployment context and audit: [PROJECT_HANDOFF.md](PROJECT_HANDOFF.md). Historical DAEMON_NEAR_* proposals in this directory are research alternatives, not the implemented money path.
 
+The unreleased reliability extension adds explicit execution approval, frozen service criteria, independent prepayment evidence checks and one bounded local AI risk analyst. Its updated architecture, API, migrations and rollout boundaries are in [reliability/OPERATIONS.md](reliability/OPERATIONS.md); the diagram below describes the earlier deployed baseline.
+
 ```mermaid
 flowchart LR
   W[Customer or provider testnet wallet] -->|NEP-413 signature| API[Express API]

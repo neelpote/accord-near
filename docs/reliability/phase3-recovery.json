@@ -1,0 +1,17 @@
+{
+  "kind": "Local fault injection with a pre-existing real testnet receipt; no monetary transactions submitted",
+  "subscription_id": "35",
+  "cycle": 0,
+  "checks": [
+    "Database rejects a second unresolved cycle",
+    "mismatch: paid-but-undelivered retained, artifact unchanged, no later cycle created",
+    "schema: paid-but-undelivered retained, artifact unchanged, no later cycle created",
+    "unavailable: paid-but-undelivered retained, artifact unchanged, no later cycle created",
+    "PREPARED: recovered existing receipt and exact prepared artifact without a signing key",
+    "SUBMITTING: recovered existing receipt and exact prepared artifact without a signing key",
+    "UNCERTAIN: recovered existing receipt and exact prepared artifact without a signing key",
+    "SETTLED: recovered existing receipt and exact prepared artifact without a signing key",
+    "Onchain cycle count and reserved funds unchanged throughout fault injection"
+  ],
+  "completed_at": "2026-11-14T01:35:25.503Z"
+}

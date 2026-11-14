@@ -1,0 +1,10 @@
+{
+  "network": "testnet",
+  "subscription_id": "37",
+  "reason": "UI test waited only five seconds for history rendering; no identity approved, no report payment",
+  "canceled": true,
+  "delegate_absent": true,
+  "released_reserve": "30000000000000000000000",
+  "withdrawal": "5sn6mc451g16hZ61gaxVVqQzPiwS4w34m9oQWeVVnAKV",
+  "completed_at": "2026-11-14T01:55:55.209Z"
+}

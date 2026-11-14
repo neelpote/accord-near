@@ -1,0 +1,9 @@
+{
+  "network": "testnet",
+  "purpose": "Dedicated fixture gas/deposit reservation for current wallet acceptance; not revenue or mainnet funds",
+  "from": "provider.accord-dev-261110.testnet",
+  "to": "buyer.accord-dev-261110.testnet",
+  "amount": "100000000000000000000000",
+  "transaction": "EEE7rW5sGJhAdkGderS4X8yYktDjSzHGqwBJXJEchRLo",
+  "completed_at": "2026-11-14T01:41:05.505Z"
+}

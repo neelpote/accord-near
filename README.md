@@ -6,6 +6,8 @@ A customer approves a finite agreement, funds its budget, and installs a charge-
 
 **Status:** testnet prototype. Five agents now read live NEAR testnet data: Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector and Network Pulse. They use deterministic rules and need no AI credits. The supplied-portfolio snapshot service remains available separately. NEAR AI Cloud integration is implemented and paused: TEE preflight authenticated successfully, but inference returned HTTP 402 because credits/spending limits were not configured. Live NEAR AI Cloud output is not claimed.
 
+**Unreleased reliability work:** owner-approved execution identities, frozen delivery criteria and disputes are implemented and locally/testnet tested. The single AI Risk Analyst is a local development service; human-reviewed accuracy and usefulness remain unverified. These commits are not deployed to the hosted app. See [phase evidence](docs/reliability/IMPLEMENTATION.md), [AI evaluation](docs/reliability/AI.md) and [architecture/API/rollout guide](docs/reliability/OPERATIONS.md).
+
 [Security walkthrough](docs/demo/accord-security-demo.mp4) · [Earlier testnet demo](docs/demo/accord-testnet-demo.webm) · [Verification and CI](VERIFICATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Loops review](docs/evaluations/LOOPS_REVIEW.md)
 
 [![Watch the 80-second security film](docs/demo/accord-security-poster.jpg)](docs/demo/accord-security-demo.mp4)
@@ -277,3 +279,17 @@ The agent's existing finite function-call key remains `charge`-only on one contr
 ## Reliability development (local, pending rollout)
 
 The three-priority implementation is tracked in [the phase log](docs/reliability/IMPLEMENTATION.md), [security acceptance](docs/reliability/SECURITY.md) and [delivery verification](docs/reliability/DELIVERY.md). These local changes require coordinated deployment and explicit owner execution-identity/delivery-specification approval. The public hosted application remains the previously deployed version until a rollout is authorized.
+
+
+## Local reliability acceptance — 14 November 2026
+
+These changes are **not deployed to the hosted demo**. The revised local flow adds explicit execution-identity and frozen-specification approval after installing the limited key. Security and delivery acceptance are documented; the experimental AI phase has not passed its human quality/value gate.
+
+- [Final report and remaining boundaries](docs/reliability/FINAL.md)
+- [Architecture, APIs, migrations, test commands, deployment and rollback](docs/reliability/OPERATIONS.md)
+- [Actual recurring AI testnet agreement 35](docs/reliability/phase3-testnet.json), [native wallet agreement 38](docs/reliability/phase3-wallet.json), [finalized chain readback](docs/reliability/phase3-readback.json) and [paid-artifact recovery](docs/reliability/phase3-recovery.json)
+- [22-case AI evaluation and rejected alternatives](docs/reliability/AI.md). Eleven of twelve replacement-model outputs passed mechanical checks; semantic errors remain. This is not an accuracy score.
+
+![Local retained risk report and separate delivery verification after cancellation](docs/demo/reliability-risk-verification.png)
+
+The screenshot is actual local testnet evidence, captured after cancellation/key removal with animation paused for readability. It uses a developer fixture; judges still use their own testnet wallets, with no shared credentials. The [full local app capture](docs/demo/reliability-risk-wallet.png) is also available. New AI execution, its model process and automatic scheduling were disabled after acceptance tests. Paid history remains readable. Groq's approved lifetime cap remains exhausted at six; no credit purchase or mainnet transaction was made.

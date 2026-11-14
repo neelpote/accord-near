@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-11-13T18:27:12.419Z",
+  "scope": "Read-only model-list authentication; no inference request",
+  "groq": {
+    "enabled": true,
+    "request_cap": 6,
+    "requests_used": 6,
+    "model_list_http": 200
+  },
+  "near_ai": {
+    "enabled": false,
+    "request_cap": 6,
+    "inference": "Not attempted; existing pause/credit restriction preserved",
+    "model_list_http": 200
+  }
+}

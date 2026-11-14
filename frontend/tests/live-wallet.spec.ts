@@ -7,7 +7,7 @@ import { Account, JsonRpcProvider, actions, PublicKey } from "near-api-js";
 import { signMessage } from "near-api-js/nep413";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { resolve } from "node:path";
-test("wallet sign-in → agreement → limited key → report → cancellation → exit", async ({
+test(process.env.ACCORD_RISK_SNAPSHOT_ID?"read-only wallet login and existing risk report screenshot":"wallet sign-in → agreement → limited key → report → cancellation → exit", async ({
   page,
 }) => {
   test.skip(
@@ -58,6 +58,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
     };
   });
   await page.exposeFunction("__accordFixtureSend", async (params: any) => {
+    if(process.env.ACCORD_RISK_SNAPSHOT_ID)throw Error("Read-only capture prohibits transactions");
     if (
       params.network !== "testnet" ||
       params.signerId !== buyer.accountId ||
@@ -165,6 +166,15 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
     page.getByRole("button", { name: buyer.accountId, exact: true }),
   ).toBeVisible({ timeout: 90000 });
   mark("signed_in");
+  if(process.env.ACCORD_RISK_SNAPSHOT_ID){
+    const id=process.env.ACCORD_RISK_SNAPSHOT_ID;if(!/^\d+$/.test(id))throw Error('Invalid capture agreement');
+    const pause=page.getByRole('button',{name:'Pause animations',exact:true});if(await pause.isVisible())await pause.click();
+    const card=page.locator('article.panel').filter({has:page.getByRole('heading',{name:`Agreement #${id}`,exact:true})});
+    await expect(card.getByText('Canceled',{exact:true})).toBeVisible({timeout:90000});await expect(card.getByRole('heading',{name:'Smart Contract Risk Analyst',exact:true})).toBeVisible();
+    await card.scrollIntoViewIfNeeded();await page.screenshot({path:resolve(root,'docs/demo/reliability-risk-wallet.png'),fullPage:true,animations:'disabled'});
+    await card.screenshot({path:resolve(root,'docs/demo/reliability-risk-verification.png'),animations:'disabled',style:'header, .skip-link { visibility:hidden !important; }'});mark('read_only_capture_complete');return;
+  }
+
   if(riskMode)await page.locator("article.service").filter({has:page.getByRole("heading",{name:"Smart Contract Risk Analyst",exact:true})}).getByRole("button",{name:"Choose terms →"}).click();
   else if (process.env.ACCORD_AGENT_UI === "1")
     await page

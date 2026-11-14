@@ -1,0 +1,126 @@
+{
+  "kind": "Independent read-only finalized RPC readback; no signing or inference",
+  "network": "testnet",
+  "contract": "contract.accord-dev-261110.testnet",
+  "subscription_id": "35",
+  "active": false,
+  "cycles": 2,
+  "delegate_absent": true,
+  "receipts": [
+    {
+      "subscription_id": "35",
+      "cycle": 0,
+      "provider": "provider.accord-dev-261110.testnet",
+      "amount": "10000000000000000000000",
+      "artifact_hash": "c9743aa086a310331f21d9c485c0cc2421bc348a18b1dda2eeb14a13de6f393d",
+      "paid_at_ns": "1794597587502041355"
+    },
+    {
+      "subscription_id": "35",
+      "cycle": 1,
+      "provider": "provider.accord-dev-261110.testnet",
+      "amount": "10000000000000000000000",
+      "artifact_hash": "e7176a40ac53f6f5280f21bd900d74bb9cbee403327d46f5674936f3f797769a",
+      "paid_at_ns": "1794597679217673034"
+    }
+  ],
+  "transactions": [
+    {
+      "step": "charge:0",
+      "hash": "4qAXKVM2QKsHqVB7dxiLZ2eHm3cVt7ehymfqQp5XWgYN",
+      "signer": "buyer.accord-dev-261110.testnet",
+      "final": true,
+      "all_receipts_succeeded": true
+    },
+    {
+      "step": "charge:1",
+      "hash": "H222Jgfrdt1e4RYAbtW37Dor6X5KCjRi9UpoKDE2dBpi",
+      "signer": "buyer.accord-dev-261110.testnet",
+      "final": true,
+      "all_receipts_succeeded": true
+    },
+    {
+      "step": "cancel",
+      "hash": "5RJMYLiJGZDZWb7jufwMRTiLJwPUzR2NrsghKv6M94TR",
+      "signer": "buyer.accord-dev-261110.testnet",
+      "final": true,
+      "all_receipts_succeeded": true
+    },
+    {
+      "step": "customer_exit",
+      "hash": "76zHWW9mTunX5NktDFbmSRWAoryP1csmDNxMRVDUy9HR",
+      "signer": "buyer.accord-dev-261110.testnet",
+      "final": true,
+      "all_receipts_succeeded": true
+    },
+    {
+      "step": "provider_withdrawal",
+      "hash": "AcTWggRmDrCmgK46EuvE5rpcVrXmuJmZZmppTgms6M6d",
+      "signer": "provider.accord-dev-261110.testnet",
+      "final": true,
+      "all_receipts_succeeded": true
+    }
+  ],
+  "wallet": {
+    "subscription_id": "38",
+    "active": false,
+    "delegate_absent": true,
+    "max_cycles": 2,
+    "cycles": 1,
+    "receipts": [
+      {
+        "subscription_id": "38",
+        "cycle": 0,
+        "provider": "provider.accord-dev-261110.testnet",
+        "amount": "10000000000000000000000",
+        "artifact_hash": "55394c60392c2a52d1ee9571d0957b2f0f4d1745a8128c39e315064a2f90704b",
+        "paid_at_ns": "1794621534823893885"
+      }
+    ],
+    "transactions": [
+      {
+        "method": "subscribe",
+        "hash": "2YrFDXHE53hFjMMswbq3jRRihFL7CfyQvKKVbWyXbVio",
+        "final": true,
+        "all_receipts_succeeded": true
+      },
+      {
+        "method": "AddKey",
+        "hash": "BSELqGwUiH4fHxGHtV2d6YzTAmRodDMVkhA9dJdjVA2X",
+        "final": true,
+        "all_receipts_succeeded": true
+      },
+      {
+        "method": "cancel",
+        "hash": "JLgamTNALBV3a4y5mp6NmiBYmRdN2Au8cAQBnz9fd4R",
+        "final": true,
+        "all_receipts_succeeded": true
+      },
+      {
+        "method": "DeleteKey",
+        "hash": "2S9a7vuC4xHb6vykSiNAVqgoDGDBVUV918sDtBbr8Nwf",
+        "final": true,
+        "all_receipts_succeeded": true
+      },
+      {
+        "method": "withdraw",
+        "hash": "EHaGMtN5Lx5jokZdrtEZf3bj8j2VR7rixgZ97rBYrjc8",
+        "final": true,
+        "all_receipts_succeeded": true
+      },
+      {
+        "method": "charge",
+        "hash": "CXcotzRSYgqMgG3Ss3Wi19HoYN7wDjDqnRzQNVEJgzmK",
+        "final": true,
+        "all_receipts_succeeded": true
+      }
+    ]
+  },
+  "failed_run_cleanup": {
+    "subscription_id": "37",
+    "inactive": true,
+    "zero_charges": true,
+    "delegate_absent": true
+  },
+  "checked_at": "2026-11-14T02:03:25.918Z"
+}

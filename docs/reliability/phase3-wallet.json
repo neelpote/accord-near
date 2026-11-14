@@ -1,0 +1,125 @@
+{
+  "network": "testnet",
+  "origin": "http://localhost:3100",
+  "contract": "contract.accord-dev-261110.testnet",
+  "subscription_id": "38",
+  "approved_cycle_limit": 2,
+  "exact_security_warning_approved": true,
+  "delegate_key": "ed25519:4jtfuBRQbF44i2i9YcGbNjvnGwo9vZ85MS2ZTUAuaPQA",
+  "paid_cycles": [
+    {
+      "cycle": 0,
+      "state": "DELIVERED",
+      "artifact_hash": "55394c60392c2a52d1ee9571d0957b2f0f4d1745a8128c39e315064a2f90704b",
+      "receipt": {
+        "cycle": 0,
+        "amount": "10000000000000000000000",
+        "provider": "provider.accord-dev-261110.testnet",
+        "paid_at_ns": "1794621534823893885",
+        "artifact_hash": "55394c60392c2a52d1ee9571d0957b2f0f4d1745a8128c39e315064a2f90704b",
+        "subscription_id": "38"
+      },
+      "verification": {
+        "job_id": "38:0",
+        "status": "DELIVERY_VERIFIED",
+        "evidence": [
+          {
+            "type": "risk_snapshot",
+            "height": 277592611,
+            "account": "contract.accord-dev-261110.testnet",
+            "baseline": false,
+            "reference": "GdNttctxob89KBTxjLs8AMDyrBJ2TzjZp8pB2UZrSLKw"
+          }
+        ],
+        "warnings": [
+          "Evidence and integrity checks do not establish factual correctness of every conclusion."
+        ],
+        "freshness": "Within agreed window at purchase/reference time; retained reports are historical snapshots",
+        "checked_at": "2026-11-14T01:59:05.589Z",
+        "valid_until": "2026-11-14T01:59:36.581Z",
+        "delivered_at": "2026-11-14T01:59:06.445Z",
+        "reference_at": "2026-11-14T01:58:54.823Z",
+        "schema_valid": true,
+        "evidence_valid": true,
+        "payment_confirmed": true,
+        "factual_correctness": "UNVERIFIED"
+      },
+      "payment_tx": "CXcotzRSYgqMgG3Ss3Wi19HoYN7wDjDqnRzQNVEJgzmK",
+      "delivered_at": "2026-11-14T01:59:06.455Z"
+    }
+  ],
+  "video_events": [
+    {
+      "event": "open_app",
+      "elapsed_ms": 415
+    },
+    {
+      "event": "signed_in",
+      "elapsed_ms": 4349
+    },
+    {
+      "event": "frozen_spec_reviewed",
+      "elapsed_ms": 6979
+    },
+    {
+      "event": "fund_agreement",
+      "elapsed_ms": 6979
+    },
+    {
+      "event": "agreement_funded",
+      "elapsed_ms": 13252
+    },
+    {
+      "event": "warning_visible",
+      "elapsed_ms": 34819
+    },
+    {
+      "event": "warning_approved",
+      "elapsed_ms": 34856
+    },
+    {
+      "event": "report_delivered",
+      "elapsed_ms": 116906
+    },
+    {
+      "event": "cancel_clicked",
+      "elapsed_ms": 120213
+    },
+    {
+      "event": "canceled",
+      "elapsed_ms": 124415
+    },
+    {
+      "event": "key_removed",
+      "elapsed_ms": 131377
+    },
+    {
+      "event": "withdrawal_confirmed",
+      "elapsed_ms": 138529
+    }
+  ],
+  "transactions": [
+    {
+      "method": "subscribe",
+      "hash": "2YrFDXHE53hFjMMswbq3jRRihFL7CfyQvKKVbWyXbVio"
+    },
+    {
+      "method": "AddKey",
+      "hash": "BSELqGwUiH4fHxGHtV2d6YzTAmRodDMVkhA9dJdjVA2X"
+    },
+    {
+      "method": "cancel",
+      "hash": "JLgamTNALBV3a4y5mp6NmiBYmRdN2Au8cAQBnz9fd4R"
+    },
+    {
+      "method": "DeleteKey",
+      "hash": "2S9a7vuC4xHb6vykSiNAVqgoDGDBVUV918sDtBbr8Nwf"
+    },
+    {
+      "method": "withdraw",
+      "hash": "EHaGMtN5Lx5jokZdrtEZf3bj8j2VR7rixgZ97rBYrjc8"
+    }
+  ],
+  "completed_at": "2026-11-14T01:59:34.533Z",
+  "wallet": "Test fixture through standard NEAR Connect injection API; real NEP-413 signatures and testnet transactions, no third-party wallet UI certification."
+}

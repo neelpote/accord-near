@@ -1,0 +1,324 @@
+{
+  "status": "PENDING",
+  "instructions": "A real human must inspect each expected label, observation and raw/model report; record corrections and explanation usefulness. Never infer review from an automated pass.",
+  "cases": [
+    {
+      "id": "unchanged",
+      "provisional_expected": {
+        "action": "report",
+        "types": []
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "first-observation",
+      "provisional_expected": {
+        "action": "report",
+        "types": []
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "unexpected-code",
+      "provisional_expected": {
+        "action": "report",
+        "types": [
+          "code_changed"
+        ]
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "expected-code-restored",
+      "provisional_expected": {
+        "action": "report",
+        "types": [
+          "code_changed"
+        ]
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "key-added",
+      "provisional_expected": {
+        "action": "report",
+        "types": [
+          "key_added"
+        ]
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "key-removed",
+      "provisional_expected": {
+        "action": "report",
+        "types": [
+          "key_removed"
+        ]
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "full-access-escalation",
+      "provisional_expected": {
+        "action": "report",
+        "types": [
+          "key_permission_changed"
+        ]
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "receiver-change",
+      "provisional_expected": {
+        "action": "report",
+        "types": [
+          "key_permission_changed"
+        ]
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "method-widening",
+      "provisional_expected": {
+        "action": "report",
+        "types": [
+          "key_permission_changed"
+        ]
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "allowance-increase",
+      "provisional_expected": {
+        "action": "report",
+        "types": [
+          "key_permission_changed"
+        ]
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "allowance-unlimited",
+      "provisional_expected": {
+        "action": "report",
+        "types": [
+          "key_permission_changed"
+        ]
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "method-injection",
+      "provisional_expected": {
+        "action": "report",
+        "types": [
+          "key_permission_changed"
+        ]
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "missing-account",
+      "provisional_expected": {
+        "action": "reject"
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "wrong-target",
+      "provisional_expected": {
+        "action": "reject"
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "malformed-block",
+      "provisional_expected": {
+        "action": "reject"
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "stale-evidence",
+      "provisional_expected": {
+        "action": "reject"
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "future-evidence",
+      "provisional_expected": {
+        "action": "reject"
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "no-code",
+      "provisional_expected": {
+        "action": "reject"
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "duplicate-keys",
+      "provisional_expected": {
+        "action": "reject"
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "conflicting-history",
+      "provisional_expected": {
+        "action": "reject"
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "malformed-permission",
+      "provisional_expected": {
+        "action": "reject"
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    },
+    {
+      "id": "oversized-method",
+      "provisional_expected": {
+        "action": "reject"
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "approved_expected": null,
+      "explanation_correct": null,
+      "unsupported_claims": null,
+      "value_beyond_rules": null,
+      "notes": null
+    }
+  ]
+}

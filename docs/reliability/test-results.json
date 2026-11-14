@@ -1,0 +1,1050 @@
+{
+  "generated_at": "2026-11-14T02:11:24.650963+00:00",
+  "baseline_commit": "24ead06044a946087213190c8722879771f70565",
+  "remote_main_confirmed": "24ead06044a946087213190c8722879771f70565",
+  "remote_ci_for_changes_run": false,
+  "backend_unit_count": 78,
+  "browser_regression_count": 13,
+  "full_native_wallet_passes": 1,
+  "read_only_capture_passes": 1,
+  "rust_unit_count": 15,
+  "wasm_sandbox_passes": 1,
+  "npm_audits": {
+    "backend": {
+      "info": 0,
+      "low": 3,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 3
+    },
+    "frontend": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "static_checks": {
+    "backend_types": "PASS",
+    "frontend_types": "PASS",
+    "frontend_production_build": "PASS",
+    "rust_format": "PASS",
+    "recognizable_credential_scan": "PASS; heuristic only"
+  },
+  "human_reviewed_ai_labels": 0,
+  "independent_security_audit": false,
+  "production_rollout": false,
+  "ai_quality_acceptance": "NOT ACCEPTED: semantic errors, no human labels or measured customer value",
+  "records": [
+    {
+      "name": "all five agent types produce bounded, kind-bound reports",
+      "scenario": "all five agent types produce bounded, kind-bound reports",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "agent inputs reject mainnet names, arbitrary URLs, extra fields and invalid thresholds",
+      "scenario": "agent inputs reject mainnet names, arbitrary URLs, extra fields and invalid thresholds",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "wallet reserve calculation never uses floating point or yields negative availability",
+      "scenario": "wallet reserve calculation never uses floating point or yields negative availability",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "access guard flags broad methods and unlimited allowances without claiming compromise",
+      "scenario": "access guard flags broad methods and unlimited allowances without claiming compromise",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "sentinel detects a baseline mismatch and receipt inspector identifies failed receipts",
+      "scenario": "sentinel detects a baseline mismatch and receipt inspector identifies failed receipts",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "network pulse flags stale blocks and rejects a wrong chain; RPC errors propagate without an invented report",
+      "scenario": "network pulse flags stale blocks and rejects a wrong chain; RPC errors propagate without an invented report",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "sentinel does not mistake an unresolved global reference for matching local code",
+      "scenario": "sentinel does not mistake an unresolved global reference for matching local code",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "AI output is bounded and invalid model JSON fails closed",
+      "scenario": "AI output is bounded and invalid model JSON fails closed",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "saved live causal evidence validates without inference or database access",
+      "scenario": "saved live causal evidence validates without inference or database access",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "causal planner changes only the low-trust tool document; reserves before independent calls",
+      "scenario": "causal planner changes only the low-trust tool document; reserves before independent calls",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "Ethereum implicit accounts use immutable global code identity rather than the empty local hash",
+      "scenario": "Ethereum implicit accounts use immutable global code identity rather than the empty local hash",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "input and artifact hashes are stable across property order",
+      "scenario": "input and artifact hashes are stable across property order",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects malformed holdings and mismatching totals",
+      "scenario": "rejects malformed holdings and mismatching totals",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "delegate credentials use authenticated encryption with independent nonces",
+      "scenario": "delegate credentials use authenticated encryption with independent nonces",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "provider response is rejected while streaming beyond the byte limit",
+      "scenario": "provider response is rejected while streaming beyond the byte limit",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "allow signs exactly the immutable intent; a changed destination or argument never signs",
+      "scenario": "allow signs exactly the immutable intent; a changed destination or argument never signs",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "curated block cannot be approved; pending report warns; dismissed reports do not block",
+      "scenario": "curated block cannot be approved; pending report warns; dismissed reports do not block",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "warn refuses until exact human authorization; missing RPC and stale data cannot be overridden",
+      "scenario": "warn refuses until exact human authorization; missing RPC and stale data cannot be overridden",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "fresh account, absent history, unreviewed code and first payment all have reasons; new evidence changes the binding",
+      "scenario": "fresh account, absent history, unreviewed code and first payment all have reasons; new evidence changes the binding",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "NEP-518 login requires the exact finalized wallet transaction and trusted receipt",
+      "scenario": "NEP-518 login requires the exact finalized wallet transaction and trusted receipt",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "central authorization rejects altered owners, input, service, cadence, expiry, cycles, reserve, revocation and version drift",
+      "scenario": "central authorization rejects altered owners, input, service, cadence, expiry, cycles, reserve, revocation and version drift",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "restricted key rejects full access, broadened methods, unlimited and excessive allowance",
+      "scenario": "restricted key rejects full access, broadened methods, unlimited and excessive allowance",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "provider authentication binds operation, timestamp and body; build/provider endpoint identity is explicit",
+      "scenario": "provider authentication binds operation, timestamp and body; build/provider endpoint identity is explicit",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "provider response authentication binds its originating request and exact returned artifact",
+      "scenario": "provider response authentication binds its originating request and exact returned artifact",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "fixture setup preserves existing keys and fails closed on invalid data or RPC failure",
+      "scenario": "fixture setup preserves existing keys and fails closed on invalid data or RPC failure",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "Groq preserves evidence and rejects failures without fallback",
+      "scenario": "Groq preserves evidence and rejects failures without fallback",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "incidents ignore gas allowance consumption but identify code and authority changes",
+      "scenario": "incidents ignore gas allowance consumption but identify code and authority changes",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "workspace onboarding bounds account scope and captures code and permissions at one finalized block",
+      "scenario": "workspace onboarding bounds account scope and captures code and permissions at one finalized block",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "pilot feedback records a concrete need without manufacturing validation or revenue",
+      "scenario": "pilot feedback records a concrete need without manufacturing validation or revenue",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: unchanged",
+      "scenario": "risk investigation: unchanged",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: first-observation",
+      "scenario": "risk investigation: first-observation",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: unexpected-code",
+      "scenario": "risk investigation: unexpected-code",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: expected-code-restored",
+      "scenario": "risk investigation: expected-code-restored",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: key-added",
+      "scenario": "risk investigation: key-added",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: key-removed",
+      "scenario": "risk investigation: key-removed",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: full-access-escalation",
+      "scenario": "risk investigation: full-access-escalation",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: receiver-change",
+      "scenario": "risk investigation: receiver-change",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: method-widening",
+      "scenario": "risk investigation: method-widening",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: allowance-increase",
+      "scenario": "risk investigation: allowance-increase",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: allowance-unlimited",
+      "scenario": "risk investigation: allowance-unlimited",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: method-injection",
+      "scenario": "risk investigation: method-injection",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: missing-account",
+      "scenario": "risk investigation: missing-account",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: wrong-target",
+      "scenario": "risk investigation: wrong-target",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: malformed-block",
+      "scenario": "risk investigation: malformed-block",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: stale-evidence",
+      "scenario": "risk investigation: stale-evidence",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: future-evidence",
+      "scenario": "risk investigation: future-evidence",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: no-code",
+      "scenario": "risk investigation: no-code",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: duplicate-keys",
+      "scenario": "risk investigation: duplicate-keys",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: conflicting-history",
+      "scenario": "risk investigation: conflicting-history",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: malformed-permission",
+      "scenario": "risk investigation: malformed-permission",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk investigation: oversized-method",
+      "scenario": "risk investigation: oversized-method",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk report preserves exact deterministic findings, nullable confidence and pinned attribution",
+      "scenario": "risk report preserves exact deterministic findings, nullable confidence and pinned attribution",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk prompt injection cannot invent evidence, request signing or omit findings",
+      "scenario": "risk prompt injection cannot invent evidence, request signing or omit findings",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk recurring baseline must be the exact preceding paid report",
+      "scenario": "risk recurring baseline must be the exact preceding paid report",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "local risk transport is bounded and makes one request without tools or secrets",
+      "scenario": "local risk transport is bounded and makes one request without tools or secrets",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "runtime manifest agrees with advertised model identity",
+      "scenario": "runtime manifest agrees with advertised model identity",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "historical paid reports retain their frozen model identity after a later model upgrade",
+      "scenario": "historical paid reports retain their frozen model identity after a later model upgrade",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "new full-access authority receives high review priority without claiming compromise",
+      "scenario": "new full-access authority receives high review priority without claiming compromise",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "first-observation hash mismatch is an expectation mismatch, never fabricated historical change",
+      "scenario": "first-observation hash mismatch is an expectation mismatch, never fabricated historical change",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "valid structured report retrieves exact source and remains factually unverified",
+      "scenario": "valid structured report retrieves exact source and remains factually unverified",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects missing required field",
+      "scenario": "rejects missing required field",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects incorrect field type",
+      "scenario": "rejects incorrect field type",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects wrong job",
+      "scenario": "rejects wrong job",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects wrong customer",
+      "scenario": "rejects wrong customer",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects wrong agreement",
+      "scenario": "rejects wrong agreement",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects wrong provider",
+      "scenario": "rejects wrong provider",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects wrong service",
+      "scenario": "rejects wrong service",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects wrong consent",
+      "scenario": "rejects wrong consent",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects old preparation",
+      "scenario": "rejects old preparation",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects missing schema version",
+      "scenario": "rejects missing schema version",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects duplicate output fields",
+      "scenario": "rejects duplicate output fields",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects wrong target",
+      "scenario": "rejects wrong target",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects fabricated balance",
+      "scenario": "rejects fabricated balance",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects stale observation",
+      "scenario": "rejects stale observation",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "rejects unknown block",
+      "scenario": "rejects unknown block",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "altered report hash and receipt cycle/amount/provider cannot pass delivery verification",
+      "scenario": "altered report hash and receipt cycle/amount/provider cannot pass delivery verification",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "source RPC outage never becomes evidence-valid",
+      "scenario": "source RPC outage never becomes evidence-valid",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "risk report uses independent finalized code and key evidence before payment",
+      "scenario": "risk report uses independent finalized code and key evidence before payment",
+      "expected": "All source assertions pass; negative cases must reject",
+      "actual": "PASS",
+      "level": "unit"
+    },
+    {
+      "name": "execution_delivery_ai_http",
+      "scenario": "Owner-only exact advertised identity approval; changed identity rejected",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/execution-check.ts"
+    },
+    {
+      "name": "execution_delivery_ai_http",
+      "scenario": "Authenticated provider preparation, input/identity binding, duplicate idempotency",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/execution-check.ts"
+    },
+    {
+      "name": "execution_delivery_ai_http",
+      "scenario": "Pause stops even cached preparation; paid delivery remains separate",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/execution-check.ts"
+    },
+    {
+      "name": "execution_delivery_ai_http",
+      "scenario": "Provider disable requires provider identity and cannot be overridden by customer",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/execution-check.ts"
+    },
+    {
+      "name": "execution_delivery_ai_http",
+      "scenario": "Revocation event requires finalized absent-key readback, not a browser claim",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/execution-check.ts"
+    },
+    {
+      "name": "execution_delivery_ai_http",
+      "scenario": "Job and security-event data isolated by owner",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/execution-check.ts"
+    },
+    {
+      "name": "execution_delivery_ai_http",
+      "scenario": "Delivery stages are distinct and idempotent; owner dispute/provider response preserve payment and cannot self-resolve",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/execution-check.ts"
+    },
+    {
+      "name": "execution_delivery_ai_http",
+      "scenario": "Risk analyst: one inference under duplicate HTTP requests, immutable cache, independently validated controlled evidence, malicious input rejected, outage retained without retry/fallback/payment, redacted audit outcomes",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/execution-check.ts"
+    },
+    {
+      "name": "counterparty_http",
+      "scenario": "Real HTTP ownership + hash-bound human approval, replay rejection, concurrent approval consumed once",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/counterparty-check.ts"
+    },
+    {
+      "name": "counterparty_http",
+      "scenario": "Code changes invalidate a previously approved payment",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/counterparty-check.ts"
+    },
+    {
+      "name": "counterparty_http",
+      "scenario": "Expired approval and explicit decline both stop signing",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/counterparty-check.ts"
+    },
+    {
+      "name": "counterparty_http",
+      "scenario": "Verified evidence involvement, invalid proof rejection, duplicate rejection, curator authorization, shared block enforcement, append-only moderation history and dismissal",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/counterparty-check.ts"
+    },
+    {
+      "name": "operations_http",
+      "scenario": "Authenticated fixture access, owner isolation, honest pilot summary and feedback deletion",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/operations-check.ts"
+    },
+    {
+      "name": "operations_http",
+      "scenario": "Workspace ownership, explicit hash-bound approval, repeated approval rejection, capture cooldown and concurrent three-workspace cap",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/operations-check.ts"
+    },
+    {
+      "name": "operations_http",
+      "scenario": "One incident for repeated changes, recovery and reopening, transactional notification deduplication, failed observation retains last evidence",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/operations-check.ts"
+    },
+    {
+      "name": "operations_http",
+      "scenario": "Signed real HTTP delivery to local receiver, persisted retry after 503, successful delivery and no redelivery, owner-scoped incident acknowledgement",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/operations-check.ts"
+    },
+    {
+      "name": "operations_http",
+      "scenario": "Owner-scoped consistent evidence export, artifact hash verification and bounded timeline cursor validation",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/operations-check.ts"
+    },
+    {
+      "name": "operations_http",
+      "scenario": "Paid-report linking verifies owner, account association, immutable price/provider/hash and deduplicates; disabled AI fails without payment or retries",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/operations-check.ts"
+    },
+    {
+      "name": "operations_http",
+      "scenario": "Concurrent acknowledgements stay idempotent, expired proposals fail, allowlist blocks unauthorized enrollment, timeline pagination is stable, final delivery leases fail closed",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/operations-check.ts"
+    },
+    {
+      "name": "operations_http",
+      "scenario": "Pilot metrics exclude synthetic demos and never claim revenue; confirmed workspace deletion cascades private pilot data while preserving paid agreements",
+      "expected": "All assertions describing this boundary pass",
+      "actual": "PASS",
+      "level": "real local PostgreSQL/HTTP with controlled chain/model adapters",
+      "source": "backend/src/near/operations-check.ts"
+    },
+    {
+      "name": "tests::artifact_cannot_be_replaced - should panic",
+      "scenario": "tests::artifact_cannot_be_replaced - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::early_cycle_is_rejected - should panic",
+      "scenario": "tests::early_cycle_is_rejected - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::expired_is_rejected - should panic",
+      "scenario": "tests::expired_is_rejected - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::another_customer_cannot_cancel - should panic",
+      "scenario": "tests::another_customer_cannot_cancel - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::cancel_revokes_delegate - should panic",
+      "scenario": "tests::cancel_revokes_delegate - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::failed_transfer_restores_balance_and_success_does_not",
+      "scenario": "tests::failed_transfer_restores_balance_and_success_does_not",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::overflow_is_rejected - should panic",
+      "scenario": "tests::overflow_is_rejected - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::exhausted_is_rejected - should panic",
+      "scenario": "tests::exhausted_is_rejected - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::billing_cancel_and_retrieval_conserve_budget",
+      "scenario": "tests::billing_cancel_and_retrieval_conserve_budget",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::immutable_service_fixes_amount_and_provider",
+      "scenario": "tests::immutable_service_fixes_amount_and_provider",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::wrong_key_is_rejected - should panic",
+      "scenario": "tests::wrong_key_is_rejected - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::underfunding_is_rejected - should panic",
+      "scenario": "tests::underfunding_is_rejected - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::wrong_owner_is_rejected - should panic",
+      "scenario": "tests::wrong_owner_is_rejected - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::zero_deposit_delegate_cannot_cancel - should panic",
+      "scenario": "tests::zero_deposit_delegate_cannot_cancel - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests::zero_deposit_delegate_cannot_withdraw - should panic",
+      "scenario": "tests::zero_deposit_delegate_cannot_withdraw - should panic",
+      "expected": "All Rust assertions/declared panic conditions pass",
+      "actual": "PASS",
+      "level": "Rust unit, Phase 1 checkpoint; financial source unchanged"
+    },
+    {
+      "name": "tests/delivery.spec.ts:2:1 \u203a report panel distinguishes structure, evidence, settlement and disputes without a factual verification badge",
+      "scenario": "tests/delivery.spec.ts:2:1 \u203a report panel distinguishes structure, evidence, settlement and disputes without a factual verification badge",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/design.spec.ts:20:1 \u203a agent scene, role controls and motion preferences remain usable on mobile",
+      "scenario": "tests/design.spec.ts:20:1 \u203a agent scene, role controls and motion preferences remain usable on mobile",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/design.spec.ts:92:1 \u203a WebGL-unavailable devices keep the illustration and app navigation",
+      "scenario": "tests/design.spec.ts:92:1 \u203a WebGL-unavailable devices keep the illustration and app navigation",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/execution.spec.ts:2:1 \u203a owner explicitly reviews execution identity and pauses jobs; receipt status is not overwritten",
+      "scenario": "tests/execution.spec.ts:2:1 \u203a owner explicitly reviews execution identity and pauses jobs; receipt status is not overwritten",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/risk.spec.ts:2:1 \u203a AI risk output exposes evidence and uncertainty without claiming factual verification",
+      "scenario": "tests/risk.spec.ts:2:1 \u203a AI risk output exposes evidence and uncertainty without claiming factual verification",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/risk.spec.ts:16:1 \u203a a provider-paused offer cannot open a funding form",
+      "scenario": "tests/risk.spec.ts:16:1 \u203a a provider-paused offer cannot open a funding form",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/security.spec.ts:2:1 \u203a security queue exposes exact-payment approval and never offers block override",
+      "scenario": "tests/security.spec.ts:2:1 \u203a security queue exposes exact-payment approval and never offers block override",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/smoke.spec.ts:2:1 \u203a marketplace renders real terms without horizontal overflow",
+      "scenario": "tests/smoke.spec.ts:2:1 \u203a marketplace renders real terms without horizontal overflow",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/smoke.spec.ts:45:1 \u203a each agent listing opens its own input schema",
+      "scenario": "tests/smoke.spec.ts:45:1 \u203a each agent listing opens its own input schema",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/smoke.spec.ts:166:1 \u203a application onboarding requires review before baseline approval",
+      "scenario": "tests/smoke.spec.ts:166:1 \u203a application onboarding requires review before baseline approval",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/smoke.spec.ts:214:1 \u203a financial refresh failure preserves the signed-in workspace",
+      "scenario": "tests/smoke.spec.ts:214:1 \u203a financial refresh failure preserves the signed-in workspace",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/wallet-auth.spec.ts:42:1 \u203a EVM login retries verification without another transaction or a NEP-413 request",
+      "scenario": "tests/wallet-auth.spec.ts:42:1 \u203a EVM login retries verification without another transaction or a NEP-413 request",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "tests/wallet-auth.spec.ts:57:1 \u203a native signature login remains usable when the Ethereum manifest is unavailable",
+      "scenario": "tests/wallet-auth.spec.ts:57:1 \u203a native signature login remains usable when the Ethereum manifest is unavailable",
+      "expected": "Browser assertions pass",
+      "actual": "PASS",
+      "level": "browser with controlled service/RPC fixtures"
+    },
+    {
+      "name": "recurring_risk_testnet",
+      "scenario": [
+        "NEP-413 full-access ownership verified; nonce replay rejected",
+        "Unauthenticated agreement access rejected",
+        "Cross-origin mutation rejected",
+        "Provider registration bound to real wallet/metadata; wrong owner rejected",
+        "Disabled provider offer cannot pass funding preflight; only its provider can re-enable it",
+        "Finite agreement funded and charge-only delegate installed; API verified both",
+        "Unapproved and owner-paused jobs cannot charge; exact owner identity approval resumes work",
+        "Unauthenticated provider request cannot unlock an unpaid report",
+        "Concurrent workers produced one verified credit and matching delivered report",
+        "Early cycle rejected on live testnet",
+        "Duplicate retry idempotent; delegate cancellation rejected on testnet",
+        "Second report purchased after a real 60-second testnet interval",
+        "Cancellation revoked contract authority; wallet function-call key removed",
+        "Actual customer exit and provider payout verified through callback state and wallet balances",
+        "Wrong session cannot cancel another owner agreement",
+        "Both paid deliveries have distinct structure/evidence stages, transaction references and completion timestamps; factual correctness stays unverified"
+      ],
+      "expected": "All explicitly recorded assertions succeed",
+      "actual": "PASS",
+      "level": "actual testnet + real local inference",
+      "evidence": "phase3-testnet.json"
+    },
+    {
+      "name": "risk_paid_artifact_recovery",
+      "scenario": [
+        "Database rejects a second unresolved cycle",
+        "mismatch: paid-but-undelivered retained, artifact unchanged, no later cycle created",
+        "schema: paid-but-undelivered retained, artifact unchanged, no later cycle created",
+        "unavailable: paid-but-undelivered retained, artifact unchanged, no later cycle created",
+        "PREPARED: recovered existing receipt and exact prepared artifact without a signing key",
+        "SUBMITTING: recovered existing receipt and exact prepared artifact without a signing key",
+        "UNCERTAIN: recovered existing receipt and exact prepared artifact without a signing key",
+        "SETTLED: recovered existing receipt and exact prepared artifact without a signing key",
+        "Onchain cycle count and reserved funds unchanged throughout fault injection"
+      ],
+      "expected": "All explicitly recorded assertions succeed",
+      "actual": "PASS",
+      "level": "real finalized testnet receipt + controlled HTTP faults, no signing",
+      "evidence": "phase3-recovery.json"
+    },
+    {
+      "name": "current_native_wallet",
+      "scenario": "current_native_wallet",
+      "expected": "All explicitly recorded assertions succeed",
+      "actual": "PASS",
+      "level": "actual NEAR Connect fixture signatures/testnet transactions",
+      "evidence": "phase3-wallet.json"
+    },
+    {
+      "name": "finalized_readback",
+      "scenario": "Independent read-only finalized RPC readback; no signing or inference",
+      "expected": "All explicitly recorded assertions succeed",
+      "actual": "PASS",
+      "level": "independent read-only actual RPC",
+      "evidence": "phase3-readback.json"
+    },
+    {
+      "name": "role_environment",
+      "scenario": "role_environment",
+      "expected": "Configured checks pass",
+      "actual": "PASS",
+      "evidence_scope": "Local run; sandbox/clippy at Phase 1, no subsequent financial source changes"
+    },
+    {
+      "name": "evm_auth_http",
+      "scenario": "evm_auth_http",
+      "expected": "Configured checks pass",
+      "actual": "PASS",
+      "evidence_scope": "Local run; sandbox/clippy at Phase 1, no subsequent financial source changes"
+    },
+    {
+      "name": "deployment_router",
+      "scenario": "deployment_router",
+      "expected": "Configured checks pass",
+      "actual": "PASS",
+      "evidence_scope": "Local run; sandbox/clippy at Phase 1, no subsequent financial source changes"
+    },
+    {
+      "name": "wasm_sandbox",
+      "scenario": "wasm_sandbox",
+      "expected": "Configured checks pass",
+      "actual": "PASS",
+      "evidence_scope": "Local run; sandbox/clippy at Phase 1, no subsequent financial source changes"
+    },
+    {
+      "name": "clippy",
+      "scenario": "clippy",
+      "expected": "Configured checks pass",
+      "actual": "PASS",
+      "evidence_scope": "Local run; sandbox/clippy at Phase 1, no subsequent financial source changes"
+    }
+  ],
+  "retained_failed_runs": {
+    "startup": "ai-evaluation-startup-failure.json",
+    "small_models": [
+      "ai-evaluation-initial.json",
+      "ai-evaluation-template-v1.json",
+      "ai-evaluation-small-model.json"
+    ],
+    "wallet_financial_assertions_with_trace_cleanup_failure": "phase3-wallet-36-transactions.json",
+    "wallet_history_timeout_zero_charge_cleanup": "phase3-wallet-37-cleanup.json",
+    "funding_preflight": "No activated agreement; fixture funding and smaller finite budget/gas limits recorded in AI.md"
+  }
+}

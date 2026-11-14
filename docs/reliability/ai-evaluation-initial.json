@@ -1,0 +1,594 @@
+{
+  "schema_version": 1,
+  "model": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+  "model_revision": "8b403126fc14f14cfc99bb4cfa72ecbc129ea677",
+  "labels": "Agent-authored controlled expectations; HUMAN REVIEW PENDING",
+  "production_readiness": false,
+  "cases": [
+    {
+      "id": "unchanged",
+      "expected": {
+        "action": "report",
+        "types": []
+      },
+      "human_review": "PENDING",
+      "source": "controlled NEAR-format snapshots",
+      "input": {
+        "account_id": "target.testnet",
+        "expected_code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+      },
+      "current": {
+        "block_height": 124,
+        "block_hash": "8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+        "observed_at": "2026-11-13T18:45:12.139Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+            "keys": [
+              {
+                "public_key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "permission": {
+                  "FunctionCall": {
+                    "receiver_id": "escrow.testnet",
+                    "method_names": [
+                      "charge"
+                    ],
+                    "allowance": "100"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "previous": {
+        "block_height": 123,
+        "block_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+        "observed_at": "2026-11-13T18:45:12.138Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+            "keys": [
+              {
+                "public_key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "permission": {
+                  "FunctionCall": {
+                    "receiver_id": "escrow.testnet",
+                    "method_names": [
+                      "charge"
+                    ],
+                    "allowance": "100"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "deterministic_findings": [],
+      "outcome": "model-failed",
+      "error": "Unexpected token '`', \"```json\n[\n\"... is not valid JSON",
+      "raw_model_response": {
+        "id": "chatcmpl-9113a99e-da16-4977-bb38-5a5684f7aa22",
+        "system_fingerprint": "0.32.2-0.32.4-macOS-26.5.2-arm64-arm-64bit-applegpu_g14g",
+        "object": "chat.completion",
+        "model": "default_model",
+        "created": 1794595513,
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "```json\n[\n    {\n        \"summary\": \"No findings detected\",\n        \"explanations\": [\n            \"The provided JSON contains untrusted data, which includes key method names but lacks specific details about the contract monitor's functionality or findings.\",\n            \"The JSON does not contain any information about the NEAR testnet contract monitor's specific methods, changes, or actions that would be expected to be monitored.\",\n            \"The JSON does not provide any details about the testnet environment, such as the network type (testnet) or the specific accounts involved.\",\n            \"The JSON does not include any information about the testnet's permissions, access, or the specific actions that would be monitored by a contract monitor.\"\n        ]\n    }\n]\n```"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 193,
+          "completion_tokens": 151,
+          "total_tokens": 344,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        }
+      },
+      "expected_behavior_pass": false,
+      "duration_ms": 6827
+    },
+    {
+      "id": "first-observation",
+      "expected": {
+        "action": "report",
+        "types": []
+      },
+      "human_review": "PENDING",
+      "source": "controlled NEAR-format snapshots",
+      "input": {
+        "account_id": "target.testnet",
+        "expected_code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+      },
+      "current": {
+        "block_height": 124,
+        "block_hash": "8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+        "observed_at": "2026-11-13T18:45:18.969Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+            "keys": [
+              {
+                "public_key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "permission": {
+                  "FunctionCall": {
+                    "receiver_id": "escrow.testnet",
+                    "method_names": [
+                      "charge"
+                    ],
+                    "allowance": "100"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "previous": null,
+      "deterministic_findings": [],
+      "outcome": "model-failed",
+      "error": "Unexpected token '`', \"```json\n[\n\"... is not valid JSON",
+      "raw_model_response": {
+        "id": "chatcmpl-10be52f9-19d6-4e66-a81e-654a00c936e7",
+        "system_fingerprint": "0.32.2-0.32.4-macOS-26.5.2-arm64-arm-64bit-applegpu_g14g",
+        "object": "chat.completion",
+        "model": "default_model",
+        "created": 1794595519,
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "```json\n[\n    {\n        \"change_id\": \"1\",\n        \"why_it_matters\": \"Unauthorized access to the testnet contract monitor could expose sensitive information or disrupt the network.\",\n        \"manual_check\": \"The lack of a baseline permission history makes it difficult to assess the current state of the network's permissions.\"\n    }\n]\n```"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 204,
+          "completion_tokens": 71,
+          "total_tokens": 275,
+          "prompt_tokens_details": {
+            "cached_tokens": 186
+          }
+        }
+      },
+      "expected_behavior_pass": false,
+      "duration_ms": 3549
+    },
+    {
+      "id": "unexpected-code",
+      "expected": {
+        "action": "report",
+        "types": [
+          "code_changed"
+        ]
+      },
+      "human_review": "PENDING",
+      "source": "controlled NEAR-format snapshots",
+      "input": {
+        "account_id": "target.testnet",
+        "expected_code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+      },
+      "current": {
+        "block_height": 124,
+        "block_hash": "8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+        "observed_at": "2026-11-13T18:45:22.519Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+            "keys": [
+              {
+                "public_key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "permission": {
+                  "FunctionCall": {
+                    "receiver_id": "escrow.testnet",
+                    "method_names": [
+                      "charge"
+                    ],
+                    "allowance": "100"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "previous": {
+        "block_height": 123,
+        "block_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+        "observed_at": "2026-11-13T18:45:22.518Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+            "keys": [
+              {
+                "public_key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "permission": {
+                  "FunctionCall": {
+                    "receiver_id": "escrow.testnet",
+                    "method_names": [
+                      "charge"
+                    ],
+                    "allowance": "100"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "deterministic_findings": [
+        {
+          "id": "6dedb34211fc24dec5e5b30688bc89ea62324da56a29de3779673fe4860bcd62",
+          "type": "code_changed",
+          "severity": "HIGH",
+          "account": "target.testnet",
+          "key": null,
+          "before": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+          "after": "8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ"
+        }
+      ],
+      "outcome": "model-failed",
+      "error": "Unexpected token '`', \"```json\n[\n\"... is not valid JSON",
+      "raw_model_response": {
+        "id": "chatcmpl-2dba7fdc-9df0-46d7-bad6-39bf0bb2a3ba",
+        "system_fingerprint": "0.32.2-0.32.4-macOS-26.5.2-arm64-arm-64bit-applegpu_g14g",
+        "object": "chat.completion",
+        "model": "default_model",
+        "created": 1794595523,
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "```json\n[\n    {\n        \"summary\": \"Code Changed\",\n        \"explanation\": \"The contract's code has been modified from `DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX` to `8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ`. This change is significant as it represents a modification to the contract's logic, which could have implications for its functionality and security.\",\n        \"change_id\": \"6dedb34211fc24dec5e5b30688bc89ea62324da56a29de3779673fe4860bcd62\",\n        \"why_it_matters\": \"The modified code could introduce vulnerabilities or unexpected behaviors, affecting the contract's integrity and the users' trust in the system.\",\n        \"manual_check\": \"Manual review of the modified code is recommended to assess the impact on the contract's security and functionality.\"\n    }\n]\n```"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 336,
+          "completion_tokens": 243,
+          "total_tokens": 579,
+          "prompt_tokens_details": {
+            "cached_tokens": 147
+          }
+        }
+      },
+      "expected_behavior_pass": false,
+      "duration_ms": 10651
+    },
+    {
+      "id": "expected-code-restored",
+      "expected": {
+        "action": "report",
+        "types": [
+          "code_changed"
+        ]
+      },
+      "human_review": "PENDING",
+      "source": "controlled NEAR-format snapshots",
+      "input": {
+        "account_id": "target.testnet",
+        "expected_code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+      },
+      "current": {
+        "block_height": 124,
+        "block_hash": "8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+        "observed_at": "2026-11-13T18:45:33.171Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+            "keys": [
+              {
+                "public_key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "permission": {
+                  "FunctionCall": {
+                    "receiver_id": "escrow.testnet",
+                    "method_names": [
+                      "charge"
+                    ],
+                    "allowance": "100"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "previous": {
+        "block_height": 123,
+        "block_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+        "observed_at": "2026-11-13T18:45:33.170Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+            "keys": [
+              {
+                "public_key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "permission": {
+                  "FunctionCall": {
+                    "receiver_id": "escrow.testnet",
+                    "method_names": [
+                      "charge"
+                    ],
+                    "allowance": "100"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "deterministic_findings": [
+        {
+          "id": "7cd1c2c584e975da9cd3861a37bc5be435ea3fe5fa9146a454239ed358d61272",
+          "type": "code_changed",
+          "severity": "MEDIUM",
+          "account": "target.testnet",
+          "key": null,
+          "before": "8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+          "after": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+        }
+      ],
+      "outcome": "model-failed",
+      "error": "Unexpected token '`', \"```json\n[\n\"... is not valid JSON",
+      "raw_model_response": {
+        "id": "chatcmpl-1e03a242-65d2-4c76-aa89-2874ad17323a",
+        "system_fingerprint": "0.32.2-0.32.4-macOS-26.5.2-arm64-arm-64bit-applegpu_g14g",
+        "object": "chat.completion",
+        "model": "default_model",
+        "created": 1794595534,
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "```json\n[\n    {\n        \"summary\": \"Code changed on the NEAR testnet contract\",\n        \"explanation\": \"The code has been modified from `8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ` to `DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX`. This change is not specified, so it's impossible to determine the implications without additional context.\",\n        \"change_id\": \"7cd1c2c584e975da9cd3861a37bc5be435ea3fe5fa9146a454239ed358d61272\",\n        \"why_it_matters\": \"The code change could introduce security vulnerabilities or unexpected behavior.\",\n        \"manual_check\": \"The user should review the modified code to ensure it aligns with the intended functionality and security practices.\"\n    }\n]\n```"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 340,
+          "completion_tokens": 231,
+          "total_tokens": 571,
+          "prompt_tokens_details": {
+            "cached_tokens": 150
+          }
+        }
+      },
+      "expected_behavior_pass": false,
+      "duration_ms": 8705
+    },
+    {
+      "id": "key-added",
+      "expected": {
+        "action": "report",
+        "types": [
+          "key_added"
+        ]
+      },
+      "human_review": "PENDING",
+      "source": "controlled NEAR-format snapshots",
+      "input": {
+        "account_id": "target.testnet",
+        "expected_code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+      },
+      "current": {
+        "block_height": 124,
+        "block_hash": "8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+        "observed_at": "2026-11-13T18:45:41.878Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+            "keys": [
+              {
+                "public_key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "permission": {
+                  "FunctionCall": {
+                    "receiver_id": "escrow.testnet",
+                    "method_names": [
+                      "charge"
+                    ],
+                    "allowance": "100"
+                  }
+                }
+              },
+              {
+                "public_key": "ed25519:8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+                "permission": "FullAccess"
+              }
+            ]
+          }
+        ]
+      },
+      "previous": {
+        "block_height": 123,
+        "block_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+        "observed_at": "2026-11-13T18:45:41.877Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+            "keys": [
+              {
+                "public_key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "permission": {
+                  "FunctionCall": {
+                    "receiver_id": "escrow.testnet",
+                    "method_names": [
+                      "charge"
+                    ],
+                    "allowance": "100"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "deterministic_findings": [
+        {
+          "id": "2ed74bae4d420d07bfaa835cbff5b20421ca213e31c38235f4772aef20187923",
+          "type": "key_added",
+          "severity": "MEDIUM",
+          "account": "target.testnet",
+          "key": "ed25519:8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+          "before": null,
+          "after": "FullAccess"
+        }
+      ],
+      "outcome": "model-failed",
+      "error": "Unexpected token '`', \"```json\n[\n\"... is not valid JSON",
+      "raw_model_response": {
+        "id": "chatcmpl-6f678d69-aa60-48fc-8c21-0383f6bf0777",
+        "system_fingerprint": "0.32.2-0.32.4-macOS-26.5.2-arm64-arm-64bit-applegpu_g14g",
+        "object": "chat.completion",
+        "model": "default_model",
+        "created": 1794595542,
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "```json\n[\n    {\n        \"summary\": \"Key Added to Account\",\n        \"explanation\": \"A key was added to the account 'target.testnet' with the ID '2ed74bae4d420d07bfaa835cbff5b20421ca213e31c38235f4772aef20187923'. This action grants full access to the account, which is a medium severity risk as it allows unauthorized access to the account's funds and data.\"\n    }\n]\n```"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 321,
+          "completion_tokens": 129,
+          "total_tokens": 450,
+          "prompt_tokens_details": {
+            "cached_tokens": 150
+          }
+        }
+      },
+      "expected_behavior_pass": false,
+      "duration_ms": 4725
+    },
+    {
+      "id": "key-removed",
+      "expected": {
+        "action": "report",
+        "types": [
+          "key_removed"
+        ]
+      },
+      "human_review": "PENDING",
+      "source": "controlled NEAR-format snapshots",
+      "input": {
+        "account_id": "target.testnet",
+        "expected_code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+      },
+      "current": {
+        "block_height": 124,
+        "block_hash": "8bNRddBMjQoLPBC3oDgKCUEBjNqmCZthYss5U3vuknBQ",
+        "observed_at": "2026-11-13T18:45:46.604Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+            "keys": []
+          }
+        ]
+      },
+      "previous": {
+        "block_height": 123,
+        "block_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+        "observed_at": "2026-11-13T18:45:46.603Z",
+        "accounts": [
+          {
+            "account_id": "target.testnet",
+            "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+            "keys": [
+              {
+                "public_key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "permission": {
+                  "FunctionCall": {
+                    "receiver_id": "escrow.testnet",
+                    "method_names": [
+                      "charge"
+                    ],
+                    "allowance": "100"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "deterministic_findings": [
+        {
+          "id": "e8da3b3c02c33a2e32c1d57d9d4d3f855ebe5a923dce8fd797f31941253ef15e",
+          "type": "key_removed",
+          "severity": "LOW",
+          "account": "target.testnet",
+          "key": "ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+          "before": {
+            "FunctionCall": {
+              "receiver_id": "escrow.testnet",
+              "method_names": [
+                "charge"
+              ],
+              "allowance": "100"
+            }
+          },
+          "after": null
+        }
+      ],
+      "outcome": "model-failed",
+      "error": "Unexpected token '`', \"```json\n[\n\"... is not valid JSON",
+      "raw_model_response": {
+        "id": "chatcmpl-f288b91f-a017-432a-999a-aba21a57e4f4",
+        "system_fingerprint": "0.32.2-0.32.4-macOS-26.5.2-arm64-arm-64bit-applegpu_g14g",
+        "object": "chat.completion",
+        "model": "default_model",
+        "created": 1794595547,
+        "choices": [
+          {
+            "index": 0,
+            "finish_reason": "stop",
+            "message": {
+              "role": "assistant",
+              "content": "```json\n[\n    {\n        \"summary\": \"Key removed from testnet account\",\n        \"explanation\": \"The account 'target.testnet' has lost its key 'ed25519:DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX'. This key was previously used to allow a function call to 'escrow.testnet' with a specific allowance. The removal of this key indicates that the account no longer has access to this function call.\",\n        \"why_it_matters\": \"The account's ability to execute certain functions has been revoked, which could affect its ability to interact with other contracts or services on the testnet.\",\n        \"manual_check\": \"The account's public key was removed from the testnet environment, but the exact impact on the testnet's functionality or security is not clear without further investigation.\"\n    }\n]\n```"
+            }
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 339,
+          "completion_tokens": 193,
+          "total_tokens": 532,
+          "prompt_tokens_details": {
+            "cached_tokens": 150
+          }
+        }
+      },
+      "expected_behavior_pass": false,
+      "duration_ms": 7429
+    }
+  ],
+  "started_at": "2026-11-13T18:45:13.101Z",
+  "updated_at": "2026-11-13T18:45:55.033Z",
+  "run_status": "Interrupted after repeated schema failures; retained without deleting local request usage",
+  "finished_at": "2026-11-13T18:45:55.033Z"
+}

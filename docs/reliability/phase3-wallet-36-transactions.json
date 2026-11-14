@@ -1,0 +1,125 @@
+{
+  "network": "testnet",
+  "origin": "http://localhost:3100",
+  "contract": "contract.accord-dev-261110.testnet",
+  "subscription_id": "36",
+  "exact_security_warning_approved": true,
+  "delegate_key": "ed25519:ANnKo5wvCbi27tvow6QvJvayKbmAXvJcuDeY6aLreETv",
+  "paid_cycles": [
+    {
+      "cycle": 0,
+      "state": "DELIVERED",
+      "artifact_hash": "a7cf76b86ea5517483dab61be6e9f732b2421c1ff675f556d939a921c859d5cf",
+      "receipt": {
+        "cycle": 0,
+        "amount": "10000000000000000000000",
+        "provider": "provider.accord-dev-261110.testnet",
+        "paid_at_ns": "1794620825913177084",
+        "artifact_hash": "a7cf76b86ea5517483dab61be6e9f732b2421c1ff675f556d939a921c859d5cf",
+        "subscription_id": "36"
+      },
+      "verification": {
+        "job_id": "36:0",
+        "status": "DELIVERY_VERIFIED",
+        "evidence": [
+          {
+            "type": "risk_snapshot",
+            "height": 277591422,
+            "account": "contract.accord-dev-261110.testnet",
+            "baseline": false,
+            "reference": "6oj1iekGegtYZTj73Y9fUMe9tEFLQj5WwesuK84RqJ9w"
+          }
+        ],
+        "warnings": [
+          "Evidence and integrity checks do not establish factual correctness of every conclusion."
+        ],
+        "freshness": "Within agreed window at purchase/reference time; retained reports are historical snapshots",
+        "checked_at": "2026-11-14T01:47:15.186Z",
+        "valid_until": "2026-11-14T01:47:43.363Z",
+        "delivered_at": "2026-11-14T01:47:16.172Z",
+        "reference_at": "2026-11-14T01:47:05.913Z",
+        "schema_valid": true,
+        "evidence_valid": true,
+        "payment_confirmed": true,
+        "factual_correctness": "UNVERIFIED"
+      },
+      "payment_tx": "7V4VVMiRViVadseWQ3Y9P8YFcsBb6ruCrT5x8GgEyfW3",
+      "delivered_at": "2026-11-14T01:47:16.180Z"
+    }
+  ],
+  "video_events": [
+    {
+      "event": "open_app",
+      "elapsed_ms": 510
+    },
+    {
+      "event": "signed_in",
+      "elapsed_ms": 4906
+    },
+    {
+      "event": "frozen_spec_reviewed",
+      "elapsed_ms": 6667
+    },
+    {
+      "event": "fund_agreement",
+      "elapsed_ms": 6667
+    },
+    {
+      "event": "agreement_funded",
+      "elapsed_ms": 12463
+    },
+    {
+      "event": "warning_visible",
+      "elapsed_ms": 35055
+    },
+    {
+      "event": "warning_approved",
+      "elapsed_ms": 35106
+    },
+    {
+      "event": "report_delivered",
+      "elapsed_ms": 113670
+    },
+    {
+      "event": "cancel_clicked",
+      "elapsed_ms": 117346
+    },
+    {
+      "event": "canceled",
+      "elapsed_ms": 123124
+    },
+    {
+      "event": "key_removed",
+      "elapsed_ms": 128829
+    },
+    {
+      "event": "withdrawal_confirmed",
+      "elapsed_ms": 135793
+    }
+  ],
+  "transactions": [
+    {
+      "method": "subscribe",
+      "hash": "G1uNzKn4HJPVERuQCWqjpB3C2t2d7NzLNAKMKRGX24wz"
+    },
+    {
+      "method": "AddKey",
+      "hash": "Evuq525z6LwwQvE5TjHiXCAMr4pzbXPDfAUTnS3M52iJ"
+    },
+    {
+      "method": "cancel",
+      "hash": "DUjQfqdECCzBLeYuAXd5RS9EunGz3o9r4zSkTCRDHrbs"
+    },
+    {
+      "method": "DeleteKey",
+      "hash": "FVh9ZhsCyA5TnGe3HamEheTJhueJgXZZUQDdHfn8o84j"
+    },
+    {
+      "method": "withdraw",
+      "hash": "6gBopsDzM7dcszAfnm8M7wxSp27j86Nixr3w3v8uNaHz"
+    }
+  ],
+  "completed_at": "2026-11-14T01:47:39.940Z",
+  "wallet": "Test fixture through standard NEAR Connect injection API; real NEP-413 signatures and testnet transactions, no third-party wallet UI certification.",
+  "runner_result": "Financial assertions completed; Playwright teardown failed because concurrent runs shared the default artifact directory. This is not recorded as a clean passing test."
+}

@@ -1,0 +1,13 @@
+{
+  "network": "testnet",
+  "local_request_reservations": 59,
+  "local_cap": 64,
+  "groq_lifetime_requests": 6,
+  "groq_authorized_cap": 6,
+  "risk_offer_execution_enabled": false,
+  "local_inference_disabled": true,
+  "worker_scheduling_disabled": true,
+  "model_process_stopped": true,
+  "production_changed": false,
+  "checked_at": "2026-11-14T02:05:53.371Z"
+}

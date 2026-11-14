@@ -1,0 +1,328 @@
+{
+  "network": "testnet",
+  "contract": "contract.accord-dev-261110.testnet",
+  "started_at": "2026-11-13T19:18:51.009Z",
+  "working_tree_dirty": false,
+  "code_commit_at_start": "d73952f69a588d9ddc53575f2188b4373ff470af",
+  "checks": [
+    "NEP-413 full-access ownership verified; nonce replay rejected",
+    "Unauthenticated agreement access rejected",
+    "Cross-origin mutation rejected",
+    "Provider registration bound to real wallet/metadata; wrong owner rejected",
+    "Disabled provider offer cannot pass funding preflight; only its provider can re-enable it",
+    "Finite agreement funded and charge-only delegate installed; API verified both",
+    "Unapproved and owner-paused jobs cannot charge; exact owner identity approval resumes work",
+    "Unauthenticated provider request cannot unlock an unpaid report",
+    "Concurrent workers produced one verified credit and matching delivered report",
+    "Early cycle rejected on live testnet",
+    "Duplicate retry idempotent; delegate cancellation rejected on testnet",
+    "Second report purchased after a real 60-second testnet interval",
+    "Cancellation revoked contract authority; wallet function-call key removed",
+    "Actual customer exit and provider payout verified through callback state and wallet balances",
+    "Wrong session cannot cancel another owner agreement",
+    "Both paid deliveries have distinct structure/evidence stages, transaction references and completion timestamps; factual correctness stays unverified"
+  ],
+  "transactions": [
+    {
+      "step": "cancel",
+      "hash": "5RJMYLiJGZDZWb7jufwMRTiLJwPUzR2NrsghKv6M94TR"
+    },
+    {
+      "step": "customer_exit",
+      "hash": "76zHWW9mTunX5NktDFbmSRWAoryP1csmDNxMRVDUy9HR",
+      "amount": "10000000000000000000000"
+    },
+    {
+      "step": "provider_withdrawal",
+      "hash": "AcTWggRmDrCmgK46EuvE5rpcVrXmuJmZZmppTgms6M6d",
+      "amount": "20000000000000000000000"
+    }
+  ],
+  "subscription_id": "35",
+  "service_id": "9",
+  "receipts": [
+    {
+      "subscription_id": "35",
+      "cycle": 0,
+      "provider": "provider.accord-dev-261110.testnet",
+      "amount": "10000000000000000000000",
+      "artifact_hash": "c9743aa086a310331f21d9c485c0cc2421bc348a18b1dda2eeb14a13de6f393d",
+      "paid_at_ns": "1794597587502041355"
+    },
+    {
+      "subscription_id": "35",
+      "cycle": 1,
+      "provider": "provider.accord-dev-261110.testnet",
+      "amount": "10000000000000000000000",
+      "artifact_hash": "e7176a40ac53f6f5280f21bd900d74bb9cbee403327d46f5674936f3f797769a",
+      "paid_at_ns": "1794597679217673034"
+    }
+  ],
+  "delivery_verification": [
+    {
+      "cycle": 0,
+      "verification": {
+        "job_id": "35:0",
+        "status": "DELIVERY_VERIFIED",
+        "evidence": [
+          {
+            "type": "risk_snapshot",
+            "height": 277552087,
+            "account": "contract.accord-dev-261110.testnet",
+            "baseline": false,
+            "reference": "5Xvmm2gkFnC5uvQo7TGdnSD9qRSqLSaCBot8SV5uknQP"
+          }
+        ],
+        "warnings": [
+          "Evidence and integrity checks do not establish factual correctness of every conclusion."
+        ],
+        "freshness": "Within agreed window at purchase/reference time; retained reports are historical snapshots",
+        "checked_at": "2026-11-13T19:19:52.349Z",
+        "valid_until": "2026-11-13T19:21:22.157Z",
+        "delivered_at": "2026-11-13T19:19:53.312Z",
+        "reference_at": "2026-11-13T19:19:47.502Z",
+        "schema_valid": true,
+        "evidence_valid": true,
+        "payment_confirmed": true,
+        "factual_correctness": "UNVERIFIED"
+      },
+      "delivered_at": "2026-11-13T19:19:53.319Z",
+      "payment_tx": "4qAXKVM2QKsHqVB7dxiLZ2eHm3cVt7ehymfqQp5XWgYN"
+    },
+    {
+      "cycle": 1,
+      "verification": {
+        "job_id": "35:1",
+        "status": "DELIVERY_VERIFIED",
+        "evidence": [
+          {
+            "type": "risk_snapshot",
+            "height": 277552233,
+            "account": "contract.accord-dev-261110.testnet",
+            "baseline": false,
+            "reference": "FBKUspt1UfzxHrRZqSfvfB58ULvEibjmBVvhnTKxiZro"
+          },
+          {
+            "type": "risk_snapshot",
+            "height": 277552087,
+            "account": "contract.accord-dev-261110.testnet",
+            "baseline": true,
+            "reference": "5Xvmm2gkFnC5uvQo7TGdnSD9qRSqLSaCBot8SV5uknQP"
+          }
+        ],
+        "warnings": [
+          "Evidence and integrity checks do not establish factual correctness of every conclusion."
+        ],
+        "freshness": "Within agreed window at purchase/reference time; retained reports are historical snapshots",
+        "checked_at": "2026-11-13T19:21:25.203Z",
+        "valid_until": "2026-11-13T19:22:50.001Z",
+        "delivered_at": "2026-11-13T19:21:27.226Z",
+        "reference_at": "2026-11-13T19:21:19.217Z",
+        "schema_valid": true,
+        "evidence_valid": true,
+        "payment_confirmed": true,
+        "factual_correctness": "UNVERIFIED"
+      },
+      "delivered_at": "2026-11-13T19:21:27.236Z",
+      "payment_tx": "H222Jgfrdt1e4RYAbtW37Dor6X5KCjRi9UpoKDE2dBpi"
+    }
+  ],
+  "reports": [
+    {
+      "cycle": 0,
+      "artifact_hash": "c9743aa086a310331f21d9c485c0cc2421bc348a18b1dda2eeb14a13de6f393d",
+      "report": {
+        "kind": "near-contract-risk-analyst-v1",
+        "jobId": "35:0",
+        "target": {
+          "network": "testnet",
+          "accountId": "contract.accord-dev-261110.testnet"
+        },
+        "summary": "No changes observed in the NEAR testnet contract monitor. All monitored interactions and account states remain unchanged with no detected activity or anomalies.",
+        "analysis": {
+          "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
+          "usage": {
+            "total_tokens": 355,
+            "prompt_tokens": 313,
+            "completion_tokens": 42,
+            "prompt_tokens_details": {
+              "cached_tokens": 237
+            }
+          },
+          "summary": "No changes observed in the NEAR testnet contract monitor. All monitored interactions and account states remain unchanged with no detected activity or anomalies.",
+          "provider": "local-mlx",
+          "elapsed_ms": 5437,
+          "explanations": [],
+          "completion_id": "chatcmpl-bea13b25-665a-4004-8896-0460a8ea0afb",
+          "model_revision": "50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b",
+          "tee_attestation": false
+        },
+        "findings": [],
+        "riskLevel": "LOW",
+        "confidence": null,
+        "input_hash": "d5ce11d76134d46be1397c4f6b3d5b583378caaea135f31b22122cefd6982df0",
+        "generatedAt": "2026-11-13T19:19:30.186Z",
+        "limitations": [
+          "Code identity and public key permissions do not prove behavior, vulnerability or compromise.",
+          "Only approved read-only testnet RPC tools were used; no source-code audit or transaction attribution is claimed.",
+          "First observation: no earlier chain snapshot is available. The expected code hash is customer-supplied, not proof of historical code or permission state.",
+          "AI explanations are advisory and may be wrong; factual correctness and confidence are not independently established."
+        ],
+        "investigation": {
+          "target": {
+            "network": "testnet",
+            "accountId": "contract.accord-dev-261110.testnet"
+          },
+          "current": {
+            "accounts": [
+              {
+                "keys": [
+                  {
+                    "permission": "FullAccess",
+                    "public_key": "ed25519:FPQ4zk4rqLCYhL3YPomoGbdR6P3zvGiS1YWE7FMfLBBT"
+                  }
+                ],
+                "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "account_id": "contract.accord-dev-261110.testnet"
+              }
+            ],
+            "block_hash": "5Xvmm2gkFnC5uvQo7TGdnSD9qRSqLSaCBot8SV5uknQP",
+            "observed_at": "2026-11-13T19:19:24.747Z",
+            "block_height": 277552087
+          },
+          "baseline": null,
+          "evidence": [
+            {
+              "id": "block:5Xvmm2gkFnC5uvQo7TGdnSD9qRSqLSaCBot8SV5uknQP",
+              "type": "block",
+              "height": 277552087,
+              "reference": "5Xvmm2gkFnC5uvQo7TGdnSD9qRSqLSaCBot8SV5uknQP",
+              "observed_at": "2026-11-13T19:19:24.747Z"
+            },
+            {
+              "id": "account:contract.accord-dev-261110.testnet",
+              "type": "account",
+              "reference": "contract.accord-dev-261110.testnet",
+              "block_hash": "5Xvmm2gkFnC5uvQo7TGdnSD9qRSqLSaCBot8SV5uknQP"
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Code identity and public key permissions do not prove behavior, vulnerability or compromise.",
+            "Only approved read-only testnet RPC tools were used; no source-code audit or transaction attribution is claimed.",
+            "First observation: no earlier chain snapshot is available. The expected code hash is customer-supplied, not proof of historical code or permission state."
+          ],
+          "expected_code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+        },
+        "schemaVersion": "1.0",
+        "baselineComparison": []
+      }
+    },
+    {
+      "cycle": 1,
+      "artifact_hash": "e7176a40ac53f6f5280f21bd900d74bb9cbee403327d46f5674936f3f797769a",
+      "report": {
+        "kind": "near-contract-risk-analyst-v1",
+        "jobId": "35:1",
+        "target": {
+          "network": "testnet",
+          "accountId": "contract.accord-dev-261110.testnet"
+        },
+        "summary": "No changes observed in the NEAR testnet contract monitor. All monitored interactions and account states remain unchanged with no detected activity or anomalies.",
+        "analysis": {
+          "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit",
+          "usage": {
+            "total_tokens": 355,
+            "prompt_tokens": 313,
+            "completion_tokens": 42,
+            "prompt_tokens_details": {
+              "cached_tokens": 312
+            }
+          },
+          "summary": "No changes observed in the NEAR testnet contract monitor. All monitored interactions and account states remain unchanged with no detected activity or anomalies.",
+          "provider": "local-mlx",
+          "elapsed_ms": 4468,
+          "explanations": [],
+          "completion_id": "chatcmpl-8e327341-08c9-4e33-8d5c-70abf52a8a80",
+          "model_revision": "50d427756c6b1b2fe0c0a10f67fbda1fc8e82c1b",
+          "tee_attestation": false
+        },
+        "findings": [],
+        "riskLevel": "LOW",
+        "confidence": null,
+        "input_hash": "d5ce11d76134d46be1397c4f6b3d5b583378caaea135f31b22122cefd6982df0",
+        "generatedAt": "2026-11-13T19:20:57.484Z",
+        "limitations": [
+          "Code identity and public key permissions do not prove behavior, vulnerability or compromise.",
+          "Only approved read-only testnet RPC tools were used; no source-code audit or transaction attribution is claimed.",
+          "AI explanations are advisory and may be wrong; factual correctness and confidence are not independently established."
+        ],
+        "investigation": {
+          "target": {
+            "network": "testnet",
+            "accountId": "contract.accord-dev-261110.testnet"
+          },
+          "current": {
+            "accounts": [
+              {
+                "keys": [
+                  {
+                    "permission": "FullAccess",
+                    "public_key": "ed25519:FPQ4zk4rqLCYhL3YPomoGbdR6P3zvGiS1YWE7FMfLBBT"
+                  }
+                ],
+                "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "account_id": "contract.accord-dev-261110.testnet"
+              }
+            ],
+            "block_hash": "FBKUspt1UfzxHrRZqSfvfB58ULvEibjmBVvhnTKxiZro",
+            "observed_at": "2026-11-13T19:20:53.015Z",
+            "block_height": 277552233
+          },
+          "baseline": {
+            "accounts": [
+              {
+                "keys": [
+                  {
+                    "permission": "FullAccess",
+                    "public_key": "ed25519:FPQ4zk4rqLCYhL3YPomoGbdR6P3zvGiS1YWE7FMfLBBT"
+                  }
+                ],
+                "code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX",
+                "account_id": "contract.accord-dev-261110.testnet"
+              }
+            ],
+            "block_hash": "5Xvmm2gkFnC5uvQo7TGdnSD9qRSqLSaCBot8SV5uknQP",
+            "observed_at": "2026-11-13T19:19:24.747Z",
+            "block_height": 277552087
+          },
+          "evidence": [
+            {
+              "id": "block:FBKUspt1UfzxHrRZqSfvfB58ULvEibjmBVvhnTKxiZro",
+              "type": "block",
+              "height": 277552233,
+              "reference": "FBKUspt1UfzxHrRZqSfvfB58ULvEibjmBVvhnTKxiZro",
+              "observed_at": "2026-11-13T19:20:53.015Z"
+            },
+            {
+              "id": "account:contract.accord-dev-261110.testnet",
+              "type": "account",
+              "reference": "contract.accord-dev-261110.testnet",
+              "block_hash": "FBKUspt1UfzxHrRZqSfvfB58ULvEibjmBVvhnTKxiZro"
+            }
+          ],
+          "findings": [],
+          "limitations": [
+            "Code identity and public key permissions do not prove behavior, vulnerability or compromise.",
+            "Only approved read-only testnet RPC tools were used; no source-code audit or transaction attribution is claimed."
+          ],
+          "expected_code_hash": "DfcbJBckRVsGXr1v6QARgrZthYDJ1EviULqYWaokLUTX"
+        },
+        "schemaVersion": "1.0",
+        "baselineComparison": []
+      }
+    }
+  ],
+  "finished_at": "2026-11-13T19:21:47.386Z",
+  "input_disclosure": "Live finalized NEAR testnet observations; real local MLX inference, no TEE or factual correctness claim."
+}
