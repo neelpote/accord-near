@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import RenewalReview from "./RenewalReview";
 import { api, near } from "@/lib/near";
 type Decision = {
   id: string;
@@ -130,6 +131,7 @@ export default function CounterpartySecurity({ account }: { account: string }) {
                 ))}
               </ul>
               <p>Expires {new Date(d.expires_at).toLocaleString()}</p>
+              <RenewalReview key={`${account}:${d.id}`} id={d.id}/>
               <details>
                 <summary>Inspect exact intent and evidence</summary>
                 <pre>{JSON.stringify(d.body, null, 2)}</pre>

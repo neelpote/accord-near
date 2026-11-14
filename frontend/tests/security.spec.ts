@@ -26,6 +26,7 @@ test("security queue exposes exact-payment approval and never offers block overr
     },
   }));
   let approved = false;
+  let renewalUnavailable=false;
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.route("**/api/near/**", async (r) => {
@@ -45,6 +46,11 @@ test("security queue exposes exact-payment approval and never offers block overr
       json = { records: [], summary: { demand_validated: false } };
     if (path === "/security")
       json = { decisions, reports: [], reviewer: false };
+    if (path === "/security/decisions/0/renewal") {
+      expect(r.request().method()).toBe('GET');
+      if(renewalUnavailable){await r.fulfill({status:503,json:{error:'Finalized RPC unavailable'}});return;}
+      json={baseline:'previous authorization',baseline_decision:{id:'previous',state:'consumed',acted_at:'2026-11-13T12:00:00Z'},changes:[{kind:'code',subject:'escrow.testnet',before:'local:original',after:'local:updated'}],changes_hash:'fixture',evidence_observed_at:'2026-11-13T13:00:00Z',block_height:100,block_hash:'fixture',terms_match:true,budget:{active:true,remaining_reports:3,reserve_yocto:'3000000000000000000000',price_yocto:'1000000000000000000000',maximum_scheduled_yocto:'3000000000000000000000',recipient:'provider.testnet'},limits:'Read-only review; signing gate rechecks evidence.'};
+    }
     if (path === "/security/decisions/0") {
       expect(r.request().postDataJSON()).toEqual({
         approve: true,
@@ -65,6 +71,20 @@ test("security queue exposes exact-payment approval and never offers block overr
   await expect(
     security.getByRole("button", { name: "Approve this exact payment once" }),
   ).toHaveCount(1);
+  const renewalButton=security.getByRole('button',{name:'Review renewal changes & remaining budget'}).first();
+  await renewalButton.click();
+  await expect(security.getByText('local:updated',{exact:true})).toBeVisible();
+  await expect(security.getByText('Up to 0.003 test NEAR',{exact:true})).toBeVisible();
+  expect(approved).toBe(false);
+  renewalUnavailable=true;
+  await renewalButton.click();
+  await expect(security.getByRole('alert')).toContainText('No approval was created');
+  await expect(security.getByText('Up to 0.003 test NEAR',{exact:true})).toHaveCount(0);
+  expect(approved).toBe(false);
+  renewalUnavailable=false;
+  await renewalButton.click();
+  await expect(security.getByText('local:updated',{exact:true})).toBeVisible();
+  await security.locator('.renewal-review').first().screenshot({path:'../.tools/renewal-review.png',animations:'disabled'});
   await security
     .getByRole("button", { name: "Approve this exact payment once" })
     .click();

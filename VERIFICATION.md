@@ -1,5 +1,11 @@
 # Verification
 
+## Renewal review — 14 November 2026
+
+Source implementation adds owner-isolated historical authorization comparisons and remaining scheduled-budget context in Payment security. The production read helper fetched agreement **31** and its service at the same finalized testnet block **277687914**: inactive, one paid cycle of one, reserve zero. This was read-only; no new approval, payment, model call or deployment occurred.
+
+Local backend validation: **83 unit tests** passed, including three renewal cases; PostgreSQL/HTTP security checks passed with renewal ownership, baseline comparison and no-authorization-side-effect assertions. Frontend types/build and all **16 browser checks** passed, including changed code/budget display, failed-refresh clearing, normal one-payment approval and mobile overflow. A subsequent focused security browser run checks the final response validation. These use controlled fixtures and do not certify a new live wallet journey. [Implementation and limitations](docs/RENEWAL_REVIEW.md).
+
 ## Security evidence lab — 14 November 2026
 
 Added a wallet-free `/proof` route (source only; pending deployment) and a no-install, read-only verifier. `node scripts/verify-security-proof.mjs --chain` matched every recorded control receipt field at finalized block **277685961**, found no attack cycle-zero receipt at block **277685963**, and confirmed both agreements are inactive with one/zero paid cycles. This used no signing key, financial transaction or new inference.

@@ -679,3 +679,9 @@ header {
   }
 }
 @media(max-width:760px){header>button{max-width:calc(100% - 145px);min-width:0}}
+
+/* Renewal decisions: show changed evidence before a one-payment authorization. */
+.renewal-review { margin:18px 0; padding:16px; border-left:3px solid var(--orange); background:var(--white); overflow-wrap:anywhere; }
+.renewal-review h5 { font-size:16px; margin:20px 0 10px; }
+.renewal-review li { margin-bottom:14px; }
+.renewal-review button { white-space:normal; text-align:left; }

@@ -29,6 +29,7 @@ Accord separates an agent's proposed action from its payment authority. The **ba
 | Finite purchases | Validate input, choose a report limit, review budget/storage/expiry, fund an agreement and install a finite-gas `charge`-only key. | Live |
 | Counterparty checks | Inspect account age/activity signals, finalized contract identity, observed code changes, prior Accord payments and shared evidence. Receive **allow**, **warn** or **block** with reasons. Unknown/unavailable history is disclosed. | Live |
 | Human payment review | Approve or decline one exact warned payment. Approval binds its intent and evidence; a blocked payment has no override. | Live |
+| Renewal review | Compare code, reports, policy and terms with a prior authorization; inspect remaining reports and reserve-capped scheduled spending at one finalized block. Previewing cannot approve or sign. | Repository; [guide](docs/RENEWAL_REVIEW.md) |
 | Shared evidence reports | Submit account/transaction evidence; inspect review history. Only configured reviewers can curate a report into a blocklist decision. | Live |
 | Reports and settlement | Read purchased reports, source blocks, artifact hashes and finalized provider credits. Interrupted paid delivery retries retrieve the same artifact instead of buying it again. | Live |
 | Cancellation and recovery | Cancel future billing, remove the limited key, recover an interrupted agreement by onchain ID, inspect balances/pending withdrawals, withdraw unused funds or provider earnings. | Live |
