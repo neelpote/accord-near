@@ -36,6 +36,7 @@ jobs:
           npm run near:test:execution
           npm run near:test:creators
           node --test scripts/execution-env.test.mjs
+          node --test ../scripts/security-proof.test.mjs
           npm run db:migrate
           npm run db:migrate
           npm audit --audit-level=moderate
