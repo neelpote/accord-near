@@ -4,11 +4,9 @@ Accord's recurring-service owner needs to answer two questions before authorizin
 
 ## Why this feature
 
-The public [SpactVault implementation](https://github.com/0xileri/SpactVault) emphasizes per-payment approval, budgets and settlement. [MASK WARS](https://github.com/plavutskyi/mask-wars) makes agent work and outcomes inspectable through its arena, records and MCP tools. Those are useful reference points, not code incorporated here.
+A previously authorized provider can have different code or evidence by the next charge. Renewal review turns existing security evidence into a before/after comparison and shows the remaining agreement budget next to it, helping owners decide whether another payment is appropriate.
 
-Accord's opportunity is the lifecycle of a recurring service: a previously authorized provider can have different code or evidence by the next charge. A list of warning codes does not make those changes easy to review. Renewal review turns existing security evidence into a before/after comparison and shows the remaining agreement budget next to it. This is differentiation within the implementations sampled, not a claim of worldwide uniqueness.
-
-Adding cross-chain settlement would expand the money path and require mainnet execution. Adding another model would not resolve an owner's authorization decision. An MCP integration remains useful distribution work, but does not itself explain changed trust. This feature improves an existing user action with no new dependency, credentials, schema migration, model or financial transaction.
+The feature extends the existing payment review without adding dependencies, credentials, schema migrations, model calls or financial transactions.
 
 ## Use it
 
