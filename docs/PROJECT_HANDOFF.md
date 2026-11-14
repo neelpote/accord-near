@@ -48,7 +48,7 @@ The useful differentiator is the combination of exact recurring commercial limit
 - `contracts-near/`: deployed financial contract, tests, locks and WASM build. `contracts-auth/`: separate Ethereum-wallet login receipt contract.
 - `backend/src/near/counterparty*`: policy, RPC/indexer evidence, persisted decisions, report moderation, HTTP routes and security acceptance scripts.
 - `docs/`: current architecture/operations/security guides and dated evidence. `docs/design/` holds visual decisions; `docs/pilot/` holds honest discovery status; `docs/vendor/near/` holds cached reference material with its source manifest.
-- `scripts/`: credential-format scanner and opt-in Ethereum-wallet fixture harness. `.agents/skills/`: installed Loops workflows. Tool installation does not mean an external evaluation was passed.
+- `scripts/`: credential-format scanner and opt-in Ethereum-wallet fixture harness. Editor-specific vendored skills were removed from the repository on 14 November; they are not runtime dependencies. Loops evaluation notes remain in the documentation and are not official judge approvals.
 - `contracts/`, `agents/`, original `backend/src/api`, `backend/src/executor` and `backend/src/index.ts`: retained upstream context. Default startup does not run that EVM financial stack.
 - Ignored `.tools`, `.near-credentials`, environment files, traces and backups are local operational material. They must not be copied into a public context document. A clean clone does not include these fixtures or private configuration.
 
@@ -179,7 +179,7 @@ Evidence: [decisions](../DECISIONS.md), [provenance](../PROVENANCE.md), [hosting
 | User discovery and pricing uncertainty | [Pilot](pilot/INTERVIEWS.md), [measurement](pilot/MEASUREMENT.md) |
 | Changes delivered in the earlier five phases | [Phase delivery](PHASE_DELIVERY.md) |
 
-`PRD.md`, `whitepaper.md`, `frontend/API_SPEC.md`, `backend/BACKEND_CHANGES.md` and earlier module READMEs contain upstream EVM proposals. `DAEMON_NEAR_*` files contain superseded Agent API-first alternatives. They are labeled historical; never use them as the active deployment spec. Dated proof JSON/video records establish only the commit/scope described inside them. An older successful video is not proof that the latest security UI was recorded. A document cannot contain literally every future state: refresh this file when behavior/topology changes.
+`docs/archive/PRD.md`, `docs/archive/whitepaper.md`, `frontend/API_SPEC.md`, `backend/BACKEND_CHANGES.md` and earlier module READMEs contain upstream EVM proposals. `DAEMON_NEAR_*` files contain superseded Agent API-first alternatives. They are labeled historical; never use them as the active deployment spec. Dated proof JSON/video records establish only the commit/scope described inside them. An older successful video is not proof that the latest security UI was recorded. A document cannot contain literally every future state: refresh this file when behavior/topology changes.
 
 The only current repo-specific frontend instruction file is [frontend/AGENTS.md](../frontend/AGENTS.md): read bundled Next documentation before editing framework behavior. The installed skills are workflow instructions, not application runtime dependencies. The owner's separate Resolve instructions apply only to Resolve editing; no Resolve project was touched in this audit.
 

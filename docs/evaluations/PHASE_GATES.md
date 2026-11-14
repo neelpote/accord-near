@@ -1,6 +1,6 @@
 # Phase reviews using Loops evaluator prompts
 
-Method: installed `.agents/skills/loops-evaluate/SKILL.md` and event skill; refreshed authenticated free `loops evaluate` prompts for Agent Economy and AI Security & Defense. Saved as phase-agent-prompt.json and phase-security-prompt.json. Loops returns a prompt to run in this repository, not an independent approval service. Reports below are agent-run engineering/alignment reviews, not hosted judging, scores, win predictions, customer validation or a security audit. No submission/project record or external message was created. Existing paid-agent demonstrations remain distinct from the unbilled operations pilot.
+Method: used the Loops evaluation and event workflows; refreshed authenticated free `loops evaluate` prompts for Agent Economy and AI Security & Defense. Saved as phase-agent-prompt.json and phase-security-prompt.json. Loops returns a prompt to run in this repository, not an independent approval service. Reports below are agent-run engineering/alignment reviews, not hosted judging, scores, win predictions, customer validation or a security audit. No submission/project record or external message was created. Existing paid-agent demonstrations remain distinct from the unbilled operations pilot.
 
 ## Phase 1 — discovery preparation
 

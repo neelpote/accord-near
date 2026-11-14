@@ -1,6 +1,6 @@
 # Loops-prompt review of the three reliability priorities
 
-Method: ran the free `loops evaluate --event near-hackathon --sponsor ai-security-defense --format json` command and applied its returned evaluation rubric to the local code/proofs. The [installed skill](../../.agents/skills/loops-evaluate/SKILL.md) fetches a prompt for the coding agent to execute; it does **not** supply independent approval, a security audit or a human judge's verdict. No paid knowledge queries, public project updates or messages were made.
+Method: ran the free `loops evaluate --event near-hackathon --sponsor ai-security-defense --format json` command and applied its returned evaluation rubric to the local code/proofs. The Loops CLI evaluation workflow fetches a prompt for the coding agent to execute; it does **not** supply independent approval, a security audit or a human judge's verdict. No paid knowledge queries, public project updates or messages were made.
 
 ## Alignment summary
 

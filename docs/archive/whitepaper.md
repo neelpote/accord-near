@@ -1,4 +1,4 @@
-> **Documentation status — 12 November 2026:** Historical upstream EVM/SIP research; not the deployed NEAR financial design. Read [the current handoff](docs/PROJECT_HANDOFF.md).
+> **Documentation status — 12 November 2026:** Historical upstream EVM/SIP research; not the deployed NEAR financial design. Read [the current handoff](../PROJECT_HANDOFF.md).
 
 # SIP Protocol: Non-Custodial On-Chain Systematic Investment Plans
 

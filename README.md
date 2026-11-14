@@ -1,135 +1,147 @@
 # Accord
 
-Counterparty checks before an agent signs, backed by finite payment agreements on NEAR.
+**Give agents a budget, not a blank cheque.**
 
-A customer approves a finite agreement, funds its budget, and installs a charge-only function-call key. An independent provider prepares a report. The worker purchases the exact prepared artifact when it is due. NEAR fixes the recipient, price, minimum interval, maximum cycles and expiry, even if the worker misbehaves. The customer can cancel future billing and withdraw the unspent remainder; providers withdraw earned funds separately.
+Accord checks who an agent is about to pay, requires human review for warnings, and blocks denied payments before signing. Bounded purchase agreements on **NEAR testnet** enforce the provider, price, interval, cycle limit and expiry.
 
-**Status:** testnet prototype. Five agents now read live NEAR testnet data: Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector and Network Pulse. They use deterministic rules and need no AI credits. The supplied-portfolio snapshot service remains available separately. NEAR AI Cloud integration is implemented and paused: TEE preflight authenticated successfully, but inference returned HTTP 402 because credits/spending limits were not configured. Live NEAR AI Cloud output is not claimed.
+[Live demo](https://accord-near-ten.vercel.app) · [Security video](docs/demo/accord-security-demo.mp4) · [Working proof](#security-acceptance--13-november-2026) · [Judge testing](#judge-access-and-testing) · [Local setup](#local-setup) · [Architecture](docs/ARCHITECTURE.md)
 
-**GitHub publication:** reliability commits were pushed in order on 14 November, with 20-second pauses. Vercel briefly auto-deployed despite the initial API flag; the prior release was restored, the Git link disconnected and an explicit deployment guard added. The new runtime is not currently deployed. See the [publication and CI follow-up](docs/reliability/PUBLISHING.md).
+![Accord application with its animated agent interface](docs/demo/editorial-desktop.png)
 
-**Unreleased reliability work:** owner-approved execution identities, frozen delivery criteria and disputes are implemented and locally/testnet tested. The single AI Risk Analyst is a local development service; human-reviewed accuracy and usefulness remain unverified. These commits are not deployed to the hosted app. See [phase evidence](docs/reliability/IMPLEMENTATION.md), [AI evaluation](docs/reliability/AI.md) and [architecture/API/rollout guide](docs/reliability/OPERATIONS.md).
+## What is Accord?
 
-**Creator listing update:** Approved creators can now connect an independently hosted agent, define a bounded input schema, publish fixed testnet terms, and use Accord's existing validated-payment flow. See [creator setup, judge testing and limits](docs/CREATOR_SERVICES.md). This code is tested in the repository and has **not been deployed** to the hosted app; there are no shared judge credentials.
+A payment-control and monitoring workspace for teams running agents on NEAR. A customer approves fixed service terms and a finite budget; the agent receives a restricted signing key. Each purchase checks the counterparty, pays for one identified report, and records a receipt. The customer can stop future purchases and withdraw the unused budget.
 
-[Security walkthrough](docs/demo/accord-security-demo.mp4) · [Earlier testnet demo](docs/demo/accord-testnet-demo.webm) · [Verification and CI](VERIFICATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Loops review](docs/evaluations/LOOPS_REVIEW.md)
+### The problem we solve
 
-[![Watch the 80-second security film](docs/demo/accord-security-poster.jpg)](docs/demo/accord-security-demo.mp4)
+Agent operators face a bad choice: manually approve every payment, or trust instructions and external tool output with spending authority. An injected instruction, changed receiver or unexpected contract identity can turn a useful agent into an expensive mistake.
 
-See [the five agents and their working demonstrations](docs/AGENT_SERVICES.md), including actual purchased reports and source-block evidence.
+Accord separates an agent's proposed action from its payment authority. The **backend policy gate** checks the receiver; the **NEAR contract** enforces the commercial limits. The intended users are NEAR application teams, agent operators and maintenance agencies. Customer demand is still unvalidated; the project is a working testnet prototype.
 
-**Current project context and submission audit:** [PROJECT_HANDOFF.md](docs/PROJECT_HANDOFF.md). This is the authoritative map of active code, accepted decisions, evidence, historical documents and remaining submission work.
+## Functionality
 
+**Availability:** **Live** means the restored hosted release; **Repository** means implemented in the current source and pending coordinated deployment; **Paused** means the integration exists but should not be used for a new purchase.
+
+| Area | What users can do | Availability |
+| --- | --- | --- |
+| Wallets and sessions | Connect a NEAR wallet, authenticate with a one-use NEP-413 signature, retain an HTTP-only session and sign out. Ethereum wallets use the official EVM-on-NEAR adapter and a transaction-verified testnet login. | Live |
+| Public service directory | Browse providers, fixed report prices and minimum intervals; open recorded paid examples without a wallet; inspect each service's input. | Live |
+| Finite purchases | Validate input, choose a report limit, review budget/storage/expiry, fund an agreement and install a finite-gas `charge`-only key. | Live |
+| Counterparty checks | Inspect account age/activity signals, finalized contract identity, observed code changes, prior Accord payments and shared evidence. Receive **allow**, **warn** or **block** with reasons. Unknown/unavailable history is disclosed. | Live |
+| Human payment review | Approve or decline one exact warned payment. Approval binds its intent and evidence; a blocked payment has no override. | Live |
+| Shared evidence reports | Submit account/transaction evidence; inspect review history. Only configured reviewers can curate a report into a blocklist decision. | Live |
+| Reports and settlement | Read purchased reports, source blocks, artifact hashes and finalized provider credits. Interrupted paid delivery retries retrieve the same artifact instead of buying it again. | Live |
+| Cancellation and recovery | Cancel future billing, remove the limited key, recover an interrupted agreement by onchain ID, inspect balances/pending withdrawals, withdraw unused funds or provider earnings. | Live |
+| Application workspaces | Group public testnet accounts; capture, inspect and explicitly approve code/access-key baselines; propose a replacement baseline. The read-only pilot is unbilled. | Live |
+| Change monitoring | Start/pause monitoring, check now, inspect grouped incidents and before/after evidence, acknowledge review, and inspect notification attempts. Signed external webhooks require operator configuration. | Live; webhooks optional |
+| Evidence and pilot feedback | Browse/paginate the evidence timeline, download a SHA-256-checked JSON export, link matching paid reports after receipt verification, submit/delete personal pilot feedback, and delete paused workspace records by exact-name confirmation. | Live |
+| Execution controls | Inspect the advertised agent version/build/endpoint, approve its exact identity and delivery specification, pause/reapprove new work, and inspect outstanding jobs/events. Providers can disable their offers. | Repository |
+| Delivery criteria and disputes | Distinguish structure/evidence validation from settlement and delivery; inspect verification history; acknowledge receipt or record a dispute; providers can respond. These are manual-review records, not automatic refunds. | Repository |
+| Independent creator listings | Approved creator wallets publish their own hosted report service with a bounded input schema, version/build declaration, signed endpoint preflight and per-provider credentials; unlist owned services and reuse the existing purchase/delivery path. No arbitrary code uploads. | Repository |
+| Interface and access | Animated agent roles and Observe → Inspect → Limit scroll chapters; pause/reduced-motion controls, mobile layouts, keyboard navigation and a static fallback when WebGL is unavailable. | Live |
+| Optional AI | Groq explanations of public chain evidence, NEAR AI Cloud adapter/preflight, and an experimental local contract-risk analyst. No current semantic-accuracy or TEE-inference claim. | Paused; see [AI limits](docs/reliability/AI.md) |
+
+### Included services
+
+| Service | Actual work |
+| --- | --- |
+| **Wallet Watch** | Reads account balance, protocol storage cost and available gas headroom. Recommended judge flow: service **2**, **0.001 test NEAR/report**. |
+| **Access Guard** | Reviews public access-key permissions, allowances and broad contract access. |
+| **Contract Sentinel** | Compares deployed code identity with an approved hash. |
+| **Receipt Inspector** | Inspects a finalized transaction, receipt failures and gas burn. |
+| **Network Pulse** | Checks configured RPC network identity, finalized-block freshness, gas price and reported synchronization/validators. |
+| Portfolio concentration | Analyzes a supplied portfolio snapshot; it does not fetch live market prices. |
+
+The five chain-monitoring services use deterministic rules and need no AI credits. [Service inputs and purchased examples](docs/AGENT_SERVICES.md) · [Creator hosting guide](docs/CREATOR_SERVICES.md) · [Operations guide](docs/OPERATIONS.md).
 
 ## Security acceptance — 13 November 2026
 
-The two requested engineering tasks are complete: the causal attack/control demonstration and current native/Ethereum wallet journeys. The security walkthrough and its source evidence are linked below. Social posting and submission remain the owner's steps.
-
-| Check | Actual result | Evidence |
+| Acceptance check | Recorded result | Working proof |
 | --- | --- | --- |
-| Live causal model comparison | Same system/task, clean versus poisoned tool document; actual Groq receiver changes | [Captured prompts and completions](docs/causal-agent-responses.json) |
-| Funded control | Agreement 31 paid 0.001 test NEAR through its charge-only key | [Control receipt and attack log](docs/causal-attack-proof.json) |
-| Blocked attacks | Agreement 32 remained otherwise valid; poisoned proposal and valid-terms reputation case each made zero signer calls | [Preflight, reasons and cleanup](docs/causal-attack-proof.json) |
-| Native wallet | Agreement 23: authenticate, fund, approve exact warning, receive report, cancel, remove key, withdraw | [Browser proof](docs/security-native-wallet-proof.json) · [raw footage](docs/demo/security-native-wallet-raw.webm) |
-| Ethereum wallet | Agreement 28: same journey through official adapter and real NEP-518 relayer | [Browser proof](docs/security-evm-wallet-proof.json) · [raw footage](docs/demo/security-evm-wallet-raw.webm) |
-| Independent readback | Both: exactly one paid cycle, matching report/receipt hash, consumed warning, inactive agreement, absent delegate, finalized successful exit receipts | [Finalized verification](docs/security-journeys-readback.json) |
+| Causal prompt-injection comparison | Same system/task, clean versus poisoned tool document; two genuine Groq calls changed the proposed receiver. | [Prompts and completions](docs/causal-agent-responses.json) |
+| Otherwise-valid funded control | Agreement **31** paid **0.001 test NEAR** through its scoped key. | [Receipt and attack log](docs/causal-attack-proof.json) |
+| Attack refusal | Agreement **32**: the poisoned proposal and a separate valid-terms reputation case each produced **zero signer calls** and no attack payment. | [Preflight, refusal reasons and cleanup](docs/causal-attack-proof.json) |
+| Native wallet journey | Agreement **23**: authentication → funding → warning approval → report → cancellation → key removal → withdrawal. | [Native proof](docs/security-native-wallet-proof.json) |
+| Ethereum wallet journey | Agreement **28**: the same path through the official adapter and real testnet relayer. | [Ethereum proof](docs/security-evm-wallet-proof.json) |
+| Independent finalized readback | One paid cycle each; matching report/receipt hashes; inactive agreements; absent delegates; successful exit receipts. | [Readback verification](docs/security-journeys-readback.json) |
 
-The wallet journeys use automated developer signers with real signatures and testnet execution. They **do not certify third-party wallet extension/pop-up/mobile UI**. The deliberately vulnerable reference planner is a demonstration, not the production worker. Its blocked accounts are our own test fixtures in an isolated demo registry; no real-world scam claim is made. The budget is exhausted at six Groq requests; replaying the captured model responses makes no new inference call.
+These are dated testnet results, not a claim that every later feature is deployed. Wallet runs use dedicated automated developer signers with real signatures/transactions; they do not certify every extension, popup or mobile wallet. The intentionally vulnerable reference planner and denylisted accounts are controlled demo fixtures, not real-world scam allegations. The six approved Groq requests are exhausted; captured-response replay makes no new inference call.
 
-## Hosted demo
+<details>
+<summary><strong>See the security review, paid report and monitoring screenshots</strong></summary>
 
-Open [Accord on NEAR testnet](https://accord-near-ten.vercel.app). Use a dedicated testnet wallet. The frontend, API and persistent workers run on Vercel; durable records are stored in Neon PostgreSQL. Testnet only; no production uptime or security-audit claim. See [hosting, verification and submission steps](docs/HOSTING_AND_SUBMISSION.md) and [MiroFish research setup](docs/pilot/MIROFISH_BRIEF.md).
+Actual browser captures from 11–14 November. Values and states reflect capture time; the purchased agreement was subsequently canceled and its key removed.
+
+**Review one exact payment and its reasons.**
+
+![Payment warning with one-payment approval controls](docs/demo/counterparty-warning.png)
+
+**Inspect the paid report and owner exit controls.**
+
+![Wallet Watch paid report and canceled finite agreement](docs/demo/readme-paid-report.png)
+
+**Review application changes and evidence.**
+
+![Application operations workspace overview](docs/demo/readme-workspace.png)
+
+[Full monitoring/evidence capture](docs/demo/editorial-workspace.png).
+
+</details>
+
+[Security walkthrough and reproduction](docs/SECURITY_WALKTHROUGH.md) · [Counterparty data sources and threat boundaries](docs/COUNTERPARTY_SECURITY.md) · [Verification record](VERIFICATION.md).
+
+## NEAR Protocol integration
+
+```mermaid
+flowchart LR
+    Owner[Owner wallet] -->|Approve fixed terms and budget| Escrow[NEAR testnet escrow]
+    Agent[Agent / worker] --> Gate{Counterparty check}
+    Gate -->|Warn| Review[One-payment owner review]
+    Gate -->|Block| Stop[No signature]
+    Gate -->|Allow / approved warning| Key[Scoped charge-only key]
+    Review --> Gate
+    Key -->|Request one cycle| Escrow
+    Escrow --> Receipt[Provider credit + artifact receipt]
+    Receipt --> Provider[Independent provider releases exact report]
+    Owner -->|Cancel / withdraw| Escrow
+```
+
+| NEAR primitive | Why it matters here |
+| --- | --- |
+| **Function-call access keys** | The automated signer can call only `charge` on one contract with a finite gas allowance. It cannot transfer native NEAR, add keys, cancel agreements or withdraw owner funds. The key's gas allowance is separate from the service budget. |
+| **Rust escrow contract** | Fixes the provider/price and checks the delegate, due cycle, interval, expiry and reserved budget. Repeated settlement of the same cycle/artifact is idempotent. |
+| **Finalized RPC and receipts** | Security checks read finalized state; delivery binds a report's SHA-256 to the actual payment receipt. A charge credits provider earnings; withdrawal is a separate owner-signed transfer. |
+| **Wallet authentication** | NEP-413 proves native wallet ownership. Ethereum-wallet login verifies the challenge emitted by the dedicated testnet authentication contract. |
+| **Owner exit** | Cancellation releases the unspent reserve. Withdrawals go to the authenticated owner; a failed transfer restores its source ledger through a private callback. |
+
+**Escrow:** [`contract.accord-dev-261110.testnet`](https://testnet.nearblocks.io/address/contract.accord-dev-261110.testnet) · **Authentication:** `login.accord-dev-261110.testnet` · **Network:** testnet only.
+
+The active payment path uses native NEAR escrow, not Agent API, Intents, a stablecoin bridge or TEE inference. The exact recurring terms and artifact-bound settlement are the contract's job; the reputation gate remains backend-enforced. [Contract source](contracts-near/src/lib.rs) · [Ethereum integration](docs/ETHEREUM_WALLETS.md) · [Design decisions](DECISIONS.md).
 
 ## Judge access and testing
 
-**Live app:** [accord-near-ten.vercel.app](https://accord-near-ten.vercel.app). Judges use **their own dedicated NEAR testnet wallet**. There is no shared demo account, username or password: sign-in verifies wallet ownership. No API key, local installation or AI credits are needed for the deterministic test below.
+Open **[accord-near-ten.vercel.app](https://accord-near-ten.vercel.app)** with your **own dedicated NEAR testnet wallet**. There is no shared account, password, private key or required AI credential. Obtain test NEAR using the [NEAR testnet wallet/faucet guidance](https://docs.near.org/). About **0.2 test NEAR** gives room for a small purchase, retained storage and gas; the application quotes exact costs before approval.
 
-| Access detail | What to use |
-| --- | --- |
-| Login credentials | Your own testnet wallet; choose **Sign in with NEAR** and sign the authentication message |
-| Network | **NEAR testnet** only |
-| Test funds | Start with about **0.2 test NEAR** for the report, retained storage and transaction gas; the app shows the exact costs before approval |
-| Free faucet | [NEAR testnet faucet](https://near-faucet.io/) — enter your own testnet account; availability/rate limits belong to the faucet |
-| Recommended offer | **Wallet Watch**, service 2, deterministic live chain checks, currently **0.001 test NEAR per report** |
-| Public account to inspect | `provider.accord-dev-261110.testnet` — an observation target, not a login account |
-| Escrow contract | `contract.accord-dev-261110.testnet` |
-| Inference credentials | None for this flow; optional Groq requests are exhausted and NEAR AI Cloud remains paused |
+1. **Preview without signing in:** open Services and expand **View paid example** on a deterministic agent. This is recorded evidence, not a new check or purchase.
+2. **Authenticate:** choose **Sign in with NEAR**, select your wallet, and sign the authentication message. Confirm your account appears in the header. Ethereum users must fund the displayed NEAR `0x` account with test NEAR; Sepolia ETH does not fund it.
+3. **Choose Wallet Watch:** select **Choose terms →** on service 2. Inspect a public testnet account using the input below.
+4. **Limit the test:** set **Maximum reports = 1**, inspect price/storage/expiry, then **Approve and fund agreement**. Storage is retained separately from the report price.
+5. **Enable the scoped key:** approve **Enable automatic purchases**. The **0.05 test NEAR gas allowance** is a ceiling on delegated gas, not another deposit or the report budget. When testing current local source, also approve the displayed execution identity and frozen delivery specification.
+6. **Review security:** inspect **Payment security**. Approve a warned payment only if you accept its receiver, amount and reasons. A changed intent/evidence pair needs new review; **BLOCK** has no override.
+7. **Verify and exit:** wait for **Paid · delivered**, inspect the source block/artifact/receipt, cancel future purchases and remove the limited key. Withdraw any available remainder. With a one-report limit already consumed, no report budget may remain; use three reports and cancel after the first only if you also want to test a nonzero remainder.
 
-### Test a fresh purchase
+```json
+{
+  "account_id": "provider.accord-dev-261110.testnet",
+  "minimum_available_yocto": "50000000000000000000000"
+}
+```
 
-1. Open the app with your testnet wallet funded. Click **Sign in with NEAR**, select your wallet and approve the one-use authentication message. Confirm the header shows **your** account. Connecting alone is not authentication.
-2. Go to **Services**, find **Wallet Watch**, and select **Choose terms →**. Its input can use the public fixture below, or replace `account_id` with an existing testnet account you want to inspect. Inspecting an account grants no access to its keys.
+Allow a few minutes for wallet/RPC/provider finalization. Complete authentication if controls are disabled; inspect warnings if a purchase pauses; check the explorer before resubmitting a transaction. Use deterministic service 2 if optional AI is unavailable. Never install a broader key to bypass a block. [Troubleshooting and hosting status](docs/HOSTING_AND_SUBMISSION.md).
 
-   ```json
-   {
-     "account_id": "provider.accord-dev-261110.testnet",
-     "minimum_available_yocto": "50000000000000000000000"
-   }
-   ```
+## Local setup
 
-3. Set **Maximum reports** to **1** for the smallest test. Read the report price, retained storage fee and expiry shown by the app. Click **Approve and fund agreement** and approve that testnet transaction in your wallet. The storage fee is separate from the 0.001 report price and is retained.
-4. Click **Enable automatic purchases** and approve the separate limited-key transaction. This key permits only `charge` on the escrow contract, with a finite **0.05 test NEAR gas allowance**; that allowance is not the service budget or a separate 0.05 deposit.
-5. Open **Payment security**. An approvable **WARN** pauses this exact payment. Inspect the receiver, amount and reasons, then click **Approve this exact payment once** if you accept them. A **BLOCK** has no override. Changed evidence may require another review; missing finalized chain state must recover before proceeding.
-6. Wait for your agreement to show **Paid · delivered**, then expand its report. Check the source network/block, measurements, artifact SHA-256 and verified provider credit. The status may be OK or a reserve warning depending on the inspected account's current balance; either is a valid measurement, not an inference failure. Network/provider processing can take a few minutes.
-7. Click **Cancel future purchases**, then **Remove limited key**, approving each wallet transaction. Under **Funds and earnings**, use **Withdraw remainder** if an available remainder exists. With one report already consumed, there may be no unspent report budget to withdraw; the retained storage fee is not refundable. To exercise a nonzero remainder, repeat with **Maximum reports = 3** and cancel after the first delivered report.
-
-**Expected result:** one receipt-bound purchased report, a visible one-payment security decision and an agreement you can cancel with its signing key removed. [Actual native/Ethereum acceptance evidence](docs/security-journeys-readback.json) and the [causal attack/control proof](docs/causal-attack-proof.json) are available separately. Never report a block as a successful payment.
-
-### Inspect before signing in
-
-The existing public catalog works without a wallet: open [Services](https://accord-near-ten.vercel.app/#market) and expand **View paid example** on Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector or Network Pulse. Each example shows a previously purchased report, source block, agreement/cycle and artifact hash. These are labeled recorded snapshots; opening one does not run a fresh check or spend tokens. This is the existing public preview, not an authenticated demo identity.
-
-### If a test pauses
-
-| Symptom | Next step |
-| --- | --- |
-| Choose terms is disabled | Complete wallet sign-in and the authentication signature; confirm your account appears in the header. |
-| Insufficient balance | Fund that same account on **testnet**, accounting for report budget, storage and gas; recheck the quoted total. |
-| A wallet reports the wrong network | Switch to NEAR testnet. Ethereum-adapter users must fund the displayed `0x` NEAR account with testnet NEAR; Ethereum Sepolia ETH does not fund it. |
-| Payment remains WARN/pending | Review **Payment security**; approval binds one exact intent/evidence pair. A changed pair needs fresh review. |
-| BLOCK or unavailable finalized chain evidence | Inspect the reasons and wait for the source to recover where applicable. Do not bypass the gate or install a broader key. |
-| Optional AI preparation fails | Use deterministic **Wallet Watch** service 2; no inference credentials or request quota are required. |
-| A transaction appears stuck | Check its wallet/explorer result before resubmitting. Use the agreement recovery controls for an interrupted setup. |
-
-Ethereum-wallet instructions and the external extension/device testing limitation are in [ETHEREUM_WALLETS.md](docs/ETHEREUM_WALLETS.md). The completed automated wallet journeys verify real signatures and testnet execution; they do not certify every vendor's popup/mobile UI.
-
-## Application screenshots
-
-Actual browser captures from 11–13 November 2026. Values, timestamps and agreement states reflect capture time; the paid example below was subsequently canceled and its key removed, as recorded in the acceptance proof.
-
-**Home and animated agent experience.** Scroll through Observe → Inspect → Limit, or use the reduced-motion controls.
-
-![Accord home with its animated agent model](docs/demo/editorial-desktop.png)
-
-**Service directory.** Compare fixed prices, intervals and providers; expand the recorded paid examples before making a new purchase.
-
-![Accord service directory with agent offerings](docs/demo/editorial-services.png)
-
-**Owner review before signing.** A captured pending warning exposes its reasons and one-payment approval/decline controls. This November 12 capture displays the amount in yoctoNEAR; the current UI formats it as test NEAR.
-
-![Payment security warning and exact-payment approval controls](docs/demo/counterparty-warning.png)
-
-**Paid report and exit controls.** Actual agreement 28 delivered Wallet Watch through the Ethereum-to-NEAR adapter. The report includes source data, artifact identity and provider credit; cancellation/key removal are separate owner actions.
-
-![Wallet Watch paid report and cancellation controls](docs/demo/security-evm-wallet.png)
-
-## Ethereum wallets
-
-MetaMask and WalletConnect can operate the same native NEAR testnet agreements through [Ethereum Wallets for NEAR](https://evm-on-near.dev/how-it-works/). Select **Ethereum Wallets** in the sign-in chooser. Ethereum wallets prove ownership with a separate zero-deposit onchain login plus testnet gas; NEAR wallets retain NEP-413 signatures. Fund the displayed `0x` account with testnet NEAR first. This does not bridge Ethereum assets. See [architecture, setup, checks and limitations](docs/ETHEREUM_WALLETS.md).
-
-## What to try
-
-1. Start the API, provider and frontend with the instructions below. Open `http://localhost:3000`.
-2. Sign in with a NEAR **testnet** wallet or the Ethereum-wallet adapter. Native login verifies a one-use NEP-413 signature; Ethereum login verifies a browser-bound finalized receipt from the separate pinned authentication contract. Connecting a wallet alone does not authenticate it.
-3. Choose a live NEAR agent or the portfolio report, inspect its fixed terms, and approve a finite prepaid agreement. Then separately enable the limited key. Its 0.05 test NEAR allowance covers gas only; the contract separately enforces the service budget.
-4. Open **Payment security**. A warning pauses the exact charge until you approve it; a block refuses signing. After an allowed or approved payment, see the verified provider credit and matching delivered report. Payment and delivery have distinct states. Later purchases follow the onchain interval and repeat the security check.
-5. Cancel future purchases, remove the limited key, and withdraw the available remainder. The provider signs into its own account to withdraw earnings.
-
-Test tokens are free. Never import a real customer wallet into development scripts. Use a dedicated funded testnet wallet with enough balance for the budget, gas, key storage and disclosed retained contract storage fees.
-
-## Run from a clean checkout
-
-Requirements: Node **24.22.2**, npm, Docker for PostgreSQL. For contract development also install stable Rust, `wasm32-unknown-unknown`, and official [cargo-near 0.23.0](https://github.com/near/cargo-near/releases/tag/cargo-near-v0.23.0).
+**Requirements:** Node **24.22.2** ([`.nvmrc`](.nvmrc)), npm and Docker. Rust/cargo-near are needed only to build or deploy your own contracts.
 
 ```sh
 git clone https://github.com/neelpote/accord-near.git
@@ -141,159 +153,68 @@ cp backend/.env.example backend/.env
 node -e 'console.log(require("crypto").randomBytes(32).toString("hex"))'
 ```
 
-Put the generated value in `DELEGATE_ENCRYPTION_KEY` in `backend/.env`. Generate a **separate** random value for `ACCORD_PROVIDER_SECRET` and set it in both the local API/worker and provider environments; the private request/response protocol requires it. Keep this file local and preserve the encryption key across restarts. It encrypts limited delegate keys; customer full-access keys are never accepted by the API.
+Set that generated value as `DELEGATE_ENCRYPTION_KEY` in `backend/.env`. Generate a **second, different** value for `ACCORD_PROVIDER_SECRET`, shared only by your local API/worker and provider. Preserve both across restarts. Keep `NEAR_NETWORK=testnet`, `PUBLIC_ORIGIN=http://localhost:3000`, and the optional AI providers disabled.
 
-The example environment points to the public development contract and reference provider account. A fresh database starts with an empty catalog. For a complete independent reproduction, create your own dedicated fixture accounts and register the provider as described next. Existing public contract state does not automatically populate a new local database.
-
-In separate terminals:
+Run these in three terminals:
 
 ```sh
-cd backend
-npm run near:provider
+# Terminal 1: independent reference provider
+cd backend && npm run near:provider
 ```
 
 ```sh
-cd backend
-npm start
+# Terminal 2: API, additive migrations and purchase worker
+cd backend && npm start
 ```
 
 ```sh
-cd frontend
-npm run build
-npm start
+# Terminal 3: web application
+cd frontend && npm run build && npm start
 ```
 
-The API is on `127.0.0.1:4000`, the independently running provider on `127.0.0.1:4001`, and the website on port 3000. The API runs the awaited scheduler loop; no separate queue or EVM signing worker starts. The schema migration is additive and idempotent. `npm run db:migrate` uses the new schema; original destructive migration commands are explicitly prefixed `legacy:`.
+Open **[localhost:3000](http://localhost:3000)**. API: `127.0.0.1:4000`; provider: `127.0.0.1:4001`; PostgreSQL: `127.0.0.1:55432`.
 
-`PUBLIC_ORIGIN` must match the website origin exactly. Set `ACCORD_API_URL` **when building the frontend** if its API address differs. The default Compose file starts only a new local PostgreSQL database. Backend and frontend Dockerfiles are available separately; they do not launch the legacy stack.
+**A fresh database has an empty catalog.** The example contract/provider IDs are public development fixtures, not accounts you can sign for. To reproduce paid flows independently, create/deploy your own dedicated testnet fixtures and publish a service using the [local operator and fixture guide](docs/LOCAL_SETUP.md). To add your own hosted agent, use [creator onboarding](docs/CREATOR_SERVICES.md). Chain state alone does not recreate offchain metadata or prepared reports.
 
-## Deploy your own testnet fixtures
-
-Use official `near-cli-rs` to create a dedicated faucet-funded parent. Choose a unique account name; the example below uses a shell variable that you must set to your own name:
+### Run the checks
 
 ```sh
-export MASTER_ACCOUNT_ID=your-unique-accord-dev.testnet
-near account create-account sponsor-by-faucet-service "$MASTER_ACCOUNT_ID" autogenerate-new-keypair save-to-legacy-keychain network-config testnet create
-cd contracts-near
-cargo near build non-reproducible-wasm --locked --no-abi
-cd ../backend
-npm run near:setup:testnet
+# Backend types, unit and isolated integration checks (PostgreSQL running)
+npm run typecheck --prefix backend
+npm run near:test --prefix backend
+npm run near:test:security --prefix backend
+npm run near:test:execution --prefix backend
+npm run near:test:creators --prefix backend
+
+# Frontend types, production build and browser fixtures
+npm run typecheck --prefix frontend
+npm run build --prefix frontend
+cd frontend && npx playwright install chromium && npm run test:browser
 ```
 
-The setup script creates `contract.`, `buyer.` and `provider.` children of that parent, saves dedicated developer fixtures in the ignored root `.near-credentials/` directory, and deploys only if the contract account has no code. It will not replace an existing deployment. The parent needs at least 4.5 test NEAR plus gas. No prize-payout account is created or inferred.
+[Application CI](https://github.com/neelpote/accord-near/actions/workflows/application.yml) runs these alongside operations/authentication checks and credential scanning. [Contract CI](https://github.com/neelpote/accord-near/actions/workflows/contract.yml) covers Rust/WASM/sandbox checks. Browser fixtures and controlled-chain integration checks are distinct from the dated live acceptance evidence above; no new AI credits are needed for this test suite.
 
-Set `NEAR_CONTRACT_ID` and `PROVIDER_ACCOUNT_ID` in `backend/.env` to the generated accounts and restart the API/provider. `npm run near:proof:testnet` registers the reference service, verifies the complete API/worker journey, runs two real billing cycles, cancels, removes the key and checks both withdrawal recipients. It uses only the dedicated fixture keys. It also revokes unfinished agreements belonging to that fixture from interrupted previous runs. This is an explicit developer acceptance command, not an operation to run against a customer's account.
+## Status and security boundaries
 
-Alternatively, sign into the provider's testnet wallet in the app and choose **List a service**. The metadata hash, provider and fixed terms must match the service registered on NEAR. The reference provider must operate the configured `PROVIDER_ACCOUNT_ID`; arbitrary provider URLs are not accepted by this deployment.
+- **Hosted versus source:** the public app runs the restored release. Execution identities, expanded delivery/dispute controls and independent creator onboarding in the current repository are pending coordinated rollout. See [release status](docs/reliability/PUBLISHING.md) and [creator test coverage](docs/CREATOR_SERVICES.md).
+- **Authority:** commercial limits are onchain; reputation decisions are enforced by the backend. The development deployment account retains upgrade authority. This is not an audited, immutable or production-safe system.
+- **Delivery and privacy:** receipt/hash checks do not establish factual correctness or provider quality. No automatic quality refunds/arbitration are implemented. Application/provider input is not end-to-end private.
+- **AI:** the approved Groq cap of six requests is exhausted; NEAR AI Cloud inference is paused after a credit/spending-limit error. The experimental local risk analyst is disabled and has not passed human quality review.
+- **Costs and exit:** retained storage fees are not refundable; cancellation cannot reverse an already-finalized charge. Wait for withdrawal callbacks and read pending/available balances before retrying. Direct wallet exit instructions are in the [architecture guide](docs/ARCHITECTURE.md).
 
-## Verification commands
+## Repository and hackathon scope
 
-```sh
-cd contracts-near
-cargo test --locked --lib
-cargo fmt --check
-cargo clippy --locked --all-targets -- -D warnings
-cargo near build non-reproducible-wasm --locked --no-abi
-cargo test --locked --test test_basics
-```
+| Location | Purpose |
+| --- | --- |
+| [`frontend/`](frontend/) | Active Next.js app, NEAR wallet integration and browser tests. |
+| [`backend/src/near/`](backend/src/near/) | Active API, purchase worker, security policy, providers and evidence storage. |
+| [`contracts-near/`](contracts-near/) / [`contracts-auth/`](contracts-auth/) | Rust escrow and separate testnet Ethereum-login contract. |
+| [`docs/`](docs/) | Architecture, setup, dated proof, screenshots and acceptance records. |
+| [`video/`](video/) | Editable security-demo source. The narrated replacement is being produced separately. |
+| [`legacy/`](legacy/), [`contracts/`](contracts/), [`agents/`](agents/) | Retained inherited EVM examples/baseline; not the active NEAR payment path. |
 
-```sh
-cd backend
-npm run typecheck
-npm run near:test
-npm run db:migrate
-npm audit --audit-level=moderate
-```
+Accord builds on an existing marketplace/backend baseline. The new NEAR contracts, scoped-key payments, authentication, counterparty policy, interface and verification work are the hackathon contribution. See [source provenance and license](PROVENANCE.md), [`upstream-baseline…main`](https://github.com/neelpote/accord-near/compare/upstream-baseline...main), and [historical planning](docs/archive/README.md). Built with Next.js/React, near-api-js, NEAR Connect, Express/PostgreSQL and near-sdk; the interface uses Quaternius' credited CC0 Robot Expressive model. [MIT license](LICENSE).
 
-```sh
-cd frontend
-npm run typecheck
-npm run build
-npx playwright install chromium
-npm run test:browser
-```
+Primary fit: **AI Security & Defense (`security`)**. Agent Economy is a secondary fit, not an automatically selected submission track. Public demo posting, final team/contact/payout details, consent and approval of the exact application remain the owner's steps. The [official hackathon guide](https://nearhackathon.com/HACKATHON.md) requires the public repository/demo-post links and disclosure of reused work; no application or social post is sent by this README update.
 
-For the live browser acceptance run, keep all three processes running, provision the dedicated fixtures and catalog, then run `npm run test:testnet` in `frontend`. A fixture wallet uses NEAR Connect's standard injection interface; real keys stay in the Node test process, and real NEP-413 signatures and testnet transactions cross the actual UI/API boundary. This verifies the connector integration, not every third-party wallet's popup/redirect implementation.
-
-For provider/worker fault recovery after a live proof:
-
-```sh
-docker compose exec postgres createdb -U accord accord_recovery
-cd backend
-npm run near:test:recovery
-```
-
-This fault-injection command uses a separate local database and an already-paid real receipt, with **no signing key**. It tests altered artifacts, invalid schema, outages and recovery from PREPARED/SUBMITTING/UNCERTAIN/SETTLED without creating another payment. See [VERIFICATION.md](VERIFICATION.md) for actual results and limits.
-
-## NEAR's role and tradeoffs
-
-- **Limited authority:** a dedicated function-call key may invoke only `charge` on the configured contract, with a finite gas allowance. It cannot transfer tokens or call cancellation/withdrawal methods requiring one yoctoNEAR.
-- **Enforced commerce:** the contract obtains amount and recipient from an immutable service. The exact delegate key, next cycle, interval, expiry and finite reserve are checked onchain. Repeating the same cycle/hash returns its original receipt.
-- **Cancellation and exit:** cancellation atomically revokes further billing and releases unspent reserve to an owner ledger. Withdrawals transfer only to that authenticated owner, deduct before sending, and restore the ledger if the private callback observes failure.
-- **Settlement versus payout:** a charge creates a provider earnings credit inside the contract. An external native NEAR withdrawal is a separate operation. Reports are independently released against the actual contract receipt, never against browser-supplied success objects.
-
-NEAR Intents and Agent API have no testnet. They are therefore absent from this active payment path. A native contract satisfies the requested testnet policy and enforces exact billing terms against a malicious dispatcher. The cost is prepaid contract custody, retained storage fees and native-NEAR pricing. No stablecoin, bridge or mainnet settlement is claimed.
-
-This is different from per-request HTTP payment: the agreement authorizes a bounded recurring series in advance. The worker still buys one identified artifact per cycle; a subscription is not an unlimited allowance or a guarantee of useful work. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
-## Limits and direct exit
-
-The prototype is not audited. The deployment account retains full-access development keys and can replace code; it is not immutable or trustless against the deployer. Provider quality and delivery remain service assumptions. A paid delivery failure blocks new purchases while the same artifact is recovered. No automatic quality refund or arbitration is implemented.
-
-The portfolio service analyzes a supplied snapshot. The five NEAR monitoring agents query live onchain data for each purchased cycle. None fetch external market prices. Repeating a finalized-transaction diagnostic or unchanged portfolio snapshot has limited recurring value. There is no customer-demand study or winning-probability claim. End-user portfolio data is visible to the application/provider; optional encrypted TEE inference would protect a narrower provider-to-model boundary, not the complete application.
-
-A cancellation cannot reverse a cycle already charged before cancellation finalized. Remove the limited key to revoke its remaining gas authority as well. Paid retrieval remains available. Retained storage fees stay in the contract; they are disclosed before approval. A pending withdrawal must be reconciled before retrying.
-
-You can exit without this API: use a full-access owner wallet to call `cancel` with `{ "subscription_id": "ID" }`, one yoctoNEAR and 30 TGas. Read `get_balance` for that account, then call `withdraw` with `{ "amount": "AVAILABLE_YOCTO", "earnings": false }`, one yoctoNEAR and at least 25 TGas (50 recommended). Providers use `earnings: true`. Wait for final callback and read `pending`, `available` and `earned`; a failed transfer restores its source ledger. The app also includes **Recover an agreement** for onchain agreements whose local activation reminder was lost.
-
-## Provenance and hackathon scope
-
-The existing Daemon marketplace, Express/PostgreSQL structure, independent provider model and risk-analysis fallback were the starting point. The Solidity/Arbitrum contracts and original frontend are retained as inactive baseline source (`contracts/`, original worker directories, `frontend/legacy/`, `legacy/`). They are not supported financial paths in this NEAR deployment.
-
-`upstream-baseline` identifies the imported source. The NEAR contract, wallet authentication, limited-key integration, persistent worker/provider protocol, active Accord interface and verification work were implemented during the November 2026 hackathon. See [PROVENANCE.md](PROVENANCE.md), the [baseline-to-current diff](https://github.com/neelpote/accord-near/compare/upstream-baseline...main), and [LICENSE](LICENSE). Third-party tools/docs retain their own licenses.
-
-Best-fit tracks are Agent Economy and AI Security & Defense. Final track selection, team details, payout account, consent and the exact submission payload remain the human's decisions. Loops reviews are agent-run reviews using fetched event prompts, not official judge scores. No hackathon application or social post has been sent. The live rules require rereading before submission; see [HACKATHON.md](HACKATHON.md).
-
-## Groq copilot extension
-
-New chain-agent offers can include a separate Groq explanation of the public NEAR evidence. Existing deterministic offers remain unchanged. See [setup and limits](docs/GROQ.md), [live inference proof](docs/groq-live-proof.json) and the [submission improvement assessment](docs/HACKATHON_DIFFERENTIATION.md). This does not claim private inference, automatic remediation or independent providers.
-
-## Application operations pilot
-
-Accord now has an application workspace for a small NEAR team or maintenance agency: capture and review code/key baselines, enable read-only change monitoring, investigate grouped incidents, acknowledge review and export evidence. Optional Groq commentary is separate from measured facts. Related paid reports can be linked after their exact receipts are rechecked on NEAR.
-
-The operations pilot is **unbilled**; existing recurring paid reports remain separate, explicit finite agreements. There is no automatic enrollment, bundled production price, autonomous remediation or claim of exploit prevention. Customer demand and paid continuation remain unvalidated. Synthetic demo activity is excluded from pilot metrics.
-
-Start at [localhost:3000](http://localhost:3000), sign in and choose Application workspace. See the [user/operator guide](docs/OPERATIONS.md), [five-phase delivery log](docs/PHASE_DELIVERY.md), [Loops-prompt review gates](docs/evaluations/PHASE_GATES.md), [pilot interviews](docs/pilot/INTERVIEWS.md) and [measurement/pricing test](docs/pilot/MEASUREMENT.md).
-
-Working evidence: [controlled testnet change](docs/operations-demo-proof.json), [HTTP/DB integration checks](docs/operations-integration-proof.json), [release browser checks](docs/operations-release-proof.json), [workspace screenshot](docs/demo/operations-workspace.png) and [browser walkthrough](docs/demo/operations-workspace.webm). The controlled canary changes only a no-op WASM marker; it does not demonstrate an exploit, behavioral regression or an escrow upgrade.
-
-## Animated interface
-
-The current frontend uses a credited artist-made Robot Expressive model and a native-scroll Observe → Inspect → Limit sequence. Camera angle, evidence paths and the bounded-authority illustration follow scroll position. Reduced-motion users can select chapters without camera motion; devices without WebGL receive a static fallback. Paid terms and evidence remain explicit in a service directory. The earlier procedural robot gallery was superseded after user feedback.
-
-[Desktop preview](docs/demo/editorial-desktop.png) · [Mobile preview](docs/demo/editorial-mobile.png) · [Scroll walkthrough](docs/demo/editorial-scroll.webm) · [Asset research and design decisions](docs/design/MODEL_AND_SCROLL_REVISION.md) · [Verification](docs/editorial-proof.json)
-
-### Counterparty security before signing
-
-Automated charges now pass a mandatory counterparty decision service: **allow**, **warn** (owner approval for one exact payment), or **block** (no signature). Both the escrow contract and the economic provider are checked using finalized code identity, indexed account age/recent activity, prior Accord receipts and shared evidence reports. Open **Payment security** to review paused payments or submit evidence. Curator-reviewed blocklist entries cannot be overridden by payment approval.
-
-The agent's existing finite function-call key remains `charge`-only on one contract; it is never a full-access key. The allowance pays gas, while the contract enforces the payment budget and recipient. The reputation gate runs in the backend and is not a contract-enforced guarantee against a compromised dispatcher. Full data-source coverage, access-key limits, API, threat boundaries and reproducible attack instructions: [Counterparty security](docs/COUNTERPARTY_SECURITY.md). [Captured causal attack log](docs/causal-attack-proof.json). Two genuine live model calls changed only the vendor tool document; the poisoned document changed the proposed receiver. A funded control paid successfully, while the poisoned proposal and a separate valid-terms reputation case stopped before signing. See the [current walkthrough and reproduction notes](docs/SECURITY_WALKTHROUGH.md).
-
-## Reliability development (local, pending rollout)
-
-The three-priority implementation is tracked in [the phase log](docs/reliability/IMPLEMENTATION.md), [security acceptance](docs/reliability/SECURITY.md) and [delivery verification](docs/reliability/DELIVERY.md). These local changes require coordinated deployment and explicit owner execution-identity/delivery-specification approval. The public hosted application remains the previously deployed version until a rollout is authorized.
-
-
-## Local reliability acceptance — 14 November 2026
-
-These changes are **not deployed to the hosted demo**. The revised local flow adds explicit execution-identity and frozen-specification approval after installing the limited key. Security and delivery acceptance are documented; the experimental AI phase has not passed its human quality/value gate.
-
-- [Final report and remaining boundaries](docs/reliability/FINAL.md)
-- [Architecture, APIs, migrations, test commands, deployment and rollback](docs/reliability/OPERATIONS.md)
-- [Actual recurring AI testnet agreement 35](docs/reliability/phase3-testnet.json), [native wallet agreement 38](docs/reliability/phase3-wallet.json), [finalized chain readback](docs/reliability/phase3-readback.json) and [paid-artifact recovery](docs/reliability/phase3-recovery.json)
-- [22-case AI evaluation and rejected alternatives](docs/reliability/AI.md). Eleven of twelve replacement-model outputs passed mechanical checks; semantic errors remain. This is not an accuracy score.
-
-![Local retained risk report and separate delivery verification after cancellation](docs/demo/reliability-risk-verification.png)
-
-The screenshot is actual local testnet evidence, captured after cancellation/key removal with animation paused for readability. It uses a developer fixture; judges still use their own testnet wallets, with no shared credentials. The [full local app capture](docs/demo/reliability-risk-wallet.png) is also available. New AI execution, its model process and automatic scheduling were disabled after acceptance tests. Paid history remains readable. Groq's approved lifetime cap remains exhausted at six; no credit purchase or mainnet transaction was made.
+[Architecture](docs/ARCHITECTURE.md) · [Local/operator guide](docs/LOCAL_SETUP.md) · [Operations](docs/OPERATIONS.md) · [Creator services](docs/CREATOR_SERVICES.md) · [Current handoff](docs/PROJECT_HANDOFF.md) · [Submission checklist](docs/HOSTING_AND_SUBMISSION.md)

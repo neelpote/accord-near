@@ -1,6 +1,6 @@
 # Loops-guided counterparty review
 
-Date: November 12, 2026. Source: `loops evaluate --event near-hackathon --sponsor ai-security-defense --format json`, using the installed [Loops evaluation skill](../../.agents/skills/loops-evaluate/SKILL.md).
+Date: November 12, 2026. Source: `loops evaluate --event near-hackathon --sponsor ai-security-defense --format json`, using the Loops CLI evaluator workflow. Editor-local skill copies are not runtime dependencies and have since been removed from the repository.
 
 This command supplies an evaluator prompt, not an independent approval or a judge verdict. The following is a repository-grounded engineering review using that prompt. No score, win probability or external endorsement is claimed.
 

@@ -34,3 +34,9 @@ frontend/.next/
 .env.local
 .env.*.local
 .vercel
+
+# Editor-local skill installations are tooling, not application source
+/.agents/skills/
+/.claude/skills/
+/.continue/skills/
+/.kiro/skills/
