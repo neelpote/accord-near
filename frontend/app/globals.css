@@ -633,3 +633,7 @@ footer p {
 .delivery-verification pre, .execution-controls pre { max-width:100%; white-space:pre-wrap; overflow-wrap:anywhere; font-size:12px; }
 
 .report pre { max-width:100%; white-space:pre-wrap; overflow-wrap:anywhere; font-size:12px; }
+
+.report.risk-report { display:block; max-width:100%; }
+.risk-report h4 { font-size:20px; margin-bottom:14px; }
+.risk-report article { padding:16px 0; border-top:1px solid var(--line); }

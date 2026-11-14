@@ -206,7 +206,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
       exact: true,
     }),
   });
-  if(riskMode)await agreement.getByRole("button",{name:"Approve this execution identity"}).click();
+  if(riskMode){await expect(agreement.locator(".eyebrow").first()).toHaveText("Smart Contract Risk Analyst");await agreement.getByRole("button",{name:"Approve this execution identity"}).click();}
   // A warning needs one owner-fixture review; an already-allowed payment can deliver directly.
   const approval = page
     .locator("#security article")
@@ -241,7 +241,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
       : agreement.getByText("high concentration risk", { exact: true }),
   ).toBeVisible();
   mark("report_delivered");
-  if(riskMode){await page.screenshot({path:resolve(root,"docs/demo/reliability-risk-wallet.png"),fullPage:true});await agreement.screenshot({path:resolve(root,"docs/demo/reliability-risk-verification.png")});}
+  if(riskMode){await page.screenshot({path:resolve(root,"docs/demo/reliability-risk-wallet.png"),fullPage:true});await agreement.screenshot({path:resolve(root,"docs/demo/reliability-risk-verification.png"),style:"header, .skip-link { visibility:hidden !important; }"});}
   await mkdir(resolve(root, "docs/demo"), { recursive: true });
   await page.screenshot({
     path: resolve(

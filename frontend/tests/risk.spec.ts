@@ -9,6 +9,7 @@ test('AI risk output exposes evidence and uncertainty without claiming factual v
  if(p==='/services/9/execution')json={identity:{hash:'identity',agent_id:report.kind,provider_id:'provider.testnet',version:'1'},enabled:true};if(p==='/execution/jobs')json={jobs:[],events:[]};
  await r.fulfill({json});});
  await page.goto('http://localhost:3100');const view=page.getByRole('region',{name:'Smart Contract Risk Analyst report'});
+ const reportWidth=(await view.boundingBox())!.width,summaryWidth=(await view.getByText(report.summary,{exact:true}).boundingBox())!.width;expect(summaryWidth).toBeGreaterThan(reportWidth*.75);
  await expect(view.getByText(/Rule-based change severity: HIGH/)).toBeVisible();await expect(view.getByText(/Factual correctness is unverified/)).toBeVisible();await view.getByText('Inspect baseline, finalized observations and evidence').click();await expect(view.locator('pre')).toContainText('previous');await expect(view.getByText(/Evidence: block:controlled/)).toBeVisible();
 });
 

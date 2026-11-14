@@ -429,7 +429,8 @@ app.get("/subscriptions", async (req, res) => {
       row.agreement = await view<Subscription>("get_subscription", {
         subscription_id: row.id,
       });
-      row.service_name = metadata.get(row.agreement.service_id)?.name ?? "Portfolio concentration report";
+      const meta=metadata.get(row.agreement.service_id);
+      row.service_name = meta?.name ?? agentDefinitions().find(d=>d.kind===meta?.kind)?.name ?? "Agent service";
       row.service_kind = metadata.get(row.agreement.service_id)?.kind ?? "portfolio-concentration-v1";
       row.cycles = history.rows.filter((cycle) => cycle.subscription_id === row.id)
         .map(({ subscription_id: _, ...cycle }) => cycle);

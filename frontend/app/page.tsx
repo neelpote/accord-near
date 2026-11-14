@@ -643,7 +643,7 @@ export default function Home() {
                 <p className="eyebrow">
                   {s.metadata.analysis_mode === "near-ai-cloud"
                     ? "NEAR AI CLOUD · VERIFIED INFERENCE"
-                    : (s.metadata.category ?? "PORTFOLIO ANALYSIS")}
+                    : (s.metadata.category ?? (s.metadata.kind==="near-contract-risk-analyst-v1"?"AI CONTRACT MONITORING":"PORTFOLIO ANALYSIS"))}
                 </p>
                 <h3>{s.service.name}</h3></div>
                 <div className="service-description"><p>{s.metadata.description}</p>
@@ -842,7 +842,7 @@ export default function Home() {
                   </span>
                 </div>
                 <p className="eyebrow">
-                  {s.service_name ?? "Portfolio concentration report"}
+                  {s.service_name ?? "Agent service"}
                 </p>
                 <div
                   className="cycle-strip"
