@@ -62,12 +62,16 @@ const collect = async (): Promise<Evidence> => ({
     errors: [],
   })),
 });
+let renewalReads=0;
 const app = express();
 app.use(express.json());
 mountCounterparty(app, async (req) => {
   const owner = req.headers["x-fixture-owner"];
   if (typeof owner !== "string") throw Error("Sign in");
   return owner;
+},async()=>{
+  renewalReads++;
+  return {sub:{owner:intent.agent,service_id:'1',delegate_key:'fixture',input_hash:'a'.repeat(64),cycles:1,max_cycles:4,reserved:'2000',active:true,next_due_ns:'0',expires_at_ns:String(BigInt(Date.now()+60000)*1000000n)},service:{provider:intent.receiver,price:intent.amount,interval_ns:'60000000000',name:'Fixture',metadata_hash:'a'.repeat(64)},block_height:123,block_hash:'finalized-fixture'};
 });
 app.use(
   (
@@ -325,6 +329,29 @@ try {
   checks.push(
     "Verified evidence involvement, invalid proof rejection, duplicate rejection, curator authorization, shared block enforcement, append-only moderation history and dismissal",
   );
+  // Renewal context never creates a decision, approval or signature.
+  const originalContract=config.contract;
+  config.contract=intent.contract;
+  const baseId=randomUUID(),currentId=randomUUID();
+  const before={intent,evidence:await collect(),policy:'v1'};
+  const after=structuredClone(before);after.evidence.accounts[0]!.code='local:changed';
+  for(const [id,owner,body,state] of [[baseId,intent.agent,before,'consumed'],[currentId,intent.agent,after,'pending']] as const)
+    await db.query(`INSERT INTO accord_security_decisions(id,owner,intent_hash,evidence_hash,body,state,created_at,acted_at) VALUES($1,$2,$3,$4,$5,$6,CASE WHEN $6='consumed' THEN now()-interval '3 minutes' ELSE now()-interval '1 minute' END,CASE WHEN $6='consumed' THEN now()-interval '2 minutes' ELSE NULL END)`,[id,owner,id,id,body,state]);
+  assert.equal((await request(`/security/decisions/${currentId}/renewal`,undefined,'')).status,400);
+  assert.equal((await request(`/security/decisions/${currentId}/renewal`,undefined,'another-agent.testnet')).status,400);
+  assert.equal(renewalReads,0);
+  const countBefore=(await db.query('SELECT count(*) FROM accord_security_decisions')).rows[0].count;
+  const renewal=await request(`/security/decisions/${currentId}/renewal`);
+  assert.equal(renewal.status,200);
+  assert.equal(renewal.body.block_height,123);
+  assert.equal(renewal.body.baseline_decision.id,baseId);
+  assert.equal(renewal.body.changes[0].kind,'code');
+  assert.equal(renewal.body.budget.maximum_scheduled_yocto,'2000');
+  assert.equal((await db.query('SELECT state FROM accord_security_decisions WHERE id=$1',[currentId])).rows[0].state,'pending');
+  assert.equal((await db.query('SELECT count(*) FROM accord_security_decisions')).rows[0].count,countBefore);
+  assert.equal(signed,1);
+  config.contract=originalContract;
+  checks.push('Renewal review isolates owners, compares prior authorization and reads bounded budget without approving, signing or creating decisions');
   console.log(
     JSON.stringify(
       { passed: true, checks, signing_calls: signed, chain_transactions: 0 },

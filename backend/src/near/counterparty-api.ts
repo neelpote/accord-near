@@ -1,6 +1,7 @@
 import type express from "express";
 import { db } from "./db.js";
-import { config, view, type Subscription, type Service } from "./config.js";
+import { config, rpc, view, type Subscription, type Service } from "./config.js";
+import { renewalReview } from "./renewal-review.js";
 import { validateIntent } from "./counterparty-policy.js";
 import {
   checkCounterparty,
@@ -9,9 +10,21 @@ import {
   reviewReport,
   isReviewer,
 } from "./counterparty.js";
+export async function readRenewalTerms(id:string) {
+  const block=await rpc.viewBlock({finality:'final'});
+  const timestamp=Number(BigInt(block.header.timestamp_nanosec)/1000000n);
+  if(Date.now()-timestamp>60000||timestamp>Date.now()+5000)throw Error('Fresh finalized state required');
+  const read=async<T>(method:string,args:Record<string,unknown>)=>await rpc.callFunction({contractId:config.contract,method,args,blockQuery:{blockId:block.header.hash}}) as T;
+  const sub=await read<Subscription|null>('get_subscription',{subscription_id:id});
+  if(!sub)throw Error('Agreement not found');
+  const service=await read<Service|null>('get_service',{service_id:sub.service_id});
+  if(!service)throw Error('Service not found');
+  return {sub,service,block_height:block.header.height,block_hash:block.header.hash};
+}
 export function mountCounterparty(
   app: express.Express,
   owner: (req: express.Request) => Promise<string>,
+  readTerms = readRenewalTerms,
 ) {
   app.get("/security", async (req, res) => {
     const account = await owner(req);
@@ -32,6 +45,21 @@ export function mountCounterparty(
       decisions,
       reports,
     });
+  });
+  app.get("/security/decisions/:id/renewal", async(req,res)=>{
+    const account=await owner(req);
+    const row=(await db.query("SELECT id,body,created_at FROM accord_security_decisions WHERE id=$1 AND owner=$2",[req.params.id,account])).rows[0];
+    if(!row)throw Error('Decision not found for this wallet');
+    const intent=validateIntent(row.body.intent);
+    if(intent.agent!==account||intent.network!==config.network||intent.contract!==config.contract)throw Error('Decision network or contract mismatch');
+    const previous=(await db.query(`SELECT id,body,state,acted_at FROM accord_security_decisions
+      WHERE owner=$1 AND id<>$2 AND state IN ('approved','consumed') AND acted_at<=$3
+      AND body->'intent'->'args'->>'subscription_id'=$4
+      ORDER BY acted_at DESC,id DESC LIMIT 1`,[account,row.id,row.created_at,intent.args.subscription_id])).rows[0];
+    const terms=await readTerms(intent.args.subscription_id);
+    res.json({...renewalReview(row.body,previous?.body??null,terms.sub,terms.service),
+      baseline_decision:previous?{id:previous.id,state:previous.state,acted_at:previous.acted_at}:null,
+      block_height:terms.block_height,block_hash:terms.block_hash,network:config.network});
   });
   app.post("/security/check", async (req, res) => {
     const account = await owner(req),
