@@ -1,8 +1,9 @@
+import {CREATOR_KIND,creatorReport} from './creator-services.js';
 import {RISK_KIND,verifyRiskReport,riskInput,verifyRiskBaseline} from "./risk-analyst.js";
 import {validatePrepared,validateDeliveryEvidence,matchDeliveryReceipt} from "./service-delivery.js";
 import {recordVerification} from "./delivery-store.js";
 import {authorizeExecution,assertLimitedKey} from "./execution-policy.js";
-import {agentIdentity,providerHeaders,securityEvent,verifyProviderRequest} from "./execution.js";
+import {agentIdentity,securityEvent,callProvider} from "./execution.js";
 import { secureCharge } from "./counterparty.js";
 import { verifyGroqExplanation } from "./groq.js";
 import { Account, KeyPair } from "near-api-js";
@@ -23,21 +24,11 @@ export function encryptionKey(): Buffer {
     throw new Error("Set DELEGATE_ENCRYPTION_KEY to 32 random bytes in hex");
   return Buffer.from(raw, "hex");
 }
-async function providerCall(path: string, body: unknown,id:string,cycle:number): Promise<any> {
-  if(!(await db.query('UPDATE accord_cycles SET provider_attempts=provider_attempts+1 WHERE subscription_id=$1 AND cycle=$2 AND provider_attempts<5 RETURNING cycle',[id,cycle])).rowCount)throw Error('Delivery retry limit reached; owner review required');
-  const response = await fetch(config.provider + path, {
-    method: "POST",
-    headers: { "content-type": "application/json",...providerHeaders(path,body) },
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(90000),
-    redirect: "error",
-  });
-  if (!response.ok)
-    throw new Error(`Provider ${path}: HTTP ${response.status}`);
-  const payload=await boundedJson(response);
-  verifyProviderRequest(path+'/response',{request_hash:digest(body),response:payload},response.headers.get('x-accord-time'),response.headers.get('x-accord-auth'));
-  return payload;
+async function providerCall(path:string,body:unknown,id:string,cycle:number,provider:string,metadata:any):Promise<any>{
+ if(!(await db.query('UPDATE accord_cycles SET provider_attempts=provider_attempts+1 WHERE subscription_id=$1 AND cycle=$2 AND provider_attempts<5 RETURNING cycle',[id,cycle])).rowCount)throw Error('Delivery retry limit reached; owner review required');
+ return callProvider(provider,metadata,path,body);
 }
+
 export async function tick() {
   const subscriptions = (
     await db.query(
@@ -124,8 +115,9 @@ export async function tick() {
           ...args,
           input: local.input,
           identity_hash:identity.hash,
+          ...(metadata.kind===CREATOR_KIND?{metadata,specification:deliveryContext.spec}:{}),
           spec_hash:freshLocal.delivery_spec_hash,
-        },local.id,cycle);
+        },local.id,cycle,service.provider,metadata);
         if (
           prepared.identity_hash !== identity.hash ||
           prepared.subscription_id !== local.id ||
@@ -258,8 +250,9 @@ export async function tick() {
       const delivered = await providerCall("/deliver", {
         ...args,
         prepare_id: row.prepare_id,
-      },local.id,cycle);
-      if(metadata.kind===RISK_KIND)verifyRiskReport(delivered.report,`${local.id}:${cycle}`,riskInput(local.input),Number(BigInt(receipt.paid_at_ns)/1000000n),deliveryContext.spec?.inference_identity);
+      },local.id,cycle,service.provider,metadata);
+      if(metadata.kind===CREATOR_KIND)creatorReport(delivered.report,local.id+':'+cycle,local.input,Number(BigInt(receipt.paid_at_ns)/1000000n));
+      else if(metadata.kind===RISK_KIND)verifyRiskReport(delivered.report,`${local.id}:${cycle}`,riskInput(local.input),Number(BigInt(receipt.paid_at_ns)/1000000n),deliveryContext.spec?.inference_identity);
       else if (isAgentKind(metadata.kind))
         verifyChainReport(delivered.report, metadata.kind);
       else verifyReport(delivered.report);

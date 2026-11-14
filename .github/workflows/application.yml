@@ -34,6 +34,7 @@ jobs:
           npm run near:test:evm-auth
           npm run near:test:security
           npm run near:test:execution
+          npm run near:test:creators
           node --test scripts/execution-env.test.mjs
           npm run db:migrate
           npm run db:migrate

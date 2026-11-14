@@ -38,7 +38,9 @@
     "near:capture:causal": "tsx src/near/capture-causal-agent.ts",
     "near:test:execution": "tsx src/near/execution-check.ts",
     "near:evaluate:risk": "tsx src/near/risk-evaluate.ts",
-    "near:readback:risk": "tsx src/near/risk-readback.ts"
+    "near:readback:risk": "tsx src/near/risk-readback.ts",
+    "near:creator:example": "tsx src/near/creator-example.ts",
+    "near:test:creators": "tsx src/near/creator-check.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",

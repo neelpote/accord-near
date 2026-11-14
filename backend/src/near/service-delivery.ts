@@ -1,3 +1,4 @@
+import {CREATOR_KIND,creatorOutputSchema,creatorReport} from './creator-services.js';
 import {RISK_KIND,riskInput,verifyRiskReport,LOCAL_MODEL,LOCAL_MODEL_REVISION} from "./risk-analyst.js";
 import {codeIdentity} from "./code-identity.js";
 import { digest, verifyReport, analyze } from "./core.js";
@@ -29,6 +30,13 @@ export function deliverySpecification(
       holdings: [],
       totalValueUsd: 1,
     };
+  if(metadata.kind===CREATOR_KIND)return {
+    schema_version:'accord-service-delivery-v1',service_id:serviceId,provider_id:service.provider,kind:CREATOR_KIND,description:metadata.description,metadata_hash:service.metadata_hash,
+    input_schema:metadata.input_schema,output_schema:creatorOutputSchema,accepted_evidence:['approved_customer_input','authenticated_provider_report'],freshness_seconds:600,execution_window_seconds:600,maximum_provider_attempts:5,maximum_inference_requests_per_job:1,
+    retry_policy:'Same immutable job/artifact only; no automatic agent retry',failure_policy:'Reject before payment; recover the identical paid output after payment',
+    acceptance_conditions:['Approved input and provider identity match','Agreed output structure and freshness valid','Report hash matches finalized payment receipt'],
+    correctness:'External report meaning and quality are unverified; source references are not independently retrieved'
+  };
   return {
     schema_version: "accord-service-delivery-v1",
     service_id: serviceId,
@@ -149,8 +157,9 @@ export function validatePrepared(
     at - time > c.spec.execution_window_seconds * 1000
   )
     throw Error("Preparation deadline exceeded");
-  validateServiceInput(c.metadata.kind, c.input);
-  if(c.metadata.kind===RISK_KIND)verifyRiskReport(envelope.report,`${c.id}:${c.cycle}`,riskInput(c.input),at,c.spec.inference_identity);
+  validateServiceInput(c.metadata.kind, c.input,c.metadata);
+  if(c.metadata.kind===CREATOR_KIND)creatorReport(envelope.report,c.id+':'+c.cycle,c.input,at);
+  else if(c.metadata.kind===RISK_KIND)verifyRiskReport(envelope.report,`${c.id}:${c.cycle}`,riskInput(c.input),at,'inference_identity' in c.spec?c.spec.inference_identity:undefined);
   else if (isAgentKind(c.metadata.kind))
     verifyChainReport(envelope.report, c.metadata.kind);
   else verifyReport(envelope.report);
@@ -197,7 +206,10 @@ export async function validateDeliveryEvidence(
     r = envelope.report,
     input = c.input as any,
     refs: any[] = [];
-  if(c.metadata.kind===RISK_KIND){
+  if(c.metadata.kind===CREATOR_KIND){
+    refs.push({type:'approved_customer_input',reference:c.sub.input_hash});
+    verification.warnings.push('Creator-supplied report: only approved-input binding, provider authentication and declared structure are checked. Factual accuracy and external references are unverified.');
+  }else if(c.metadata.kind===RISK_KIND){
     for(const [which,snapshot] of [['current',r.investigation.current],['baseline',r.investigation.baseline]] as const){
       if(!snapshot)continue;
       const block=await client.viewBlock({blockId:snapshot.block_hash});if(block.header.hash!==snapshot.block_hash||block.header.height!==snapshot.block_height)throw Error('Risk evidence block mismatch');

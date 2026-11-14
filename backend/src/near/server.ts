@@ -1,3 +1,5 @@
+import {CREATOR_KIND,creatorMetadata,providerRoute} from './creator-services.js';
+import {callProvider} from './execution.js';
 import {RISK_KIND,localRiskConfig,riskAvailability} from "./risk-analyst.js";
 import {deliverySpecification} from "./service-delivery.js";
 import {mountDelivery} from "./delivery-api.js";
@@ -29,7 +31,7 @@ import {
   validateServiceInput,
 } from "./agents.js";
 import { tick, encryptionKey } from "./worker.js";
-const app = express();
+export const app = express();
 app.disable("x-powered-by");
 app.use(express.json({ limit: "64kb" }));
 app.use((req, res, next) => {
@@ -193,10 +195,14 @@ app.post("/services/:id/unlist", async (req, res) => {
   ]);
   res.json({ unlisted: true });
 });
-app.post("/services", async (req, res) => {
-  const account = await owner(req),
-    serviceId = id(req.body.service_id),
-    metadata = req.body.metadata;
+async function validateListing(account:string,metadata:any){
+ if(metadata?.kind===CREATOR_KIND){
+   creatorMetadata(metadata,account);
+   const challenge=randomBytes(32).toString('hex'),proof=await callProvider(account,metadata,'/handshake',{challenge,provider:account},5000);
+   if(proof.challenge!==challenge||proof.provider!==account||proof.protocol!=='accord-provider-v1')throw Error('Creator endpoint ownership proof rejected');
+   return;
+ }
+ if(account!==process.env.PROVIDER_ACCOUNT_ID)throw Error('This wallet is not approved for reference services; onboard an external creator first');
   if (
     metadata?.analysis_mode === "near-ai-cloud" &&
     process.env["NEAR_AI_ENABLED"] !== "true"
@@ -225,6 +231,19 @@ app.post("/services", async (req, res) => {
   }
   if (metadata.analysis_mode === "groq" && (!isAgentKind(metadata.kind) || !groqConfigured()))
     throw Error("Groq chain explanations require an enabled provider and key");
+
+}
+app.get('/creators/me',async(req,res)=>{
+ const account=await owner(req);
+ try{const route=providerRoute(account);res.json({account,approved:true,provider_url:route.url,external:route.external,protocol:'accord-provider-v1'});}
+ catch{res.json({account,approved:false,external:true,message:'Operator approval is required before registration. No registration payment should be made yet.'});}
+});
+app.post('/services/preflight',async(req,res)=>{const account=await owner(req);await validateListing(account,req.body.metadata);res.json({approved:true,provider:account,metadata_hash:digest(req.body.metadata)});});
+app.post("/services", async (req, res) => {
+  const account = await owner(req),
+    serviceId = id(req.body.service_id),
+    metadata = req.body.metadata;
+  await validateListing(account,metadata);
   const service = await view<Service | null>("get_service", {
     service_id: serviceId,
   });
@@ -234,10 +253,7 @@ app.post("/services", async (req, res) => {
     service.metadata_hash !== digest(metadata)
   )
     throw new Error("Register these exact service terms on NEAR first");
-  if (service.provider !== process.env["PROVIDER_ACCOUNT_ID"])
-    throw new Error(
-      "This deployment only lists the account operated by its configured provider",
-    );
+
   await db.query(
     "INSERT INTO accord_services(id,metadata) VALUES($1,$2) ON CONFLICT DO NOTHING",
     [serviceId, metadata],
@@ -275,7 +291,7 @@ app.post("/transactions/confirm", async (req, res) => {
 });
 app.post("/inputs/validate", async (req, res) => {
   await owner(req);
-  let kind = "portfolio-concentration-v1";
+  let kind = "portfolio-concentration-v1",inputMetadata:any;
   if (req.body.service_id !== undefined) {
     const row = (
       await db.query("SELECT metadata,execution_enabled FROM accord_services WHERE id=$1", [
@@ -284,10 +300,10 @@ app.post("/inputs/validate", async (req, res) => {
     ).rows[0];
     if (!row) throw new Error("Unknown service");
     if(!row.execution_enabled)throw Error("Provider disabled this offer; no agreement should be funded");
-    kind = row.metadata.kind;
+    kind = row.metadata.kind;inputMetadata=row.metadata;
   }
   if(kind===RISK_KIND&&!(await riskAvailability()).local_risk_available)throw Error("Local AI is unavailable or its request budget is exhausted; no agreement should be funded");
-  const input = validateServiceInput(kind, req.body.input);
+  const input = validateServiceInput(kind, req.body.input,inputMetadata);
   res.json({ input, input_hash: digest(input) });
 });
 app.post("/delegates", async (req, res) => {
@@ -363,7 +379,7 @@ app.post("/subscriptions", async (req, res) => {
     ])
   ).rows[0]?.metadata;
   if (!metadata) throw new Error("Unknown service metadata");
-  const input = validateServiceInput(metadata.kind, req.body.input);
+  const input = validateServiceInput(metadata.kind, req.body.input,metadata);
   if (
     !sub ||
     sub.owner !== account ||
@@ -474,6 +490,7 @@ app.use(
       });
   },
 );
+if(process.env.ACCORD_API_TEST!=="1"){
 await migrate();
 await migrateProvisioning();
 await networkCheck();
@@ -491,3 +508,4 @@ async function run() {
 if (process.env["RUN_WORKER"] !== "false") void run();
 
 if (process.env["RUN_OPERATIONS"] !== "false") void runOperations();
+}

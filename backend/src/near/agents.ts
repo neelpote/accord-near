@@ -1,3 +1,4 @@
+import {CREATOR_KIND,creatorInput} from './creator-services.js';
 import type { JsonRpcProvider } from "near-api-js";
 import { rpc, config } from "./config.js";
 import { validateInput } from "./core.js";
@@ -35,7 +36,9 @@ const base58 = (v: unknown): string => {
 export function validateServiceInput(
   kind: string,
   value: unknown,
+  metadata?:any,
 ): Record<string, unknown> {
+  if(kind===CREATOR_KIND)return creatorInput(value,metadata?.input_schema);
   if(kind==="near-contract-risk-analyst-v1")return validateServiceInput("near-contract-sentinel-v1",value);
   if (kind === "portfolio-concentration-v1") return validateInput(value);
   if (!isAgentKind(kind)) throw Error("Unsupported agent type");
