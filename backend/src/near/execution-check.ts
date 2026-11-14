@@ -14,6 +14,12 @@ const u = new URL(original);
 u.searchParams.set("options", "-csearch_path=" + schema);
 process.env.DATABASE_URL = u.toString();
 process.env.ACCORD_PROVIDER_TEST = "1";
+// Every chain call is controlled here; never borrow a developer contract/RPC.
+process.env.NEAR_NETWORK = "testnet";
+process.env.NEAR_CONTRACT_ID = "escrow.testnet";
+process.env.NEAR_RPC_URL = "http://127.0.0.1:9";
+process.env.PROVIDER_URL = "http://127.0.0.1:4001";
+process.env.ACCORD_ENV_ISOLATED = "true";
 process.env.PROVIDER_ACCOUNT_ID = "provider.testnet";
 process.env.ACCORD_PROVIDER_SECRET =
   "integration-fixture-secret-not-an-api-key";

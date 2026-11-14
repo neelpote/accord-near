@@ -1,6 +1,6 @@
 # Reliability change inventory
 
-Compared with `24ead06044a946087213190c8722879771f70565`. Local commits only; no push or production deployment. Generated model weights, environments, private fixtures, browser traces and credentials are excluded.
+Compared with `24ead06044a946087213190c8722879771f70565`. Inventory prepared at the local engineering checkpoint; subsequent publication is recorded in [PUBLISHING.md](PUBLISHING.md). No production deployment. Generated model weights, environments, private fixtures, browser traces and credentials are excluded.
 
 ## Backend
 
@@ -70,6 +70,7 @@ Compared with `24ead06044a946087213190c8722879771f70565`. Local commits only; no
 - `docs/reliability/IMPLEMENTATION.md`
 - `docs/reliability/LOOPS_REVIEW.md`
 - `docs/reliability/OPERATIONS.md`
+- `docs/reliability/PUBLISHING.md`
 - `docs/reliability/SECURITY.md`
 - `docs/reliability/ai-evaluation-initial.json`
 - `docs/reliability/ai-evaluation-small-model.json`

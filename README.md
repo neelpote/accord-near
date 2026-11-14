@@ -6,6 +6,8 @@ A customer approves a finite agreement, funds its budget, and installs a charge-
 
 **Status:** testnet prototype. Five agents now read live NEAR testnet data: Wallet Watch, Access Guard, Contract Sentinel, Receipt Inspector and Network Pulse. They use deterministic rules and need no AI credits. The supplied-portfolio snapshot service remains available separately. NEAR AI Cloud integration is implemented and paused: TEE preflight authenticated successfully, but inference returned HTTP 402 because credits/spending limits were not configured. Live NEAR AI Cloud output is not claimed.
 
+**GitHub publication:** reliability commits were pushed in order on 14 November, with 20-second pauses. Automatic Vercel Git deployments are disabled; the hosted app was not updated. See the [publication and CI follow-up](docs/reliability/PUBLISHING.md).
+
 **Unreleased reliability work:** owner-approved execution identities, frozen delivery criteria and disputes are implemented and locally/testnet tested. The single AI Risk Analyst is a local development service; human-reviewed accuracy and usefulness remain unverified. These commits are not deployed to the hosted app. See [phase evidence](docs/reliability/IMPLEMENTATION.md), [AI evaluation](docs/reliability/AI.md) and [architecture/API/rollout guide](docs/reliability/OPERATIONS.md).
 
 [Security walkthrough](docs/demo/accord-security-demo.mp4) · [Earlier testnet demo](docs/demo/accord-testnet-demo.webm) · [Verification and CI](VERIFICATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Loops review](docs/evaluations/LOOPS_REVIEW.md)
