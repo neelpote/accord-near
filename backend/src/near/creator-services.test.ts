@@ -41,6 +41,7 @@ test('two independent creators prepare once, require exact payment and recover e
    const registry=JSON.parse(process.env.ACCORD_APPROVED_PROVIDERS??'{}');registry[provider]={url,secret};process.env.ACCORD_APPROVED_PROVIDERS=JSON.stringify(registry);
    const routeMetadata={...metadata,provider_url:url};creatorMetadata(routeMetadata,provider);
    const identity=agentIdentity(id,service,routeMetadata),spec=deliverySpecification(id,service,metadata);
+   assert.equal(spec.maximum_inference_requests_per_job,null);
    const body={subscription_id:id,cycle:0,input,identity_hash:identity.hash,spec_hash:digest(spec),metadata,specification:spec};
    const challenge='a'.repeat(64);assert.deepEqual(await callProvider(provider,routeMetadata,'/handshake',{provider,challenge}),{provider,challenge,protocol:'accord-provider-v1'});
    const prepared=await callProvider(provider,routeMetadata,'/prepare',body);

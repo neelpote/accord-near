@@ -32,7 +32,7 @@ export function deliverySpecification(
     };
   if(metadata.kind===CREATOR_KIND)return {
     schema_version:'accord-service-delivery-v1',service_id:serviceId,provider_id:service.provider,kind:CREATOR_KIND,description:metadata.description,metadata_hash:service.metadata_hash,
-    input_schema:metadata.input_schema,output_schema:creatorOutputSchema,accepted_evidence:['approved_customer_input','authenticated_provider_report'],freshness_seconds:600,execution_window_seconds:600,maximum_provider_attempts:5,maximum_inference_requests_per_job:1,
+    input_schema:metadata.input_schema,output_schema:creatorOutputSchema,accepted_evidence:['approved_customer_input','authenticated_provider_report'],freshness_seconds:600,execution_window_seconds:600,maximum_provider_attempts:5,maximum_agent_preparations_per_job:1,maximum_inference_requests_per_job:null,
     retry_policy:'Same immutable job/artifact only; no automatic agent retry',failure_policy:'Reject before payment; recover the identical paid output after payment',
     acceptance_conditions:['Approved input and provider identity match','Agreed output structure and freshness valid','Report hash matches finalized payment receipt'],
     correctness:'External report meaning and quality are unverified; source references are not independently retrieved'

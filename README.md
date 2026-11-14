@@ -10,6 +10,8 @@ A customer approves a finite agreement, funds its budget, and installs a charge-
 
 **Unreleased reliability work:** owner-approved execution identities, frozen delivery criteria and disputes are implemented and locally/testnet tested. The single AI Risk Analyst is a local development service; human-reviewed accuracy and usefulness remain unverified. These commits are not deployed to the hosted app. See [phase evidence](docs/reliability/IMPLEMENTATION.md), [AI evaluation](docs/reliability/AI.md) and [architecture/API/rollout guide](docs/reliability/OPERATIONS.md).
 
+**Creator listing update:** Approved creators can now connect an independently hosted agent, define a bounded input schema, publish fixed testnet terms, and use Accord's existing validated-payment flow. See [creator setup, judge testing and limits](docs/CREATOR_SERVICES.md). This code is tested in the repository and has **not been deployed** to the hosted app; there are no shared judge credentials.
+
 [Security walkthrough](docs/demo/accord-security-demo.mp4) · [Earlier testnet demo](docs/demo/accord-testnet-demo.webm) · [Verification and CI](VERIFICATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Loops review](docs/evaluations/LOOPS_REVIEW.md)
 
 [![Watch the 80-second security film](docs/demo/accord-security-poster.jpg)](docs/demo/accord-security-demo.mp4)
