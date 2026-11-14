@@ -93,10 +93,12 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
         return actions.deleteKey(PublicKey.fromString(a.params.publicKey));
       throw Error("Unsupported fixture action");
     });
+    if(riskMode&&params.actions[0]?.params.methodName==='subscribe')cleanupKey=params.actions[0].params.args.delegate_key;
     const result = await buyer.signAndSendTransaction({
       receiverId: params.receiverId,
       actions: converted,
     });
+    if(riskMode&&params.actions[0]?.params.methodName==='subscribe'&&typeof result.status==='object'&&'SuccessValue' in result.status)cleanupId=JSON.parse(Buffer.from(result.status.SuccessValue,'base64').toString());
     transactions.push({
       method: params.actions[0].params.methodName ?? params.actions[0].type,
       hash: result.transaction.hash,
@@ -182,6 +184,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
         }),
       );
   try{
+  if(riskMode){const spec=page.getByRole("region",{name:"Service delivery specification"});await spec.getByText("Inspect service delivery specification before approval",{exact:true}).click();await expect(spec.locator("pre")).toContainText("near-contract-risk-analyst-v1");await expect(spec.locator("pre")).toContainText("model_revision");mark("frozen_spec_reviewed");}
   mark("fund_agreement");
   await page
     .getByRole("button", { name: "Approve and fund agreement" })
@@ -314,6 +317,7 @@ test("wallet sign-in → agreement → limited key → report → cancellation �
         contract: config.contract,
         subscription_id: pending.subscription_id,
         exact_security_warning_approved: securityWarningApproved,
+        ...(riskMode?{delegate_key:pending.public_key,paid_cycles:await page.evaluate(async(id)=>{const rows=await (await fetch("/api/near/subscriptions")).json();return rows.find((s:any)=>s.id===id).cycles.map((c:any)=>({cycle:c.cycle,state:c.state,artifact_hash:c.artifact_hash,receipt:c.receipt,verification:c.verification,payment_tx:c.payment_tx,delivered_at:c.delivered_at}));},pending.subscription_id)}:{}),
         video_events: videoEvents,
         transactions,
         completed_at: new Date().toISOString(),

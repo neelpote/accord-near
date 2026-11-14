@@ -248,7 +248,7 @@ export default function Home() {
       actions: [
         {
           type: "FunctionCall",
-          params: { methodName: method, args, gas: "50000000000000", deposit },
+          params: { methodName: method, args, gas: method==="withdraw"?"50000000000000":"30000000000000", deposit },
         },
       ],
     });
