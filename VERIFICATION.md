@@ -1,5 +1,12 @@
 # Verification
 
+## Security evidence lab — 14 November 2026
+
+Added a wallet-free `/proof` route (source only; pending deployment) and a no-install, read-only verifier. `node scripts/verify-security-proof.mjs --chain` matched every recorded control receipt field at finalized block **277685961**, found no attack cycle-zero receipt at block **277685963**, and confirmed both agreements are inactive with one/zero paid cycles. This used no signing key, financial transaction or new inference.
+
+Local validation: frontend typecheck and production build passed; all **16** browser checks passed, including recorded-input switching, downloads, mobile overflow and no POST requests on the proof page. Three verifier tests cover original/download consistency, tampering, invalid preflights, modified receipts, unexpected attack payment, missing state and RPC failure. Five deployment-configuration checks passed. Browser wallet tests here are controlled fixtures, not new extension acceptance or funded wallet journeys. These additions do not change contract code or deployed runtime.
+
+
 > **Current checkpoint — 12 November 2026:** reviewed application `519f83e` passed [CI 43243745816](https://github.com/neelpote/accord-near/actions/runs/43243745816): 23 unit tests, operations/EVM-auth/security integration checks, schema, build, nine browser checks and credential scan. Contract CI [43180728469](https://github.com/neelpote/accord-near/actions/runs/43180728469) covers the unchanged Rust crates. Funded warning/approval evidence: [local agreement 21](docs/counterparty-live-proof.json), [hosted agreement 22](docs/counterparty-hosted-proof.json).
 >
 > The dated checkpoints below are historical, not a statement that their counts or pre-hosting limits describe the latest release. The current documentation audit and exact evidence boundaries are in [PROJECT_HANDOFF.md](docs/PROJECT_HANDOFF.md). The older attack fixture remains historical. The 13 November causal capture, funded control and current native/EVM reruns supersede that limitation; see the new checkpoint below.

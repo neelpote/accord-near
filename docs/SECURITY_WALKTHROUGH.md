@@ -87,3 +87,11 @@ Earlier attempts exposed two issues, neither concealed as a pass: fluctuating in
 ## Remaining owner work
 
 Review the finished film, perform the external wallet UI/device smoke check, supply the actual prize wallet/team/consent fields, and approve/post the exact social and application content. No post, application, contest enrollment or paid service purchase was sent as part of this delivery. Customer demand is still unvalidated; test fixtures and a polished film are not user adoption.
+
+## Wallet-free evidence lab and independent readback
+
+The frontend `/proof` route compares the dated clean/poisoned documents and recorded plans, shows the legitimate payment and the isolated reputation-only refusal, and offers the original JSON downloads. No authentication, backend, new model call or financial transaction is needed. This route is implemented in source and pending deployment.
+
+Run `node scripts/verify-security-proof.mjs --chain` from the repository root with Node 24. It validates the capture using the same canonical digest function as the production backend, checks log/preflight consistency, and reads `get_receipt` / `get_subscription` at finalized testnet blocks. It compares the full control receipt, absence of attack cycle zero, and canceled agreements with one/zero paid cycles. Current state cannot independently establish historical signing counts or model provenance. Exported frontend downloads are byte-checked against the original docs in CI.
+
+`node --test scripts/security-proof.test.mjs` checks altered inputs, signing activity, confounded reputation controls, modified chain receipts, unexpected attack payment, missing state and RPC outage. No online call is made by those tests. To refresh the public downloads after reviewing any source evidence change, run `node scripts/verify-security-proof.mjs --export`.

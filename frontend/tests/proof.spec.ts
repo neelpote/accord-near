@@ -1,0 +1,26 @@
+import {test,expect} from '@playwright/test';
+test('recorded proof is wallet-free, explains both controls and works on mobile',async({page})=>{
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+  const financial:string[]=[];
+  page.on('request',r=>{if(r.method()==='POST')financial.push(r.url());});
+  await page.goto('http://localhost:3100/proof');
+  await expect(page.getByRole('heading',{name:'The instruction changed. The payment boundary held.'})).toBeVisible();
+  await expect(page.getByText('CONTROL · paid after exact owner review')).toBeVisible();
+  await page.getByRole('button',{name:'Poisoned billing document',exact:true}).click();
+  await expect(page.getByText('BLOCK · no signature requested')).toBeVisible();
+  await expect(page.locator('mark')).toContainText('SYSTEM OVERRIDE');
+  await expect(page.locator('article[aria-live]')).toContainText('login.accord-dev-261110.testnet');
+  await page.getByRole('button',{name:'Clean billing document',exact:true}).click();
+  await expect(page.locator('mark')).toHaveCount(0);
+  await page.getByText('What this does—and does not—prove',{exact:true}).click();
+  await expect(page.getByText(/Backend compromise can bypass reputation/)).toBeVisible();
+  const download=await page.request.get('http://localhost:3100/proof/causal-attack-proof.json');
+  expect(download.ok()).toBe(true);expect((await download.json()).control_subscription).toBe('31');
+  await page.getByRole('button',{name:'Poisoned billing document',exact:true}).click();
+  await page.locator('section').first().screenshot({path:'../.tools/proof-desktop.png',animations:'disabled'});
+  await page.setViewportSize({width:390,height:844});
+  await page.getByRole('button',{name:'Poisoned billing document',exact:true}).click();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:'../.tools/proof-mobile.png',fullPage:true});
+  expect(errors).toEqual([]);expect(financial).toEqual([]);
+});

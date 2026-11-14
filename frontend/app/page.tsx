@@ -458,6 +458,7 @@ export default function Home() {
           <a href="#operations">Workspace</a>
           <a href="#market">Services</a>
           <a href="#agreements">Agreements</a>
+          <a href="/proof">Security proof</a>
           <button className="quiet" onClick={() => setCreator(!creator)}>
             List a service
           </button>

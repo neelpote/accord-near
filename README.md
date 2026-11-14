@@ -4,7 +4,7 @@
 
 Accord checks who an agent is about to pay, requires human review for warnings, and blocks denied payments before signing. Bounded purchase agreements on **NEAR testnet** enforce the provider, price, interval, cycle limit and expiry.
 
-[Live demo](https://accord-near-ten.vercel.app) · [Security video](docs/demo/accord-security-demo.mp4) · [Working proof](#security-acceptance--13-november-2026) · [Judge testing](#judge-access-and-testing) · [Local setup](#local-setup) · [Architecture](docs/ARCHITECTURE.md)
+[Live demo](https://accord-near-ten.vercel.app) · [Security video](docs/demo/accord-security-demo.mp4) · [Verify the security proof](#verify-the-security-proof) · [Working proof](#security-acceptance--13-november-2026) · [Judge testing](#judge-access-and-testing) · [Local setup](#local-setup) · [Architecture](docs/ARCHITECTURE.md)
 
 ![Accord application with its animated agent interface](docs/demo/editorial-desktop.png)
 
@@ -39,6 +39,7 @@ Accord separates an agent's proposed action from its payment authority. The **ba
 | Delivery criteria and disputes | Distinguish structure/evidence validation from settlement and delivery; inspect verification history; acknowledge receipt or record a dispute; providers can respond. These are manual-review records, not automatic refunds. | Repository |
 | Independent creator listings | Approved creator wallets publish their own hosted report service with a bounded input schema, version/build declaration, signed endpoint preflight and per-provider credentials; unlist owned services and reuse the existing purchase/delivery path. No arbitrary code uploads. | Repository |
 | Interface and access | Animated agent roles and Observe → Inspect → Limit scroll chapters; pause/reduced-motion controls, mobile layouts, keyboard navigation and a static fallback when WebGL is unavailable. | Live |
+| Security evidence lab | Compare the clean and injected billing document without a wallet, inspect captured model outputs and separate payment controls, and download the original evidence. Independent read-only verifier checks finalized testnet receipts. | Repository (`/proof`); CLI usable now |
 | Optional AI | Groq explanations of public chain evidence, NEAR AI Cloud adapter/preflight, and an experimental local contract-risk analyst. No current semantic-accuracy or TEE-inference claim. | Paused; see [AI limits](docs/reliability/AI.md) |
 
 ### Included services
@@ -80,6 +81,12 @@ Actual browser captures from 11–14 November. Values and states reflect capture
 
 ![Wallet Watch paid report and canceled finite agreement](docs/demo/readme-paid-report.png)
 
+**Browse service capabilities and review the quoted terms.**
+
+![Directory of NEAR monitoring services](docs/demo/readme-services.png)
+
+![Finite purchase terms showing price, report limit and budget](docs/demo/readme-service-terms.png)
+
 **Review application changes and evidence.**
 
 ![Application operations workspace overview](docs/demo/readme-workspace.png)
@@ -117,6 +124,24 @@ flowchart LR
 **Escrow:** [`contract.accord-dev-261110.testnet`](https://testnet.nearblocks.io/address/contract.accord-dev-261110.testnet) · **Authentication:** `login.accord-dev-261110.testnet` · **Network:** testnet only.
 
 The active payment path uses native NEAR escrow, not Agent API, Intents, a stablecoin bridge or TEE inference. The exact recurring terms and artifact-bound settlement are the contract's job; the reputation gate remains backend-enforced. [Contract source](contracts-near/src/lib.rs) · [Ethereum integration](docs/ETHEREUM_WALLETS.md) · [Design decisions](DECISIONS.md).
+
+## Verify the security proof
+
+Judges can check the experiment **without a wallet, database, npm install or AI credits**. From a checkout with Node 24:
+
+```sh
+node scripts/verify-security-proof.mjs             # Recorded evidence consistency
+node scripts/verify-security-proof.mjs --chain     # Also read finalized testnet state
+node --test scripts/security-proof.test.mjs        # Includes tampering and RPC-failure cases
+```
+
+The chain check compares **every control receipt field**, confirms no cycle-zero receipt exists for the attack agreement, and checks both canceled agreements have the expected paid-cycle counts. It exits nonzero on mismatches or RPC failure. For another HTTPS testnet RPC, set `ACCORD_PROOF_RPC`.
+
+The wallet-free **`/proof` evidence lab** in the current frontend source lets judges switch between the clean and poisoned tool document, inspect the changed receiver and compare the separate reputation-only control. Run `npm ci --prefix frontend` then `npm run dev --prefix frontend` and open **http://localhost:3000/proof**. It needs no running backend. **This new route is pending deployment; the existing hosted release is unchanged.**
+
+![Wallet-free security evidence lab showing recorded inputs and payment boundaries](docs/demo/security-proof-lab.png)
+
+**Proof boundary:** the logs are operator-produced records, not independent attestations. Hashes establish consistency, not model-provider authenticity. Current chain reads verify receipt/state facts; they cannot prove that signing was never attempted, reconstruct historical key permissions, or establish general detection accuracy. The controlled demo planner is intentionally vulnerable; it is not the production worker.
 
 ## Judge access and testing
 
